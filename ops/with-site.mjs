@@ -1,24 +1,28 @@
-// Run a command against local copies of the site, then stop them.
+// Run a command against a local copy of the site, then stop it.
 //
-//   node ops/with-site.mjs -- python ops/health.py http://127.0.0.1:8787 --expect staging
-//   node ops/with-site.mjs --as-production -- python ops/health.py http://127.0.0.1:8788 --expect production
+//   node ops/with-site.mjs -- python ops/health.py {site} --expect staging
+//   node ops/with-site.mjs --as-production -- python ops/health.py {site} --expect production
 //
 // It starts "wrangler dev" (the same asset server Cloudflare runs) on 127.0.0.1, waits until
-// the home page answers, runs the command, and always stops the server, also on Windows,
-// where wrangler's child processes outlive a plain kill.
+// the home page answers, runs the command with every {site} replaced by the server's address,
+// and always stops the server, also on Windows, where wrangler's child processes outlive a
+// plain kill.
 //
-//   default           port 8787, the staging Worker's config. Requests arrive with the local
-//                     host name, so the site behaves like any address that is not the public one.
-//   --as-production   port 8788, the production Worker's config, and every request arrives as
-//                     if it were for pennypawsgames.com (wrangler's --local-upstream). This is
-//                     how the "public address is indexable" rule in _headers is tested before
-//                     anything is deployed.
-//   --port N          use another port.
+// The port is a free one, chosen each run, so the command can never be pointed at some other
+// program that happens to hold a fixed port.
+//
+//   default           the staging Worker's config. Requests arrive with the local host name,
+//                     so the site behaves like any address that is not the public one.
+//   --as-production   the production Worker's config, and every request arrives as if it were
+//                     for pennypawsgames.com (wrangler's --local-upstream). This is how the
+//                     "public address is indexable" rule in _headers is tested before anything
+//                     is deployed.
+//   --port N          use this port; it is an error if something already listens on it.
 import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import process from "node:process";
-import { devArgs } from "./dev-server.mjs";
+import { devArgs, freePort, portInUse } from "./dev-server.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -52,12 +56,18 @@ async function main() {
     return 2;
   }
   const flags = argv.slice(0, split);
-  const command = argv.slice(split + 1);
   const portAt = flags.indexOf("--port");
+  const port = portAt >= 0 ? Number(flags[portAt + 1]) : await freePort();
+  if (portAt >= 0 && await portInUse(port)) {
+    console.error(`with-site: something already listens on 127.0.0.1:${port}; stop it or leave --port out`);
+    return 1;
+  }
   const { args, url } = devArgs({
     asProduction: flags.includes("--as-production"),
-    port: portAt >= 0 ? Number(flags[portAt + 1]) : undefined,
+    port,
+    inspectorPort: await freePort(),
   });
+  const command = argv.slice(split + 1).map((a) => a.replaceAll("{site}", url));
 
   const server = spawn(process.execPath, args, {
     cwd: root,

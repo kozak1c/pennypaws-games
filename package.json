@@ -11,7 +11,7 @@
     "walk": "playwright test",
     "check:all": "node ops/check.mjs && playwright test",
     "dev": "wrangler dev --env staging --ip 127.0.0.1 --port 8787",
-    "health": "node ops/with-site.mjs -- python ops/health.py http://127.0.0.1:8787 --expect staging"
+    "health": "node ops/with-site.mjs -- python ops/health.py {site} --expect staging"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
