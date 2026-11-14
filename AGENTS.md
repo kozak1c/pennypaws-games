@@ -7,6 +7,11 @@ The plan this implements is tracker task PAWS-001 (hosting, releases, rollback, 
 Read it before changing hosting, branches or deploys. Operating steps are in
 [docs/runbook.md](docs/runbook.md): read it when deploying, rolling back, or when a check is red.
 
+The designed site (its look, pages, content model, the move to Astro and the phases) is
+planned in [docs/site-plan.md](docs/site-plan.md), tracker task PAWS-007. Read it before
+adding a page, a component or a dependency. Until its phase 1 lands, "What is served" below
+still describes the site.
+
 ## What is served
 
 The site is plain files at the repository root, served by Cloudflare as a static-assets
