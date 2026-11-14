@@ -1,0 +1,163 @@
+# preview: each pull request into staging gets its own address, a Cloudflare Worker Preview
+# of the staging Worker named pr-<number>. The address is posted as one comment on the pull
+# request and health-checked; the Preview is deleted when the pull request closes.
+#
+# Only for pull requests from this repository that are ready for review. Forks and Dependabot
+# get no Cloudflare secret, so they get no preview (and nothing fails).
+#
+# Off until the repository variable CLOUDFLARE_DEPLOY is "true" (docs/runbook.md, "Turning
+# deploys on"); "not-configured" says so. Preview addresses are on workers.dev, which
+# Cloudflare marks noindex, and _headers marks every address but the public one noindex too.
+name: preview
+
+on:
+  pull_request:
+    branches: [staging]
+    types: [opened, synchronize, reopened, ready_for_review, closed]
+
+permissions:
+  contents: read
+
+# One at a time for each pull request; a newer push, or the close, replaces a run in flight.
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  not-configured:
+    if: vars.CLOUDFLARE_DEPLOY != 'true' && github.event.action != 'closed' && github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Say why there is no preview
+        run: |
+          msg="No preview address: the repository variable CLOUDFLARE_DEPLOY is not \"true\". Previews start once the Cloudflare secrets are in place (docs/runbook.md, \"Turning deploys on\")."
+          echo "::notice title=Preview skipped::${msg}"
+          echo "${msg}" >> "$GITHUB_STEP_SUMMARY"
+
+  preview:
+    if: >-
+      vars.CLOUDFLARE_DEPLOY == 'true' && github.event.action != 'closed'
+      && github.event.pull_request.draft == false
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: staging
+      url: ${{ steps.preview.outputs.url }}
+    permissions:
+      contents: read
+      pull-requests: write  # the comment with the address
+    env:
+      PR: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Is there a Cloudflare secret for this run?
+        id: secret
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice title=Preview skipped::This run has no Cloudflare secret (GitHub gives none to Dependabot), so there is no preview address."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.secret.outputs.present == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+        if: steps.secret.outputs.present == 'true'
+
+      - name: Create or update the Preview
+        id: preview
+        if: steps.secret.outputs.present == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/preview.ndjson
+        run: |
+          npx wrangler preview --env staging --name "pr-${PR}" --message "Pull request ${PR} at ${GITHUB_SHA::7}"
+          url=$(jq -r 'select(.type == "preview") | .preview_urls[0] // empty' "$WRANGLER_OUTPUT_FILE_PATH" | tail -n 1)
+          if [ -z "$url" ]; then
+            echo "::error::wrangler created the Preview but gave no address. Preview addresses need the staging Worker deployed once with preview_urls on: run the staging workflow, then rerun this job."
+            exit 1
+          fi
+          echo "url=${url}" >> "$GITHUB_OUTPUT"
+
+      - name: Health check
+        id: health
+        if: steps.secret.outputs.present == 'true'
+        env:
+          URL: ${{ steps.preview.outputs.url }}
+        run: |
+          set +e
+          python3 ops/health.py "$URL" --expect staging --wait 180 --markdown health.md
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Comment with the address
+        if: ${{ !cancelled() && steps.secret.outputs.present == 'true' && steps.preview.outputs.url != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ steps.preview.outputs.url }}
+          RC: ${{ steps.health.outputs.rc }}
+        run: |
+          {
+            echo "<!-- pennypaws-preview -->"
+            echo "### Preview of \`${GITHUB_SHA::7}\`"
+            echo "Open it: **${URL}**"
+            echo
+            echo "This address follows the pull request and is deleted when it closes. It is marked noindex."
+            echo
+            if [ -f health.md ]; then cat health.md; fi
+          } > comment.md
+          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none --body-file comment.md
+          [ "$RC" = "0" ]
+
+  cleanup:
+    if: >-
+      vars.CLOUDFLARE_DEPLOY == 'true' && github.event.action == 'closed'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: staging
+    env:
+      PR: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Is there a Cloudflare secret for this run?
+        id: secret
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.secret.outputs.present == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+        if: steps.secret.outputs.present == 'true'
+
+      # A pull request that was never ready for review has no Preview; deleting nothing is fine.
+      # Cloudflare also removes the oldest Previews by itself at its limit, so a missed delete
+      # cannot pile up.
+      - name: Delete the Preview
+        if: steps.secret.outputs.present == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if ! npx wrangler preview delete --env staging --name "pr-${PR}" --skip-confirmation; then
+            echo "::warning::Could not delete the Preview pr-${PR}. It may never have existed; otherwise delete it in the Cloudflare dashboard."
+          fi

@@ -1,0 +1,57 @@
+# The never-break list: what must keep answering on the Penny Paws site.
+#
+# ops/health.py reads this file and checks every entry against one address: a local
+# "wrangler dev", a pull request preview, staging after each deploy, and the live site after
+# each release (a failed check there rolls the release back). Other services depend on these
+# addresses, so removing or loosening an entry needs the owner's say-so. Adding one is fine.
+#
+# Each entry says why it is here. Keep the reason: it is what stops the next person from
+# "tidying" the entry away.
+
+# The one address search engines may index. Every other address the same files are served
+# from (staging, pull request previews, workers.dev) must send "X-Robots-Tag: noindex".
+production_host = "pennypawsgames.com"
+
+# Files whose bytes are a contract with someone else. "body" is compared byte for byte.
+[[exact]]
+path = "/app-ads.txt"
+body = "google.com, pub-5568542430803397, DIRECT, f08c47fec0942fa0\n"
+content_type = "text/plain"
+why = "AdMob reads this file to confirm we may sell ads in our apps. A changed or missing file stops ad revenue."
+
+# Pages that must answer 200 as HTML with this exact <title>.
+[[page]]
+path = "/"
+title = "Penny Paws Games"
+why = "The home page, and the developer website on the Google Play listing."
+
+[[page]]
+path = "/squishy-bop/privacy/"
+title = "Squishy Bop! Privacy Policy"
+why = "The privacy policy address given to Google Play and linked from inside Squishy Bop!."
+
+# Headers every page must send. A name alone means "present"; a value means "contains".
+[headers]
+content-security-policy = "default-src 'none'"
+strict-transport-security = "max-age="
+x-content-type-options = "nosniff"
+referrer-policy = ""
+
+# Paths that must never be served: repository files that are not part of the site.
+# .assetsignore keeps them out; this proves it on the deployed copy.
+[absent]
+paths = [
+  "/README.md",
+  "/AGENTS.md",
+  "/wrangler.jsonc",
+  "/package.json",
+  "/_headers",
+  "/.assetsignore",
+  "/.gitignore",
+  "/CNAME",
+  "/ops/health.py",
+  "/ops/never-break.toml",
+  "/docs/runbook.md",
+  "/.github/workflows/ci.yml",
+  "/.git/config",
+]

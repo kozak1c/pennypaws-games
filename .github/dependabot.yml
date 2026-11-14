@@ -1,0 +1,27 @@
+# Weekly dependency updates, one grouped pull request for npm and one for the pinned actions.
+# They go into staging like any other change and through the same checks. Dependabot updates
+# an action's commit SHA and its "# vX.Y.Z" comment together.
+# GitHub reads this file from the default branch (main), so it takes effect after a release.
+# Not covered: actionlint, which .github/actions/checks/action.yml downloads by version and
+# SHA-256; bump both there by hand.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: staging
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      npm:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directories: ["/", "/.github/actions/*"]
+    target-branch: staging
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]

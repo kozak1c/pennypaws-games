@@ -1,0 +1,37 @@
+# release-guard: a pull request into main must come from this repository's staging branch, so
+# what goes live is exactly what staging checked and served. The branch rules on main require
+# this check ("source-is-staging") and the "ci" check before a merge.
+#
+# The release pull request is opened by a workflow, and GitHub starts no checks for a pull
+# request a workflow opened. This one starts when the owner marks the draft ready for review
+# (which he must do before he can merge) and on every later push to staging. It takes seconds.
+name: release-guard
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, edited, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-guard-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  source-is-staging:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Check the source branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          if [ "$HEAD_REF" = "staging" ] && [ "$HEAD_REPO" = "$GITHUB_REPOSITORY" ]; then
+            echo "Release pull request from staging: OK"
+          else
+            echo "::error::Pull requests into main must come from this repository's staging branch. Send the change to staging instead (gh pr edit <number> --base staging)."
+            exit 1
+          fi

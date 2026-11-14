@@ -1,0 +1,155 @@
+# staging: every push to the staging branch is checked, deployed to the staging Worker and
+# health-checked on https://staging.pennypawsgames.com.
+#
+#   1. ci      the same checks as a pull request, on the merged tree. This run is also the
+#              "ci" check the release pull request (staging into main) needs.
+#   2. deploy  wrangler deploy --env staging, then ops/health.py against the address wrangler
+#              deployed to. The result is the commit status "staging/smoke" and a comment on
+#              the pull request that was merged.
+#
+# Deploys are off until the repository variable CLOUDFLARE_DEPLOY is "true" (set once the
+# staging environment holds its Cloudflare secrets; docs/runbook.md, "Turning deploys on").
+# Until then the deploy job is skipped, "not-configured" says why, and no status is posted.
+# Once the variable is on, a missing secret fails the run instead of skipping it.
+name: staging
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# The newest push wins: its commit includes the older one. A run cancelled this way reports
+# its commit as superseded, not failed.
+concurrency:
+  group: staging
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/checks
+
+  not-configured:
+    if: vars.CLOUDFLARE_DEPLOY != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Say why nothing was deployed
+        run: |
+          msg="Staging was not deployed: the repository variable CLOUDFLARE_DEPLOY is not \"true\". Deploys start once the Cloudflare secrets are in place (docs/runbook.md, \"Turning deploys on\")."
+          echo "::notice title=Staging deploy skipped::${msg}"
+          echo "${msg}" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: ci
+    if: vars.CLOUDFLARE_DEPLOY == 'true' && github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: staging
+      url: https://staging.pennypawsgames.com
+    permissions:
+      contents: read
+      statuses: write       # the staging/smoke commit status
+      pull-requests: write  # the comment on the merged pull request
+    env:
+      CONTEXT: staging/smoke
+      GH_TOKEN: ${{ github.token }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Status pending
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" -f state=pending \
+            -f context="$CONTEXT" -f description="Deploying to staging" -f target_url="$RUN_URL" >/dev/null
+
+      - uses: ./.github/actions/setup
+
+      - name: Deploy to staging
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/deploy.ndjson
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_DEPLOY is true, but the staging environment has no CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID secret (docs/runbook.md, \"Turning deploys on\")."
+            exit 1
+          fi
+          npx wrangler deploy --env staging
+          url=$(python3 ops/site_url.py "$WRANGLER_OUTPUT_FILE_PATH")
+          version=$(python3 ops/site_url.py "$WRANGLER_OUTPUT_FILE_PATH" --field version_id)
+          {
+            echo "url=${url}"
+            echo "version=${version}"
+          } >> "$GITHUB_OUTPUT"
+
+      # --wait covers a certificate still being issued on the first deploy of a new address.
+      - name: Health check
+        id: health
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          set +e
+          python3 ops/health.py "$URL" --expect staging --wait 300 --markdown health.md
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Report (commit status, pull request comment, summary)
+        if: ${{ !cancelled() }}
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+          VERSION: ${{ steps.deploy.outputs.version }}
+          RC: ${{ steps.health.outputs.rc }}
+        run: |
+          if [ "$RC" = "0" ]; then
+            state=success; desc="Staging checks passed"; head="Staging is ready"
+          elif [ -n "$RC" ]; then
+            state=failure; desc="Staging checks failed"; head="Staging checks FAILED"
+          else
+            state=error; desc="Staging deploy failed"; head="Staging deploy FAILED (no checks ran)"
+          fi
+          gh api "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" -f state="$state" \
+            -f context="$CONTEXT" -f description="$desc" -f target_url="$RUN_URL" >/dev/null
+          {
+            echo "<!-- pennypaws-staging -->"
+            echo "### ${head}: \`${GITHUB_SHA::7}\`"
+            if [ -n "$URL" ]; then
+              echo "Open it: **${URL}**"
+              echo
+              echo "Worker version \`${VERSION}\`. Staging is marked noindex."
+            fi
+            echo "[Run log](${RUN_URL})"
+            echo
+            if [ -f health.md ]; then cat health.md; fi
+            echo
+            if [ "$state" = "success" ]; then
+              echo "To put this live: merge the release pull request (staging into main)."
+            fi
+          } > comment.md
+          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+          # The pull request(s) this push merged into staging: one comment each.
+          for pr in $(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
+                        --jq '.[] | select(.base.ref == "staging") | .number' || true); do
+            gh pr comment "$pr" --repo "$GITHUB_REPOSITORY" --body-file comment.md || true
+          done
+          [ "$state" = "success" ]
+
+      # A newer push cancelled this run. Say so, rather than "deploy failed".
+      - name: Report superseded
+        if: ${{ cancelled() }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" -f state=error \
+            -f context="$CONTEXT" -f description="Superseded by a newer staging push" \
+            -f target_url="$RUN_URL" >/dev/null || true

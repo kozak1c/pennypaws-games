@@ -1,0 +1,11 @@
+# What the Worker serves is this folder minus everything below (wrangler.jsonc, "assets").
+# Deny by default: nothing is public unless a line here lets it through, so a new doc, script
+# or config file can never be published by accident. A new public file also goes in
+# ops/public-files.txt; tests/assets.test.mjs fails until the two agree.
+# _headers is read by wrangler as configuration and is never served.
+*
+!/index.html
+!/404.html
+!/app-ads.txt
+!/squishy-bop/
+!/squishy-bop/**

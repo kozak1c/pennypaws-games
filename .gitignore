@@ -1,0 +1,6 @@
+.local/
+node_modules/
+.wrangler/
+__pycache__/
+test-results/
+playwright-report/
