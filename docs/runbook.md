@@ -127,9 +127,17 @@ pull requests still merge into staging on `ci` alone.
 ## The domain is on Cloudflare
 
 `pennypawsgames.com` is a custom domain of the production Worker (`routes` in
-`wrangler.jsonc`). It moved from GitHub Pages with the release that added that route:
-in CI, wrangler takes over a hostname's existing DNS records when it attaches a custom
-domain, so that release replaced the four GitHub Pages `A` records.
+`wrangler.jsonc`). It moved from GitHub Pages on 2026-11-14.
+
+How the move went, for the next hostname: the release that added the route could not attach
+the domain. Cloudflare refused it because the apex still had its GitHub Pages records
+("already has externally managed DNS records ... Delete them first", code 100117), and the
+deploy token has no DNS rights, so wrangler could not replace them. The workflow rolled the
+Worker back and the live site never changed. The four `A` records were then deleted in the
+dashboard and the custom domain added there a few seconds later (the dashboard offers no
+override either), and the release was re-run. So: a hostname that already has DNS records
+needs them removed by hand before a custom domain can take it; a new hostname (as
+`staging` was) needs nothing.
 
 **The way back to GitHub Pages** (kept for 14 days after the move): in the Cloudflare
 dashboard remove the custom domain from the Worker (Workers & Pages > `pennypaws-site` >

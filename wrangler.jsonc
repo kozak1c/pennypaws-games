@@ -22,8 +22,8 @@
 
   // PRODUCTION. The Worker answers on pennypawsgames.com as a custom domain (Cloudflare keeps
   // its DNS record and certificate) and has no workers.dev address. The domain moved here
-  // from GitHub Pages with the release that added "routes" (tracker task PAWS-005). The way
-  // back, and the "www" redirect, are in docs/runbook.md.
+  // from GitHub Pages on 2026-11-14 (tracker task PAWS-005). How it went, the way back and
+  // the "www" redirect are in docs/runbook.md.
   "routes": [{ "pattern": "pennypawsgames.com", "custom_domain": true }],
   "workers_dev": false,
   "preview_urls": false,
