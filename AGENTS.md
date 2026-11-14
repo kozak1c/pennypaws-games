@@ -22,8 +22,9 @@ until the two agree with what wrangler would upload. Pages use paths for their o
 load nothing from another origin: no outside script, style, font, image or frame.
 Children open these pages.
 
-Until the domain moves to Cloudflare, GitHub Pages serves `main` from the root: `index.html`,
-`app-ads.txt`, `CNAME`, `.nojekyll` and `squishy-bop/privacy/` stay where they are.
+GitHub Pages stays switched on as the way back for 14 days after the domain's move to
+Cloudflare, and it serves `main` from the root: until it is switched off (docs/runbook.md),
+`index.html`, `app-ads.txt`, `CNAME`, `.nojekyll` and `squishy-bop/privacy/` stay where they are.
 
 ## How a change goes live
 
@@ -105,4 +106,4 @@ screenshots in `test-results/walk/` yourself too.
 | `ops/` | the health check, the never-break list, the allow-list, the local-server helpers |
 | `tests/` | unit tests, configuration rules, the browser walk |
 | `.github/workflows/` | `ci`, `preview`, `staging`, `release-pr`, `release-guard`, `release`, `rollback` |
-| `docs/runbook.md` | deploy, roll back, a red check, turning deploys on, moving the domain |
+| `docs/runbook.md` | deploy, roll back, a red check, turning deploys on, the domain and the way back |
