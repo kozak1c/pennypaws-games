@@ -302,6 +302,23 @@ class Health:
         except Exception as exc:
             self.add("http redirects to https", False, f"{type(exc).__name__}: {exc}")
 
+    def redirects(self) -> None:
+        """Other addresses that must send visitors on to the public one (the never-break list's
+        [[redirect]] entries). They live outside this site, so they are only checked when the
+        address under test is the public one over HTTPS."""
+        u = urlsplit(self.base)
+        if u.scheme != "https" or (u.hostname or "").lower() != self.spec["production_host"]:
+            return
+        for entry in self.spec.get("redirect", []):
+            name = f"redirect {entry['from']}"
+            try:
+                r = self.http(entry["from"])
+                loc = r.headers.get("location", "")
+                ok = r.status in (301, 308) and loc == entry["to"]
+                self.add(name, ok, f"HTTP {r.status} -> {loc or 'no location'}")
+            except Exception as exc:
+                self.add(name, False, f"{type(exc).__name__}: {exc}")
+
     def run(self, wait: float = 60) -> Health:
         if not self.wait_ready(wait):
             return self
@@ -311,6 +328,7 @@ class Health:
         self.indexing()
         self.not_found()
         self.https_only()
+        self.redirects()
         return self
 
     # -- output

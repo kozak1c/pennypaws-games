@@ -12,9 +12,9 @@ Written to be used from a phone. Each section starts with what to tap.
 | Cloudflare | [Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages), Workers `pennypaws-site` (production) and `pennypaws-site-staging` |
 
 **Where things stand (2026-11-14).** Deploys are on. pennypawsgames.com is served by the
-production Worker on Cloudflare. GitHub Pages is still switched on as the way back and
-`www` still redirects through it ("The domain is on Cloudflare" lists what is left).
-Update this paragraph when either changes.
+production Worker on Cloudflare, and `www` is a redirect rule on the zone. GitHub Pages is
+still switched on as the way back until 2026-11-28 ("The domain is on Cloudflare").
+Update this paragraph when that changes.
 
 ## Deploy
 
@@ -151,25 +151,26 @@ Settings > Domains & Routes), then put these records back, DNS only:
 | `pennypawsgames.com` | A | `185.199.111.153` |
 | `www` | CNAME | `kozak1c.github.io` |
 
-Then revert the route in `wrangler.jsonc` through a pull request, or the next release moves
+(`www` replaces the proxied `A` record it has now.) Then revert the route in `wrangler.jsonc` through a pull request, or the next release moves
 the domain again. Rolling the Worker back (`rollback` workflow) does not move the domain:
 it only changes which version the domain serves.
 
-Still to do after the move, in this order:
+**`www`.** A custom domain only answers its exact host name, so `www` is a redirect on the
+zone, not a second custom domain: a proxied `A` record for `www` to `192.0.2.0` and a
+redirect rule ("www to apex") that sends `www.pennypawsgames.com/<path>` to
+`https://pennypawsgames.com/<path>` with a 301, query string kept. It is in
+`ops/never-break.toml` and checked after every release.
 
-1. Check the live domain: `python ops/health.py https://pennypawsgames.com`, then by eye:
-   `/app-ads.txt`, `/squishy-bop/privacy/`, the padlock, and `http://` redirecting.
-2. `www`: a custom domain only answers its exact host name, so `www` is a redirect, not a
-   second custom domain. Until this step is done `www` still points at GitHub Pages, which
-   redirects it to the apex. Replace the `www` CNAME with a proxied `A` record to
-   `192.0.2.0` and add a redirect rule from `www.pennypawsgames.com/*` to
-   `https://pennypawsgames.com/$1` (301). Then add `www` to `ops/never-break.toml`.
-3. Rollback drill: release a harmless visible change, roll it back from a phone, time it,
-   and write the time here.
-4. Keep GitHub Pages switched on for 14 days as the way back. Pages cannot renew its
-   certificate while the domain points elsewhere, so check the certificate is still valid
-   before relying on it. Then switch Pages off, and in a follow-up pull request remove
-   `CNAME`, `.nojekyll` and the test "the files GitHub Pages needs are still at the root".
+**Rollback drill, 2026-11-14.** A release added a marker to the not-found page; the
+`rollback` workflow was started from the command line with nothing else prepared. The marker
+was gone from the live site 25 seconds after the workflow was started, and the whole run,
+including its own health check, took 53 seconds. All checks passed on the rolled-back
+version. From the GitHub phone app allow a little longer for finding the button.
+
+**Still to do:** keep GitHub Pages switched on until 2026-11-28 as the way back. Pages cannot
+renew its certificate while the domain points elsewhere, so check the certificate is still
+valid before relying on it. Then switch Pages off, and in a follow-up pull request remove
+`CNAME`, `.nojekyll` and the test "the files GitHub Pages needs are still at the root".
 
 `/404.html` and `_headers` at the root are Cloudflare's alone.
 

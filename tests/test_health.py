@@ -49,6 +49,10 @@ class Site:
         }
         self.http_redirect = True
         self.requests: list[str] = []
+        # Addresses outside the site that the never-break list expects to redirect here.
+        self.elsewhere: dict[str, health.Resp] = {
+            e["from"]: health.Resp(301, {"location": e["to"]}, b"") for e in SPEC.get("redirect", [])
+        }
 
     def __call__(self, url: str) -> health.Resp:
         self.requests.append(url)
@@ -56,6 +60,8 @@ class Site:
             if self.http_redirect:
                 return health.Resp(301, {"location": "https://" + url[len("http://"):]}, b"")
             return health.Resp(200, dict(self.headers), page("Penny Paws Games"))
+        if url in self.elsewhere:
+            return self.elsewhere[url]
         assert url.startswith(self.base), f"request left the site: {url}"
         path = url[len(self.base):] or "/"
         status, extra, body = self.routes.get(path, (404, {}, page("Page not found")))
@@ -204,6 +210,20 @@ class BrokenTest(unittest.TestCase):
         s = Site()
         s.routes["/wrangler.jsonc"] = (200, {"content-type": "application/json"}, b"{}")
         self.assertEqual(failed(s.run()), ["repository files are not served"])
+
+    def test_www_not_redirecting_to_the_same_path(self):
+        entry = SPEC["redirect"][0]
+        for resp in (health.Resp(200, {}, b""), health.Resp(302, {"location": entry["to"]}, b""),
+                     health.Resp(301, {"location": "https://pennypawsgames.com/"}, b"")):
+            s = Site("https://pennypawsgames.com", indexable=True)
+            s.elsewhere[entry["from"]] = resp
+            self.assertEqual(failed(s.run()), [f"redirect {entry['from']}"], resp)
+
+    def test_redirects_are_only_checked_on_the_public_address(self):
+        s = Site()
+        s.elsewhere.clear()
+        self.assertEqual(failed(s.run()), [])
+        self.assertFalse([c for c in s.run().checks if c.name.startswith("redirect ")])
 
     def test_http_not_redirected(self):
         s = Site()

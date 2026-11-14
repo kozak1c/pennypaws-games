@@ -30,6 +30,13 @@ path = "/squishy-bop/privacy/"
 title = "Squishy Bop! Privacy Policy"
 why = "The privacy policy address given to Google Play and linked from inside Squishy Bop!."
 
+# Other addresses that must answer with a permanent redirect to exactly this address. Checked
+# only against the public address, because they are not part of the site under test.
+[[redirect]]
+from = "https://www.pennypawsgames.com/squishy-bop/privacy/?from=health"
+to = "https://pennypawsgames.com/squishy-bop/privacy/?from=health"
+why = "People type www. It is a redirect rule on the Cloudflare zone, not part of the Worker: path and query must survive."
+
 # Headers every page must send. A name alone means "present"; a value means "contains".
 [headers]
 content-security-policy = "default-src 'none'"
