@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import io
 import json
+import ssl
 import sys
 import tempfile
 import unittest
 from contextlib import redirect_stdout
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -238,20 +240,69 @@ class OutputTest(unittest.TestCase):
         self.assertIn("| exact /app-ads.txt | pass |", md)
 
     def test_exit_code_and_files(self):
-        real = health.urllib_http
+        real, real_cert = health.urllib_http, health.tls_not_after
         health.urllib_http = lambda timeout=30: Site()
+        health.tls_not_after = lambda host, port=443: datetime.now(UTC) + timedelta(days=60)
         try:
             with redirect_stdout(io.StringIO()), tempfile.TemporaryDirectory() as d:
                 out = Path(d) / "h.json"
                 code = health.main(["https://staging.pennypawsgames.com", "--wait", "0", "--json", str(out)])
                 self.assertEqual(code, 0)
-                self.assertFalse(json.loads(out.read_text())["failed"])
+                result = json.loads(out.read_text())
+                self.assertFalse(result["failed"])
+                self.assertAlmostEqual(result["certificate"]["days_left"], 60, delta=0.1)
+                self.assertIn("certificate valid for 14+ days", [c["name"] for c in result["checks"]])
             bad = Site(indexable=True)
             health.urllib_http = lambda timeout=30: bad
             with redirect_stdout(io.StringIO()):
                 self.assertEqual(health.main(["https://staging.pennypawsgames.com", "--wait", "0"]), 1)
         finally:
-            health.urllib_http = real
+            health.urllib_http, health.tls_not_after = real, real_cert
+
+
+class CertificateTest(unittest.TestCase):
+    NOW = datetime(2026, 11, 14, 12, tzinfo=UTC)
+
+    def check(self, base: str, probe) -> health.Health:
+        h = health.Health(base, Site(base), SPEC, cert=probe)
+        h.certificate_valid(self.NOW)
+        return h
+
+    def test_a_certificate_with_time_left_passes(self):
+        asked = []
+
+        def probe(host: str, port: int) -> datetime:
+            asked.append((host, port))
+            return self.NOW + timedelta(days=80)
+
+        h = self.check("https://pennypawsgames.com", probe)
+        self.assertEqual(failed(h), [])
+        self.assertEqual(asked, [("pennypawsgames.com", 443)])
+        self.assertEqual(h.certificate["days_left"], 80)
+
+    def test_a_certificate_about_to_expire_fails(self):
+        h = self.check("https://pennypawsgames.com", lambda host, port: self.NOW + timedelta(days=9))
+        self.assertEqual(failed(h), ["certificate valid for 14+ days"])
+        self.assertIn("9 day(s) left", h.checks[0].detail)
+
+    def test_a_certificate_that_cannot_be_read_fails(self):
+        def bad(host: str, port: int) -> datetime:
+            raise ssl.SSLCertVerificationError("certificate verify failed")
+
+        h = self.check("https://pennypawsgames.com", bad)
+        self.assertEqual(failed(h), ["certificate valid for 14+ days"])
+        self.assertIsNone(h.certificate)
+
+    def test_plain_http_and_no_probe_skip_the_check(self):
+        self.assertEqual(self.check("http://127.0.0.1:8787", lambda h, p: self.NOW).checks, [])
+        self.assertEqual(self.check("https://pennypawsgames.com", None).checks, [])
+
+    def test_the_full_run_includes_it(self):
+        s = Site("https://pennypawsgames.com", indexable=True)
+        h = health.Health(s.base, s, SPEC, cert=lambda host, port: datetime.now(UTC) + timedelta(days=50))
+        h.run(wait=0)
+        self.assertEqual(failed(h), [])
+        self.assertIn("certificate valid for 14+ days", [c.name for c in h.checks])
 
 
 class NeverBreakListTest(unittest.TestCase):
