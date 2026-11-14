@@ -13,8 +13,7 @@ Written to be used from a phone. Each section starts with what to tap.
 
 **Where things stand (2026-11-14).** Deploys are on. pennypawsgames.com is served by the
 production Worker on Cloudflare, and `www` is a redirect rule on the zone. GitHub Pages is
-still switched on as the way back until 2026-11-28 ("The domain is on Cloudflare").
-Update this paragraph when that changes.
+switched off. Update this paragraph when the hosting changes.
 
 ## Deploy
 
@@ -96,8 +95,117 @@ rerun the failed job.
 `python ops/health.py https://pennypawsgames.com` from any computer to see what fails.
 The files are static and served without code, so an account spending limit does not stop them.
 
-**What the health check checks** is `ops/never-break.toml`; `ops/health.py --help` explains
-each line it prints.
+**What the health check checks** is `ops/never-break.toml`, plus the certificate: over
+HTTPS it fails when the certificate has fewer than 14 days left (`--cert-days`). Cloudflare
+renews its certificates about 30 days before they expire, so a red line here means renewal
+stopped. `ops/health.py --help` explains each line it prints; `--json` writes the results,
+with the certificate's expiry date, for other tools.
+
+## Alerts
+
+The owner's scheduled checks run every 15 minutes: this repository's `ops/health.py` against
+the live site, plus the print service's health address once it is live, the month's
+Cloudflare usage, the domain's expiry date and the DNS backup. A check that fails twice in a
+row sends **one** alert to the owner's phone, and the alert closes itself when the check passes
+again. Each alert links to its section below. An outside monitor also watches the home page,
+`/app-ads.txt` and a heartbeat the checks send after every run.
+
+### Site check failed
+
+The live site failed `ops/health.py`. The alert names the failing lines.
+
+1. Open https://pennypawsgames.com on the phone. If it looks broken and a release went out in
+   the last hour, roll back: GitHub app > `pennypaws-games` > Actions > **rollback** > **Run
+   workflow** (see "Roll back").
+2. If nothing was released, check [Cloudflare's status page](https://www.cloudflarestatus.com/).
+3. A certificate line ("certificate valid for 14+ days"): Cloudflare dashboard >
+   pennypawsgames.com > SSL/TLS > Edge Certificates; a stuck certificate can be re-ordered there.
+4. A wrong `/app-ads.txt` or privacy page: fix it on `staging` and release.
+
+Fix: the **rollback** workflow, or `python ops/health.py https://pennypawsgames.com` to see what fails.
+
+### Print service unhealthy
+
+`https://print.pennypawsgames.com/api/health` did not answer `ok`. Skipped until that address
+exists. Cloudflare error 1103 in the alert means the Workers spending limit was reached and
+every Worker on the account is stopped until the next billing month (the static site is not
+affected). The print service's own runbook has the failure modes.
+
+Fix: Cloudflare dashboard > Workers & Pages > the print Worker > Logs; for 1103, Billing > Spend
+Management (raising the limit is the owner's call).
+
+### Cloudflare usage high
+
+The month's Worker requests and CPU time point to a bill past half of the USD 10 spending
+limit, R2 storage operations passed 80 % of the free tier, or the read-only token could not
+read the numbers. Static file requests are free and not counted.
+
+Fix: Cloudflare dashboard > Workers & Pages > Overview for the busy Worker; a flood is held by
+the zone's rate limiting rule (Security > WAF > Rate limiting rules). "Cannot be read" means the
+read-only token expired or lost a permission: make a new one (Zone Read, DNS Read, Account
+Analytics Read).
+
+### Domain expires soon
+
+The registry says pennypawsgames.com expires in under 25 days, so auto-renew (about 30 days
+before expiry) did not happen.
+
+Fix: Cloudflare dashboard > Domain Registration > Manage domains > pennypawsgames.com > turn on
+auto-renew or renew now, and check the payment method under Billing.
+
+### DNS backup missing
+
+The nightly copy of the zone's DNS records is missing, failed, or older than 26 hours. Nothing
+is down.
+
+Fix: run the scheduled task "Penny Paws DNS backup" again on the owner's PC (Task Scheduler >
+Run). Its log says why it failed; usually the read-only token.
+
+### Yearly domain renewal check
+
+Every October 9 a reminder, not a failure: confirm auto-renew is on, the registrar lock is on,
+and the account's payment method will still work at renewal. Then dismiss it.
+
+Fix: Cloudflare dashboard > Domain Registration > Manage domains > pennypawsgames.com.
+
+### Restore drill failed
+
+Every quarter the print service's database is exported and the export restored into a scratch
+copy and compared with the live one. A failure means the backup cannot be trusted.
+
+Fix: the print service's runbook, "restore drill"; then run the task "Penny Paws restore drill"
+again.
+
+### Dependency updates not merged
+
+Each week the Dependabot pull requests into `staging` are merged when every check is green. The
+alert lists the ones that were not, with the reason (usually a red `ci`).
+
+Fix: open the pull request from the alert, read the failing step, and fix or close it.
+
+### Heartbeat missing (outside monitor)
+
+The outside monitor stopped hearing from the scheduled checks: the PC that runs them is off,
+asleep or offline, or the checks cannot reach the alert service. The site itself may be fine;
+the monitor's own checks of the home page say so.
+
+Fix: wake or restart the PC; the next run within 15 minutes sends the heartbeat again.
+
+## Checked live
+
+**Rebuild from nothing, 2026-11-14.** A fresh clone of `main` in an empty folder, `npm ci`,
+`npm run check` (every `ci` step but the browser, including a production dry run) and
+`npx wrangler deploy --dry-run --env production`: all passed in 63 seconds (clone under a second,
+`npm ci` 6 s with a warm package cache, checks 48 s, dry run 9 s; Node 24, wrangler 4.162.0).
+No scratch Worker was deployed: a real deploy runs only from the workflows, and the rollback
+drill above proves them. Expect a few minutes longer on a computer with an empty package cache.
+
+**Spending limit and rate rule, 2026-11-14.** The print service's runbook records a USD 10
+Workers spending limit on the account and one rate limiting rule on the zone (150 requests per
+10 seconds per address). The read-only token used by the checks cannot read either: the spend
+policy needs Account Billing Read, and the rule needs Zone WAF Read, and both answer
+"Authentication error". So they are not confirmed by a machine yet. To confirm by hand: Billing >
+Spend Management, and pennypawsgames.com > Security > WAF > Rate limiting rules.
 
 ## Turning deploys on
 
@@ -139,21 +247,16 @@ override either), and the release was re-run. So: a hostname that already has DN
 needs them removed by hand before a custom domain can take it; a new hostname (as
 `staging` was) needs nothing.
 
-**The way back to GitHub Pages** (kept for 14 days after the move): in the Cloudflare
-dashboard remove the custom domain from the Worker (Workers & Pages > `pennypaws-site` >
-Settings > Domains & Routes), then put these records back, DNS only:
+**There is no second host.** GitHub Pages was switched off on 2026-11-14, once the move was
+checked, and `CNAME` and `.nojekyll` left the repository. A bad release is undone with the
+`rollback` workflow (below, "Rollback drill"). If Cloudflare itself is the problem, the files
+are plain static files at the repository root and will serve from any static host; the
+domain's DNS is on Cloudflare too, so pointing it elsewhere needs the Cloudflare dashboard.
+The records GitHub Pages used, for the record: four `A` records for the apex
+(`185.199.108.153` to `185.199.111.153`) and `www` as a CNAME to `kozak1c.github.io`.
 
-| Name | Type | Value |
-|---|---|---|
-| `pennypawsgames.com` | A | `185.199.108.153` |
-| `pennypawsgames.com` | A | `185.199.109.153` |
-| `pennypawsgames.com` | A | `185.199.110.153` |
-| `pennypawsgames.com` | A | `185.199.111.153` |
-| `www` | CNAME | `kozak1c.github.io` |
-
-(`www` replaces the proxied `A` record it has now.) Then revert the route in `wrangler.jsonc` through a pull request, or the next release moves
-the domain again. Rolling the Worker back (`rollback` workflow) does not move the domain:
-it only changes which version the domain serves.
+Rolling the Worker back does not change the domain: it only changes which version the
+domain serves.
 
 **`www`.** A custom domain only answers its exact host name, so `www` is a redirect on the
 zone, not a second custom domain: a proxied `A` record for `www` to `192.0.2.0` and a
@@ -166,11 +269,6 @@ redirect rule ("www to apex") that sends `www.pennypawsgames.com/<path>` to
 was gone from the live site 25 seconds after the workflow was started, and the whole run,
 including its own health check, took 53 seconds. All checks passed on the rolled-back
 version. From the GitHub phone app allow a little longer for finding the button.
-
-**Still to do:** keep GitHub Pages switched on until 2026-11-28 as the way back. Pages cannot
-renew its certificate while the domain points elsewhere, so check the certificate is still
-valid before relying on it. Then switch Pages off, and in a follow-up pull request remove
-`CNAME`, `.nojekyll` and the test "the files GitHub Pages needs are still at the root".
 
 `/404.html` and `_headers` at the root are Cloudflare's alone.
 
