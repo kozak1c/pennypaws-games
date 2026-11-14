@@ -2,6 +2,7 @@
 
 The site at [pennypawsgames.com](https://pennypawsgames.com) for Penny Paws Games: the landing page, each game's privacy policy and `app-ads.txt`.
 Squishy Bop! privacy policy: `squishy-bop/privacy/index.html` (linked from the game's Grown-ups > About and the Play listing).
+Plush Hour privacy policy: `plush-hour/privacy/index.html` (for the Play listing).
 
 The site is plain static files at the repository root. Changes go through pull requests into `staging`, are checked and previewed, and reach the live site only when the owner merges the release pull request into `main`.
 
