@@ -20,12 +20,12 @@
     "not_found_handling": "404-page"
   },
 
-  // PRODUCTION. Until the domain moves from GitHub Pages (tracker task PAWS-005) the production
-  // Worker answers only on its workers.dev address, which _headers marks noindex.
-  // Do not add "routes" here before that cutover: in CI, wrangler takes over a hostname's
-  // existing DNS records without asking, so a custom-domain route for pennypawsgames.com would
-  // move the live site on the next release. The cutover steps are in docs/runbook.md.
-  "workers_dev": true,
+  // PRODUCTION. The Worker answers on pennypawsgames.com as a custom domain (Cloudflare keeps
+  // its DNS record and certificate) and has no workers.dev address. The domain moved here
+  // from GitHub Pages with the release that added "routes" (tracker task PAWS-005). The way
+  // back, and the "www" redirect, are in docs/runbook.md.
+  "routes": [{ "pattern": "pennypawsgames.com", "custom_domain": true }],
+  "workers_dev": false,
   "preview_urls": false,
   "observability": { "enabled": true },
 
