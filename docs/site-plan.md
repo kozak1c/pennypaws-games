@@ -38,7 +38,7 @@ open these pages, so no page loads anything from another origin and no page post
 | Client JavaScript | Almost none. One small script for press feedback and the screenshot strip, served as a file from our own origin. Every page works with JavaScript off. |
 | Content | Typed content collections: games, printables, books, FAQ, legal pages, home shelves. A missing field fails the build. |
 | Look | "Clay on the table": the brand kit's pale sky ground, navy text, five clay shapes. Section 3. |
-| Colour scheme | Light only at launch. The clay art exists on white and pale sky grounds only. |
+| Colour scheme | Light only (decided). The clay art exists on white and pale sky grounds only. |
 | Navigation | Four tabs, each with its own shape: Games, Printables, Books, Grown-ups. A fifth, Play, appears when the first browser game exists. |
 | Stores | Google Play for games, Etsy for printables, Amazon for paperbacks. Links only. |
 | Order of work | The look is shown and picked before any page is built. The engine swap can run in parallel because it changes nothing a visitor sees. |
@@ -538,21 +538,24 @@ Section 8. A content change plus one button variant, after the owner's decisions
 Section 8. The site's part is the `demo_url` field, the button and the Play tab; hosting the
 games is PAWS-009.
 
-## 12. Calls for the owner
+## 12. The owner's calls
 
-Each has a recommendation; the look round is the natural moment to settle them.
+Decided by the owner on 2026-11-14, as recommended:
 
-1. **Light only at launch.** Recommended. A night version needs the logo rendered on a dark
-   ground first.
-2. **Heading typeface.** Decided in the look round between Nunito and Baloo 2.
-3. **Which printables appear.** Recommended: the kid and family lines; anything else stays
-   in the Etsy shop and is reached through "See the whole shop on Etsy".
-4. **Which games get a page at launch.** Recommended: only games the owner has cleared to be
-   named in public.
-5. **Amazon links.** Recommended: plain links. An affiliate tag would need a disclosure on
-   every page that uses one.
-6. **Contact address.** Keep the current address at launch; an address on the brand's own
+1. **Light only at launch.** A night version needs the logo rendered on a dark ground first,
+   and is not planned.
+2. **Which printables appear.** The kid and family lines. Anything else stays in the Etsy
+   shop and is reached through "See the whole shop on Etsy". The per-product `show_on_site`
+   flag in the export carries the choice.
+3. **Which games get a page at launch.** Only games the owner has cleared to be named in
+   public; at launch that is Squishy Bop!.
+4. **Amazon links.** Plain links, no affiliate tag.
+5. **Contact address.** The current address stays at launch; an address on the brand's own
    domain is a later, separate job.
+
+Still open, settled in the look round (phase 0):
+
+6. **Heading typeface.** Nunito throughout, or Baloo 2 for headings.
 
 ## 13. Risks
 
