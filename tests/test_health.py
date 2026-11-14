@@ -23,6 +23,7 @@ HEADERS = {
     "strict-transport-security": "max-age=31536000",
     "x-content-type-options": "nosniff",
     "referrer-policy": "strict-origin-when-cross-origin",
+    "cache-control": "public, max-age=0, must-revalidate, no-transform",
     "x-robots-tag": "noindex",
 }
 
@@ -148,9 +149,14 @@ class BrokenTest(unittest.TestCase):
         s.routes["/squishy-bop/privacy/"] = (200, {}, page("Privacy"))
         self.assertEqual(failed(s.run()), ["page /squishy-bop/privacy/"])
 
+    def test_cache_control_without_no_transform(self):
+        s = Site()
+        s.headers["cache-control"] = "public, max-age=0, must-revalidate"
+        self.assertEqual(failed(s.run()), ["page /", "page /squishy-bop/privacy/"])
+
     def test_missing_security_header(self):
         for name in ("content-security-policy", "strict-transport-security",
-                     "x-content-type-options", "referrer-policy"):
+                     "x-content-type-options", "referrer-policy", "cache-control"):
             s = Site()
             del s.headers[name]
             self.assertEqual(failed(s.run()), ["page /", "page /squishy-bop/privacy/"], name)
@@ -249,7 +255,8 @@ class NeverBreakListTest(unittest.TestCase):
         self.assertIn("/app-ads.txt", [e["path"] for e in SPEC["exact"]])
         self.assertIn("/squishy-bop/privacy/", [p["path"] for p in SPEC["page"]])
         self.assertIn("/", [p["path"] for p in SPEC["page"]])
-        for h in ("content-security-policy", "strict-transport-security", "x-content-type-options", "referrer-policy"):
+        for h in ("content-security-policy", "strict-transport-security", "x-content-type-options", "referrer-policy",
+                  "cache-control"):
             self.assertIn(h, SPEC["headers"])
         self.assertEqual(SPEC["production_host"], "pennypawsgames.com")
 

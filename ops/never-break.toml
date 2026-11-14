@@ -36,6 +36,8 @@ content-security-policy = "default-src 'none'"
 strict-transport-security = "max-age="
 x-content-type-options = "nosniff"
 referrer-policy = ""
+# Keeps Cloudflare from adding its analytics script to our pages (see _headers).
+cache-control = "no-transform"
 
 # Paths that must never be served: repository files that are not part of the site.
 # .assetsignore keeps them out; this proves it on the deployed copy.
