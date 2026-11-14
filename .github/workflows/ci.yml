@@ -1,0 +1,32 @@
+# ci: the checks every pull request into staging must pass (.github/actions/checks).
+#
+# Draft pull requests are skipped: mark the pull request ready when it is finished, and the
+# checks run once. They need no secret, so they also run for Dependabot and for forks.
+# The same checks run again on staging after the merge (staging.yml); that run, on the commit
+# the release pull request points at, is the "ci" check main requires.
+name: ci
+
+on:
+  pull_request:
+    branches: [staging]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+# A new push replaces the run still in flight for the same pull request.
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/checks

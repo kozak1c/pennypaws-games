@@ -1,0 +1,4 @@
+# Bytes in, bytes out: git never converts line endings in this repository.
+# app-ads.txt and the privacy pages are compared byte for byte, so a checkout on Windows must
+# hold exactly what is committed. Write new files with LF line endings.
+* -text

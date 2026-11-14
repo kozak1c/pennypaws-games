@@ -1,0 +1,24 @@
+# Response headers for every file the Worker serves (Cloudflare Workers static assets).
+# ops/never-break.toml lists the headers that must be present; ops/health.py checks them on
+# every deploy. GitHub Pages ignores this file.
+
+# Every address. noindex is the default so that staging, pull request previews and
+# workers.dev addresses can never be indexed; the one public address removes it below.
+# Cache-Control carries no-transform so Cloudflare may not rewrite our pages. Without it the
+# zone's Web Analytics adds a script from static.cloudflareinsights.com to every HTML page
+# (seen on the first staging deploy, 2026-11-14). The rest of the value is what Workers
+# sends by default.
+/*
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()
+  X-Robots-Tag: noindex
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
+
+# The public address is the only one search engines may index. This block must stay below
+# the one above: a removal only undoes what an earlier rule added.
+https://pennypawsgames.com/*
+  ! X-Robots-Tag

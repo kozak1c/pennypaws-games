@@ -1,0 +1,10 @@
+.local/
+node_modules/
+.wrangler/
+__pycache__/
+test-results/
+playwright-report/
+# Local keys (the read-only Cloudflare token for the health check). Never committed.
+.env
+.env.*
+.dev.vars
