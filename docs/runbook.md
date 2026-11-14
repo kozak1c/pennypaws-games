@@ -107,8 +107,8 @@ The owner's scheduled checks run every 15 minutes: this repository's `ops/health
 the live site, plus the print service's health address once it is live, the month's
 Cloudflare usage, the domain's expiry date and the DNS backup. A check that fails twice in a
 row sends **one** alert to the owner's phone, and the alert closes itself when the check passes
-again. Each alert links to its section below. An outside monitor also watches the home page,
-`/app-ads.txt` and a heartbeat the checks send after every run.
+again. Each alert links to its section below. The `watchdog` workflow runs the same
+`ops/health.py` from GitHub twice an hour, for when the owner's PC is off.
 
 ### Site check failed
 
@@ -183,13 +183,20 @@ alert lists the ones that were not, with the reason (usually a red `ci`).
 
 Fix: open the pull request from the alert, read the failing step, and fix or close it.
 
-### Heartbeat missing (outside monitor)
+### Watchdog issue (the check from GitHub)
 
-The outside monitor stopped hearing from the scheduled checks: the PC that runs them is off,
-asleep or offline, or the checks cannot reach the alert service. The site itself may be fine;
-the monitor's own checks of the home page say so.
+The `watchdog` workflow failed `ops/health.py` against the live site twice, a minute apart,
+and opened the issue "[watchdog] pennypawsgames.com is failing its health check". GitHub emails
+it to the owner. The issue holds the failing lines; it gets a comment at most every six hours
+while the site stays down, and closes itself when the check passes. If the owner's PC is on, its
+own "Site check failed" alert arrives as well.
 
-Fix: wake or restart the PC; the next run within 15 minutes sends the heartbeat again.
+GitHub starts scheduled runs late when it is busy, sometimes by an hour or more. The workflow
+does not know whether the owner's PC is running; an alert that comes only from here, with no
+phone alert, means the PC's checks have stopped.
+
+Fix: as for "Site check failed". To run the check now: GitHub app > `pennypaws-games` > Actions >
+**watchdog** > **Run workflow**.
 
 ## Checked live
 

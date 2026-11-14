@@ -115,7 +115,7 @@ const actionFiles = [
 ];
 
 test("workflows: the set the release flow needs is all there", () => {
-  assert.deepEqual(workflows, ["ci.yml", "preview.yml", "release-guard.yml", "release-pr.yml", "release.yml", "rollback.yml", "staging.yml"]);
+  assert.deepEqual(workflows, ["ci.yml", "preview.yml", "release-guard.yml", "release-pr.yml", "release.yml", "rollback.yml", "staging.yml", "watchdog.yml"]);
 });
 
 for (const file of actionFiles) {
@@ -188,6 +188,15 @@ test("release-guard.yml: a job named source-is-staging on pull requests into mai
   const text = read(".github/workflows/release-guard.yml");
   assert.match(text, /^  source-is-staging:$/m);
   assert.match(text, /branches: \[main\]/);
+});
+
+test("watchdog.yml: scheduled, checks the public address, and only that job may write issues", () => {
+  const text = read(".github/workflows/watchdog.yml");
+  assert.match(text, /^  schedule:\n    - cron: "/m);
+  assert.match(text, /\|\| 'https:\/\/pennypawsgames\.com' \}\}/, "without the drill it checks the public address");
+  assert.match(text, /ops\/health\.py "\$ADDRESS" /);
+  assert.equal([...text.matchAll(/^\s+\w+: write$/gm)].map((m) => m[0].trim()).join(), "issues: write");
+  assert.doesNotMatch(text, /secrets\./, "the watchdog needs no secret");
 });
 
 test("staging.yml posts the commit status staging/smoke", () => {

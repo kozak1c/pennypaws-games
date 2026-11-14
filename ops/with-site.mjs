@@ -22,7 +22,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import process from "node:process";
-import { devArgs, freePort, portInUse } from "./dev-server.mjs";
+import { devArgs, freePorts, portInUse } from "./dev-server.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -57,7 +57,8 @@ async function main() {
   }
   const flags = argv.slice(0, split);
   const portAt = flags.indexOf("--port");
-  const port = portAt >= 0 ? Number(flags[portAt + 1]) : await freePort();
+  const [free, inspectorPort] = await freePorts(2);
+  const port = portAt >= 0 ? Number(flags[portAt + 1]) : free;
   if (portAt >= 0 && await portInUse(port)) {
     console.error(`with-site: something already listens on 127.0.0.1:${port}; stop it or leave --port out`);
     return 1;
@@ -65,7 +66,7 @@ async function main() {
   const { args, url } = devArgs({
     asProduction: flags.includes("--as-production"),
     port,
-    inspectorPort: await freePort(),
+    inspectorPort,
   });
   const command = argv.slice(split + 1).map((a) => a.replaceAll("{site}", url));
 
