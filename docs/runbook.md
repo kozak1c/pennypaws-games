@@ -13,8 +13,7 @@ Written to be used from a phone. Each section starts with what to tap.
 
 **Where things stand (2026-11-14).** Deploys are on. pennypawsgames.com is served by the
 production Worker on Cloudflare, and `www` is a redirect rule on the zone. GitHub Pages is
-still switched on as the way back until 2026-11-28 ("The domain is on Cloudflare").
-Update this paragraph when that changes.
+switched off. Update this paragraph when the hosting changes.
 
 ## Deploy
 
@@ -139,21 +138,16 @@ override either), and the release was re-run. So: a hostname that already has DN
 needs them removed by hand before a custom domain can take it; a new hostname (as
 `staging` was) needs nothing.
 
-**The way back to GitHub Pages** (kept for 14 days after the move): in the Cloudflare
-dashboard remove the custom domain from the Worker (Workers & Pages > `pennypaws-site` >
-Settings > Domains & Routes), then put these records back, DNS only:
+**There is no second host.** GitHub Pages was switched off on 2026-11-14, once the move was
+checked, and `CNAME` and `.nojekyll` left the repository. A bad release is undone with the
+`rollback` workflow (below, "Rollback drill"). If Cloudflare itself is the problem, the files
+are plain static files at the repository root and will serve from any static host; the
+domain's DNS is on Cloudflare too, so pointing it elsewhere needs the Cloudflare dashboard.
+The records GitHub Pages used, for the record: four `A` records for the apex
+(`185.199.108.153` to `185.199.111.153`) and `www` as a CNAME to `kozak1c.github.io`.
 
-| Name | Type | Value |
-|---|---|---|
-| `pennypawsgames.com` | A | `185.199.108.153` |
-| `pennypawsgames.com` | A | `185.199.109.153` |
-| `pennypawsgames.com` | A | `185.199.110.153` |
-| `pennypawsgames.com` | A | `185.199.111.153` |
-| `www` | CNAME | `kozak1c.github.io` |
-
-(`www` replaces the proxied `A` record it has now.) Then revert the route in `wrangler.jsonc` through a pull request, or the next release moves
-the domain again. Rolling the Worker back (`rollback` workflow) does not move the domain:
-it only changes which version the domain serves.
+Rolling the Worker back does not change the domain: it only changes which version the
+domain serves.
 
 **`www`.** A custom domain only answers its exact host name, so `www` is a redirect on the
 zone, not a second custom domain: a proxied `A` record for `www` to `192.0.2.0` and a
@@ -166,11 +160,6 @@ redirect rule ("www to apex") that sends `www.pennypawsgames.com/<path>` to
 was gone from the live site 25 seconds after the workflow was started, and the whole run,
 including its own health check, took 53 seconds. All checks passed on the rolled-back
 version. From the GitHub phone app allow a little longer for finding the button.
-
-**Still to do:** keep GitHub Pages switched on until 2026-11-28 as the way back. Pages cannot
-renew its certificate while the domain points elsewhere, so check the certificate is still
-valid before relying on it. Then switch Pages off, and in a follow-up pull request remove
-`CNAME`, `.nojekyll` and the test "the files GitHub Pages needs are still at the root".
 
 `/404.html` and `_headers` at the root are Cloudflare's alone.
 
