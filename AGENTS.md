@@ -101,5 +101,5 @@ screenshots in `test-results/walk/` yourself too.
 | `wrangler.jsonc`, `.assetsignore` | the two Workers (production, staging) and what they serve |
 | `ops/` | the health check, the never-break list, the allow-list, the local-server helpers |
 | `tests/` | unit tests, configuration rules, the browser walk |
-| `.github/workflows/` | `ci`, `preview`, `staging`, `release-pr`, `release-guard`, `release`, `rollback` |
+| `.github/workflows/` | `ci`, `preview`, `staging`, `release-pr`, `release-guard`, `release`, `rollback`, `watchdog` (the live check from GitHub, twice an hour) |
 | `docs/runbook.md` | deploy, roll back, a red check, turning deploys on, the domain |

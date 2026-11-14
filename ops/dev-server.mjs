@@ -9,18 +9,24 @@ const wrangler = path.join(root, "node_modules", "wrangler", "bin", "wrangler.js
 
 export const PRODUCTION_HOST = "pennypawsgames.com";
 
-// A port on 127.0.0.1 that nothing is listening on. The checks ask for one each run instead of
-// using a fixed number: another program on a fixed port (a second local server, another
-// checkout's run) would otherwise be checked in the site's place.
-export function freePort() {
-  return new Promise((resolve, reject) => {
-    const probe = createServer();
-    probe.once("error", reject);
-    probe.listen(0, "127.0.0.1", () => {
-      const { port } = probe.address();
-      probe.close(() => resolve(port));
-    });
-  });
+// Ports on 127.0.0.1 that nothing is listening on, all different. The checks ask for them
+// each run instead of using fixed numbers: another program on a fixed port (a second local
+// server, another checkout's run) would otherwise be checked in the site's place. The probes
+// are held open together, so two ports asked for at once can never be the same one.
+export async function freePorts(count) {
+  const probes = [];
+  try {
+    for (let i = 0; i < count; i++) {
+      probes.push(await new Promise((resolve, reject) => {
+        const probe = createServer();
+        probe.once("error", reject);
+        probe.listen(0, "127.0.0.1", () => resolve(probe));
+      }));
+    }
+    return probes.map((probe) => probe.address().port);
+  } finally {
+    await Promise.all(probes.map((probe) => new Promise((done) => probe.close(done))));
+  }
 }
 
 // Whether something already listens on a port of 127.0.0.1.

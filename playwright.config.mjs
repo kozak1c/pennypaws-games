@@ -9,11 +9,12 @@
 // processes load this file again and must get the same ports: they inherit them from the
 // environment.
 import { defineConfig } from "@playwright/test";
-import { devArgs, freePort } from "./ops/dev-server.mjs";
+import { devArgs, freePorts } from "./ops/dev-server.mjs";
 
-if (!process.env.WALK_BASE_URL) {
-  process.env.WALK_LOCAL_PORT ??= String(await freePort());
-  process.env.WALK_LOCAL_INSPECTOR_PORT ??= String(await freePort());
+if (!process.env.WALK_BASE_URL && !process.env.WALK_LOCAL_PORT) {
+  const [port, inspectorPort] = await freePorts(2);
+  process.env.WALK_LOCAL_PORT = String(port);
+  process.env.WALK_LOCAL_INSPECTOR_PORT = String(inspectorPort);
 }
 const local = devArgs({
   port: Number(process.env.WALK_LOCAL_PORT) || undefined,

@@ -1,0 +1,77 @@
+# watchdog: check the live site from outside, twice an hour.
+#
+# The site's main health check runs every 15 minutes on the owner's own computer. This is the
+# second pair of eyes for when that computer is off or offline: it runs on GitHub, needs no
+# account anywhere else and no secret, and uses the same ops/health.py and never-break list.
+#
+# When the check fails (twice, a minute apart, so one blip from a runner is not an outage) it
+# opens the issue "[watchdog] pennypawsgames.com is failing its health check" with the report.
+# GitHub emails the owner. While the site stays down it adds a comment at most every six hours,
+# and it closes the issue with a comment when the check passes again. The run itself fails
+# while the site is failing, so the Actions tab shows it too.
+#
+# GitHub starts scheduled runs late when it is busy, sometimes by an hour or more, and only
+# from the workflow file on main. Run it by hand any time:
+#   gh workflow run watchdog.yml --ref main
+# A drill (-f drill=true) checks an address that does not exist, so the issue opens and the
+# email arrives; the next ordinary run closes it.
+name: watchdog
+
+on:
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+    inputs:
+      drill:
+        description: "Drill: check an address that does not exist, to prove the alert opens. The next run closes it."
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+
+jobs:
+  check:
+    # Nothing is live before deploys are switched on (docs/runbook.md, "Turning deploys on").
+    if: vars.CLOUDFLARE_DEPLOY == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check the live site
+        id: health
+        env:
+          ADDRESS: ${{ inputs.drill && 'https://pennypawsgames.com/watchdog-drill-no-such-page' || 'https://pennypawsgames.com' }}
+        run: |
+          check() { python3 ops/health.py "$ADDRESS" --markdown "$RUNNER_TEMP/health.md"; }
+          if check; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning title=Health check failed::Trying once more in a minute."
+            sleep 60
+            if check; then echo "ok=true" >> "$GITHUB_OUTPUT"; else echo "ok=false" >> "$GITHUB_OUTPUT"; fi
+          fi
+          if [ -f "$RUNNER_TEMP/health.md" ]; then cat "$RUNNER_TEMP/health.md" >> "$GITHUB_STEP_SUMMARY"; fi
+
+      - name: Open, update or close the alert
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OK: ${{ steps.health.outputs.ok }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python3 ops/watchdog_issue.py "$OK" "$RUNNER_TEMP/health.md" "$RUN_URL"
+
+      - name: Fail the run while the site is failing
+        if: steps.health.outputs.ok != 'true'
+        run: |
+          echo "::error title=pennypawsgames.com is failing its health check::See the open watchdog issue and docs/runbook.md, \"Alerts\"."
+          exit 1
