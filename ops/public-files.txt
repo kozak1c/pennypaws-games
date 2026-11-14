@@ -1,0 +1,4 @@
+index.html
+404.html
+app-ads.txt
+squishy-bop/privacy/index.html

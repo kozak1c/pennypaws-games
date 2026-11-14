@@ -1,0 +1,163 @@
+# release-pr: every push to staging opens, or brings up to date, the draft pull request
+# "Release YYYY-MM-DD" from staging into main. It lists the pull requests waiting on staging,
+# gives the staging address and shows phone and desktop screenshots of every page.
+# Merging that pull request is the owner's call and the only way a change goes live.
+#
+#   screenshots   walks the merged tree in a browser (read-only token) and keeps the pictures
+#   release-pr    stores the pictures on the branch "release-shots" so the pull request can
+#                 show them, then writes the pull request. Runs none of the repository's code.
+#
+# "release-shots" holds only pictures: one folder per staging push, the newest ten, rewritten
+# as a single commit each time so it never grows. Nothing else may be pushed there.
+#
+# Needs the repository setting "Allow GitHub Actions to create and approve pull requests".
+# While it is off, the job says so and passes (docs/runbook.md, "Turning deploys on").
+name: release-pr
+
+on:
+  push:
+    branches: [staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-pr
+  cancel-in-progress: true
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Take the screenshots
+        run: npx playwright test --project phone-light --project desktop-light --grep "page /"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-screenshots
+          path: test-results/walk/fold/
+          if-no-files-found: error
+          retention-days: 14
+
+  release-pr:
+    needs: screenshots
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write       # pushes the pictures to the release-shots branch
+      pull-requests: write  # opens and updates the release pull request
+    env:
+      GH_TOKEN: ${{ github.token }}
+      DEPLOYS_ON: ${{ vars.CLOUDFLARE_DEPLOY == 'true' }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Get the screenshots
+        id: shots
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-screenshots
+          path: shots
+
+      - name: Store the screenshots on the release-shots branch
+        id: store
+        if: steps.shots.outcome == 'success'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          folder="$(date -u +%Y%m%dT%H%M%SZ)-${GITHUB_SHA::7}"
+          src="$PWD/shots"
+          work="$RUNNER_TEMP/release-shots"
+          remote="https://github.com/${GITHUB_REPOSITORY}.git"
+          gh auth setup-git
+          mkdir -p "$work"
+          cd "$work"
+          git init -q -b release-shots
+          # Carry over the folders already there, then keep only the newest nine of them.
+          if git fetch -q --depth 1 "$remote" release-shots 2>/dev/null; then
+            git checkout -q FETCH_HEAD -- . 2>/dev/null || true
+          fi
+          find . -mindepth 1 -maxdepth 1 -type d ! -name .git -printf '%f\n' | sort | head -n -9 | xargs -r rm -rf
+          mkdir "$folder"
+          cp "$src"/*.png "$folder"/
+          printf '%s\n' "Screenshots for release pull requests, written by .github/workflows/release-pr.yml." \
+            "One folder per push to staging; only the newest ten are kept. Do not push here by hand." > README.md
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Screenshots for ${GITHUB_SHA::7}"
+          git push -q --force "$remote" HEAD:refs/heads/release-shots
+          echo "folder=${folder}" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update the release pull request
+        env:
+          FOLDER: ${{ steps.store.outputs.folder }}
+        run: |
+          set -euo pipefail
+          repo="$GITHUB_REPOSITORY"
+          ahead=$(gh api "repos/${repo}/compare/main...staging" --jq '.ahead_by')
+          if [ "$ahead" = "0" ]; then
+            echo "::notice::Nothing on staging is waiting for main; no release pull request needed."
+            exit 0
+          fi
+          title="Release $(TZ=America/New_York date +%F)"
+          raw="https://raw.githubusercontent.com/${repo}/release-shots/${FOLDER}"
+          {
+            echo "<!-- pennypaws-release -->"
+            echo "Merging this pull request puts what is on staging live on https://pennypawsgames.com. The release checks the live site afterwards and rolls itself back if that check fails."
+            echo
+            if [ "$DEPLOYS_ON" = "true" ]; then
+              echo "**Look at it first:** https://staging.pennypawsgames.com (the \`staging/smoke\` status below says whether staging passed its health check)."
+            else
+              echo "**Staging is not deployed yet:** deploys are off until the Cloudflare secrets are in place, so there is no staging address to open. The screenshots below are from the same files."
+            fi
+            echo
+            echo "Staging is at \`${GITHUB_SHA::7}\`. This is a draft: mark it ready for review, wait a few seconds for \`source-is-staging\`, then merge."
+            echo
+            echo "### What is in it"
+            echo
+            gh api "repos/${repo}/compare/main...staging" --jq '.commits[].commit.message | split("\n")[0] | "- " + .'
+            echo
+            echo "### Screenshots"
+            echo
+            if [ -n "$FOLDER" ]; then
+              echo "Phone is 390 x 844, desktop is 1280 x 800, the top of each page. Whole pages, light and dark, are in the \`walk-screenshots\` file of [this commit's staging run](${GITHUB_SERVER_URL}/${repo}/commit/${GITHUB_SHA}/checks)."
+              echo
+              for phone in shots/phone-light-*.png; do
+                name=$(basename "$phone" .png)
+                page=${name#phone-light-}
+                echo "**${page}**"
+                echo
+                echo "<img src=\"${raw}/phone-light-${page}.png\" alt=\"${page} on a phone\" width=\"260\"> <img src=\"${raw}/desktop-light-${page}.png\" alt=\"${page} on a desktop\" width=\"560\">"
+                echo
+              done
+            else
+              echo "No screenshots this time (see [the run](${RUN_URL})). Open the staging address instead."
+            fi
+          } > body.md
+          cat body.md >> "$GITHUB_STEP_SUMMARY"
+
+          number=$(gh api "repos/${repo}/pulls?state=open&base=main&head=${GITHUB_REPOSITORY_OWNER}:staging" --jq '.[0].number // empty')
+          if [ -n "$number" ]; then
+            gh api -X PATCH "repos/${repo}/pulls/${number}" -f title="$title" -F body=@body.md --jq '.html_url'
+            exit 0
+          fi
+          if out=$(gh api -X POST "repos/${repo}/pulls" -f title="$title" -f head=staging -f base=main \
+                     -F draft=true -F body=@body.md --jq '.html_url' 2>&1); then
+            echo "Opened ${out}"
+          elif grep -qi "not permitted to create" <<<"$out"; then
+            echo "::notice title=Release pull request not opened::The repository setting \"Allow GitHub Actions to create and approve pull requests\" is off (docs/runbook.md, \"Turning deploys on\"). Open the pull request from staging into main by hand, or turn the setting on and push to staging again."
+          else
+            echo "$out"
+            exit 1
+          fi

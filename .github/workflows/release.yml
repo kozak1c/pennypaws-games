@@ -1,0 +1,170 @@
+# release: every push to main (the owner merging the release pull request) deploys production.
+#
+#   1. Note the Worker version that is live now.
+#   2. wrangler deploy --env production.
+#   3. ops/health.py against the address wrangler deployed to: https://pennypawsgames.com once
+#      the domain is on Cloudflare, the Worker's workers.dev address before that.
+#   4. If the deploy or the health check failed: wrangler rollback to the version from step 1,
+#      check again, and fail this run. A red run here means "the release did not go out",
+#      and the summary says whether production is healthy on the old version.
+#
+# Deploys are off until the repository variable CLOUDFLARE_DEPLOY is "true"
+# (docs/runbook.md, "Turning deploys on"). Once it is on, a missing secret fails the run.
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# One production change at a time (the rollback workflow shares this group), and a deploy in
+# flight is never cancelled: the next one waits.
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  not-configured:
+    if: vars.CLOUDFLARE_DEPLOY != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Say why nothing was deployed
+        run: |
+          msg="Production was not deployed: the repository variable CLOUDFLARE_DEPLOY is not \"true\". Deploys start once the Cloudflare secrets are in place (docs/runbook.md, \"Turning deploys on\")."
+          echo "::notice title=Production deploy skipped::${msg}"
+          echo "${msg}" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    if: vars.CLOUDFLARE_DEPLOY == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+
+      # The Cloudflare secrets are given only to the steps that call wrangler.
+      - name: Note the version that is live now
+        id: before
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::CLOUDFLARE_DEPLOY is true, but the production environment has no CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID secret (docs/runbook.md, \"Turning deploys on\")."
+            exit 1
+          fi
+          # Fails on the very first deploy, when the Worker does not exist yet: then there is
+          # nothing to go back to.
+          version=""
+          if status=$(npx wrangler deployments status --env production --json 2>/dev/null); then
+            version=$(printf '%s' "$status" | jq -r '[.versions[] | select(.percentage == 100)][0].version_id // empty' || true)
+          fi
+          echo "Live before this release: ${version:-nothing (first deploy)}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to production
+        id: deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/deploy.ndjson
+        run: |
+          npx wrangler deploy --env production
+          url=$(python3 ops/site_url.py "$WRANGLER_OUTPUT_FILE_PATH")
+          version=$(python3 ops/site_url.py "$WRANGLER_OUTPUT_FILE_PATH" --field version_id)
+          {
+            echo "url=${url}"
+            echo "version=${version}"
+          } >> "$GITHUB_OUTPUT"
+
+      # A deploy takes a few seconds to reach every Cloudflare location; give it that before
+      # judging it. The rule set (indexable or noindex) follows the address.
+      - name: Health check
+        id: health
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          sleep 20
+          set +e
+          python3 ops/health.py "$URL" --wait 180 --markdown health.md
+          echo "rc=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Roll back
+        id: rollback
+        if: ${{ !cancelled() && (steps.deploy.outcome == 'failure' || (steps.deploy.outcome == 'success' && steps.health.outputs.rc != '0')) }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PREVIOUS: ${{ steps.before.outputs.version }}
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          if [ -z "$PREVIOUS" ]; then
+            echo "::error::Nothing to roll back to: this was the first production deploy."
+            echo "result=nothing to roll back to (first deploy)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # A deploy that failed before it went live leaves production on the old version.
+          live=""
+          if status=$(npx wrangler deployments status --env production --json 2>/dev/null); then
+            live=$(printf '%s' "$status" | jq -r '[.versions[] | select(.percentage == 100)][0].version_id // empty' || true)
+          fi
+          if [ "$live" = "$PREVIOUS" ]; then
+            echo "Production is still on ${PREVIOUS}: the failed deploy never went live."
+            echo "result=not needed (production never left ${PREVIOUS})" >> "$GITHUB_OUTPUT"
+          else
+            npx wrangler rollback "$PREVIOUS" --env production --yes --message "Automatic rollback: release ${GITHUB_SHA::7} failed its checks"
+            echo "result=rolled back to ${PREVIOUS}" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -n "$URL" ]; then
+            sleep 20
+            set +e
+            python3 ops/health.py "$URL" --wait 120 --markdown health-after-rollback.md
+            echo "after_rc=$?" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report
+        if: ${{ !cancelled() }}
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+          VERSION: ${{ steps.deploy.outputs.version }}
+          PREVIOUS: ${{ steps.before.outputs.version }}
+          DEPLOY: ${{ steps.deploy.outcome }}
+          RC: ${{ steps.health.outputs.rc }}
+          ROLLBACK: ${{ steps.rollback.outputs.result }}
+          ROLLBACK_OUTCOME: ${{ steps.rollback.outcome }}
+          AFTER_RC: ${{ steps.rollback.outputs.after_rc }}
+        run: |
+          ok=false
+          if [ "$DEPLOY" = "success" ] && [ "$RC" = "0" ]; then ok=true; fi
+          {
+            if [ "$ok" = "true" ]; then
+              echo "### Released \`${GITHUB_SHA::7}\` to ${URL}"
+              echo "Worker version \`${VERSION}\`. Before it: \`${PREVIOUS:-nothing (first deploy)}\`."
+            else
+              echo "### Release of \`${GITHUB_SHA::7}\` FAILED"
+              echo "Deploy step: ${DEPLOY:-not run}. Health check: ${RC:+exit }${RC:-not run}."
+              if [ "$ROLLBACK_OUTCOME" = "failure" ]; then
+                echo "**The automatic rollback FAILED. Production needs a person now: docs/runbook.md, \"Roll back\".**"
+              else
+                echo "Rollback: ${ROLLBACK:-not run}."
+              fi
+              if [ "$AFTER_RC" = "0" ]; then
+                echo "Production is healthy again on the previous version."
+              elif [ -n "$AFTER_RC" ]; then
+                echo "**Production is still failing its health check after the rollback: docs/runbook.md, \"A check is red\".**"
+              fi
+            fi
+            echo
+            if [ -f health.md ]; then cat health.md; fi
+            if [ -f health-after-rollback.md ]; then echo; echo "After the rollback:"; echo; cat health-after-rollback.md; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$ok" = "true" ]

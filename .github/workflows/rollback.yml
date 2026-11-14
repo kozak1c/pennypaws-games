@@ -1,0 +1,105 @@
+# rollback: put production back on an earlier version, by hand. About a minute.
+#
+# From a phone: GitHub app > this repository > Actions > rollback > Run workflow (branch main).
+# From a terminal: gh workflow run rollback.yml --ref main -f reason="why"
+#
+# With no version it goes back one step: to the version that was live before the current one.
+# Running it twice in a row therefore goes forward again, because the rollback is itself the
+# newest deployment. To go further back, give a version id from Cloudflare's deployment list.
+# Afterwards it runs ops/health.py against the live address.
+#
+# A rollback changes what is served, not the repository: main still holds the change that was
+# rolled back, and the next release would ship it again. Fix or revert it on staging first.
+name: rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: Why (kept with the deployment in Cloudflare)
+        required: false
+        type: string
+      version_id:
+        description: Version to go back to. Leave empty for the one before the current one.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+# Shares the release workflow's group, so a rollback never runs in the middle of a deploy.
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  not-configured:
+    if: vars.CLOUDFLARE_DEPLOY != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Say why nothing happened
+        run: |
+          echo "::error title=Rollback not possible::The repository variable CLOUDFLARE_DEPLOY is not \"true\", so this repository has not deployed anything yet (docs/runbook.md, \"Turning deploys on\")."
+          exit 1
+
+  rollback:
+    if: vars.CLOUDFLARE_DEPLOY == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup
+
+      - name: Roll back production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          REASON: ${{ inputs.reason }}
+          VERSION_ID: ${{ inputs.version_id }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::error::The production environment has no CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID secret. Run this from the main branch (docs/runbook.md, \"Roll back\")."
+            exit 1
+          fi
+          if [ -n "$VERSION_ID" ] && ! [[ "$VERSION_ID" =~ ^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$ ]]; then
+            echo "::error::version_id must be a version id such as 1a2b3c4d-0000-0000-0000-123456789abc."
+            exit 1
+          fi
+          message="Manual rollback by ${GITHUB_ACTOR}: ${REASON:-no reason given}"
+          message=${message:0:120}
+          echo "Before:"
+          npx wrangler deployments status --env production
+          if [ -n "$VERSION_ID" ]; then
+            npx wrangler rollback "$VERSION_ID" --env production --yes --message "$message"
+          else
+            npx wrangler rollback --env production --yes --message "$message"
+          fi
+          echo "After:"
+          npx wrangler deployments status --env production
+
+      - name: Health check
+        run: |
+          url=$(node ops/public-address.mjs production)
+          if [ -z "$url" ]; then
+            msg="Production has no custom domain in wrangler.jsonc yet (the domain has not moved to Cloudflare), so there is no live address to check. Open the Worker's workers.dev address by hand."
+            echo "::notice title=Health check skipped::${msg}"
+            echo "${msg}" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          sleep 20
+          set +e
+          python3 ops/health.py "$url" --wait 120 --markdown health.md
+          rc=$?
+          set -e
+          {
+            echo "### Rolled back production"
+            echo
+            cat health.md
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$rc"

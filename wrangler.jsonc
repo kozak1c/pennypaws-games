@@ -1,0 +1,50 @@
+// The Penny Paws site Worker: static files only. There is no "main" and no "run_worker_first",
+// so no code of ours runs in front of a page and the site keeps serving when the account's
+// Workers spending limit stops Workers that run code. tests/config.test.mjs pins every value
+// here; docs/runbook.md says how deploys and rollbacks work.
+//
+// Two Workers come out of this file:
+//   pennypaws-site           production  (the top level, and "--env production", which is the same)
+//   pennypaws-site-staging   staging     ("--env staging"), plus one Preview per pull request
+// Only the GitHub workflows deploy. They always pass --env.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pennypaws-site",
+  "compatibility_date": "2026-11-01",
+
+  // The public files are the repo root minus everything .assetsignore lists (deny by default).
+  // ops/public-files.txt is the allow-list; tests/assets.test.mjs proves the two agree.
+  "assets": {
+    "directory": ".",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+
+  // PRODUCTION. Until the domain moves from GitHub Pages (tracker task PAWS-005) the production
+  // Worker answers only on its workers.dev address, which _headers marks noindex.
+  // Do not add "routes" here before that cutover: in CI, wrangler takes over a hostname's
+  // existing DNS records without asking, so a custom-domain route for pennypawsgames.com would
+  // move the live site on the next release. The cutover steps are in docs/runbook.md.
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+
+  "env": {
+    "production": {
+      "name": "pennypaws-site"
+    },
+
+    "staging": {
+      "name": "pennypaws-site-staging",
+      "workers_dev": false,
+      // Pull request Previews live under the staging Worker, on workers.dev addresses, which
+      // Cloudflare marks noindex. Production has no Previews.
+      "preview_urls": true,
+      "routes": [{ "pattern": "staging.pennypawsgames.com", "custom_domain": true }],
+      "observability": { "enabled": true },
+      // Nothing differs in a Preview (no variables, no bindings), but the block must exist
+      // for "wrangler preview --env staging".
+      "previews": {}
+    }
+  }
+}

@@ -1,0 +1,194 @@
+# Runbook: pennypawsgames.com
+
+Written to be used from a phone. Each section starts with what to tap.
+
+| | |
+|---|---|
+| Live site | https://pennypawsgames.com |
+| Staging | https://staging.pennypawsgames.com (noindex) |
+| Release pull request | [open pull requests into main](https://github.com/kozak1c/pennypaws-games/pulls?q=is%3Apr+is%3Aopen+base%3Amain) |
+| Runs | [Actions](https://github.com/kozak1c/pennypaws-games/actions) |
+| Roll back | [rollback workflow](https://github.com/kozak1c/pennypaws-games/actions/workflows/rollback.yml) |
+| Cloudflare | [Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages), Workers `pennypaws-site` (production) and `pennypaws-site-staging` |
+
+**Where things stand (2026-11-14).** The pipeline is built. Deploys are off until the
+Cloudflare secrets exist ("Turning deploys on"). pennypawsgames.com is still served by
+GitHub Pages from `main` ("Moving the domain"). Update this paragraph when either changes.
+
+## Deploy
+
+**To staging:** merge a pull request into `staging`. Nothing else to do. The `staging`
+workflow checks the merged tree, deploys it and posts the `staging/smoke` status on the
+commit, with a comment on the pull request. About 5 minutes.
+
+**To production:** the owner merges the release pull request.
+
+1. Open the [release pull request](https://github.com/kozak1c/pennypaws-games/pulls?q=is%3Apr+is%3Aopen+base%3Amain) ("Release YYYY-MM-DD"). It lists what is waiting and shows screenshots.
+2. Open staging and look. Check `staging/smoke` and `ci` are green at the bottom of the pull request.
+3. Tap **Ready for review**. `source-is-staging` turns green within a few seconds.
+4. Tap **Merge pull request** (a merge commit, not squash).
+5. The `release` workflow deploys, waits 20 seconds, runs the health check on the live
+   address, and rolls back by itself if the check fails. About 2 minutes. Green means live.
+
+A release never needs a terminal. If the `release` run is red, go to "A check is red".
+
+## Roll back
+
+Agents may roll production back to the last good version without asking, and must report it.
+Going forward again is the owner's call.
+
+**From a phone:** GitHub app > `pennypaws-games` > Actions > **rollback** > **Run workflow**
+> branch `main` > type a reason > Run. About a minute. It ends with the health check.
+
+**From a terminal:**
+
+    gh workflow run rollback.yml --repo kozak1c/pennypaws-games --ref main -f reason="why"
+
+**From Cloudflare, if GitHub is down:** [Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages)
+> `pennypaws-site` > Deployments > the three dots on the version you want > **Rollback**.
+
+What to know:
+
+- With no version id, it goes back one step: to the version that was live before the
+  current one. Run it twice and you are forward again, because a rollback is itself the
+  newest deployment. To go further back, paste a version id from the Deployments list.
+- Cloudflare keeps the last 100 versions.
+- A rollback changes what is served, not the repository. `main` still holds the bad change
+  and the next release would ship it again. Fix or revert it on `staging` before releasing.
+- Staging has no rollback workflow. Fix forward: a red staging blocks nothing live.
+
+## A check is red
+
+**`ci` on a pull request.** Open the run; the summary table names the failing step. Run
+the same thing locally with `npm run check` (or `node ops/check.mjs --only <step>`) and
+`npm run walk`, fix it on the branch, push once.
+
+| Step | It means |
+|---|---|
+| Lint the workflows | a workflow file has a mistake; the message names the line |
+| unit | a test of the ops scripts failed |
+| config | `wrangler.jsonc`, `_headers` or a workflow broke a rule, **or** a file would be published that is not in `ops/public-files.txt` (or the reverse), **or** a privacy page changed (see AGENTS.md, "Privacy pages") |
+| html, links | a page has broken markup, a dead link, or loads something from another origin |
+| dry-run | wrangler rejects the configuration |
+| health | the local copy of the site fails the never-break list |
+| Browser walk | a page does not load cleanly, is wider than the screen, or fails the accessibility scan; screenshots are in the run's `walk-screenshots` file |
+
+**`staging/smoke` is red** (or the `staging` run failed). Production is untouched. Open the
+run from the status; the health table says which check failed. Fix it with a new pull
+request into `staging`: that is the next job, before anything else merges. If the first
+deploy of a new address fails only on "reachable", its certificate was still being issued:
+rerun the failed job.
+
+**The `release` run is red.** Read its summary. It says one of:
+
+- *Rolled back, production is healthy on the previous version.* Nothing is down. The change
+  did not go out. Fix it on `staging` and release again.
+- *Production is still failing after the rollback*, or *the rollback failed*. Open the live
+  site. If it is broken, run the rollback workflow with an older version id, or use the
+  Cloudflare dashboard. If the health check itself is wrong (the site is fine), fix the
+  check on `staging`.
+- *Nothing to roll back to.* Only possible on the very first production deploy.
+- The run failed before deploying (for example a missing secret). Nothing changed.
+
+**The live site is down and nothing was released.** Check
+[Cloudflare's status page](https://www.cloudflarestatus.com/). Then run
+`python ops/health.py https://pennypawsgames.com` from any computer to see what fails.
+The files are static and served without code, so an account spending limit does not stop them.
+
+**What the health check checks** is `ops/never-break.toml`; `ops/health.py --help` explains
+each line it prints.
+
+## Turning deploys on
+
+One sitting, owner only. Until it is done, every deploy job is skipped with a notice and
+pull requests still merge into staging on `ci` alone.
+
+1. **Cloudflare API token** for deploys: Account > Workers Scripts > Edit, and Zone >
+   Workers Routes > Edit on the zone `pennypawsgames.com` only. Nothing else: no DNS, no
+   billing. (The token can deploy any Worker in the account; Cloudflare's per-Worker roles
+   cannot yet cover creating Workers or custom domains.)
+2. **GitHub environments** `staging` and `production`, each with the secrets
+   `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. `production` is limited to the `main`
+   branch. `staging` has no branch limit, because pull request previews use it.
+3. **Repository variable** `CLOUDFLARE_DEPLOY` = `true`. This is the switch. With it on, a
+   missing secret fails a deploy instead of skipping it.
+4. **Repository settings:** Actions may create pull requests (for the release pull
+   request); workflows from outside contributors need approval; secret scanning and push
+   protection on.
+5. **Branch rules:** `main` takes only pull requests, needs `ci` and `source-is-staging`,
+   merge commits only, no force-push or delete. `staging` takes only pull requests and
+   needs `ci`.
+6. **First staging deploy:** Actions > staging > Run workflow on `staging`. It creates the
+   Worker `pennypaws-site-staging`, the address `staging.pennypawsgames.com` (Cloudflare
+   adds the DNS record and certificate) and turns on preview addresses. Do this before
+   expecting a preview on a pull request.
+
+## Moving the domain to Cloudflare
+
+Today the apex has four DNS-only `A` records to GitHub Pages and `www` is a DNS-only
+`CNAME`. Write-up of the records, so they can be put back:
+
+| Name | Type | Value |
+|---|---|---|
+| `pennypawsgames.com` | A | `185.199.108.153` |
+| `pennypawsgames.com` | A | `185.199.109.153` |
+| `pennypawsgames.com` | A | `185.199.110.153` |
+| `pennypawsgames.com` | A | `185.199.111.153` |
+| `www` | CNAME | `kozak1c.github.io` |
+
+**Know this first.** `wrangler.jsonc` deliberately has no production `routes` yet. In CI,
+wrangler replaces a hostname's existing DNS records without asking when it attaches a custom
+domain (it only asks in an interactive terminal). So the pull request that adds the route
+below **is** the cutover: once it is released, the live site moves. Do not add it early.
+
+Order:
+
+1. Staging is green on `staging.pennypawsgames.com`.
+2. The first release has deployed production. Its run health-checks the Worker on its
+   workers.dev address (noindex there). Open that address and look.
+3. Cut over, either way:
+   - **By release (one step):** a pull request into staging that adds, at the top level of
+     `wrangler.jsonc`, `"routes": [{ "pattern": "pennypawsgames.com", "custom_domain": true }]`
+     and sets `"workers_dev": false`; flips the test "not on the domain until the cutover"
+     in `tests/config.test.mjs`; and updates this page. Releasing it attaches the domain.
+   - **By hand first:** in the Cloudflare dashboard delete the four `A` records, then
+     Workers & Pages > `pennypaws-site` > Settings > Domains & Routes > Add > Custom Domain >
+     `pennypawsgames.com`. Follow with the same pull request so the repository matches.
+4. `www`: a custom domain only answers its exact host name, so `www` is a redirect, not a
+   second custom domain. Replace the `www` CNAME with a proxied `A` record to `192.0.2.0`
+   and add a redirect rule from `www.pennypawsgames.com/*` to `https://pennypawsgames.com/$1`
+   (301). Turn on **Always Use HTTPS** for the zone: the health check requires
+   `http://` to redirect to `https://`.
+5. Check the live domain: `python ops/health.py https://pennypawsgames.com`, then by eye:
+   `/app-ads.txt`, `/squishy-bop/privacy/`, the padlock, `www` and `http://` redirecting.
+6. Rollback drill: release a harmless visible change, roll it back from a phone, time it,
+   and write the time here.
+7. Keep GitHub Pages switched on for 14 days as the way back (restore the five records
+   above). Pages cannot renew its certificate while the domain points elsewhere, so check
+   the certificate is still valid before relying on this. Then switch Pages off, and in a
+   follow-up pull request remove `CNAME`, `.nojekyll` and the test "the files GitHub Pages
+   needs are still at the root".
+
+After the move, `/404.html` and `_headers` at the root are Cloudflare's alone. Before it,
+GitHub Pages also picks up `404.html` as its not-found page once `main` has it.
+
+## Facts this page relies on
+
+Checked against Cloudflare's documentation on 2026-11-14 (developers.cloudflare.com/workers):
+
+- A Worker with `assets` and no `main` serves static files without running code.
+- `_headers`: up to 100 rules, 2,000 characters a line; a rule may name a full
+  `https://host/*` address; `! Header-Name` removes a header an earlier rule added.
+- Worker Previews (`wrangler preview`, open beta) need wrangler 4.135.0 or later and a
+  `previews` block; preview addresses on workers.dev are sent with `X-Robots-Tag: noindex`.
+- `wrangler rollback` creates a new deployment that sends all traffic to an earlier version,
+  on the Worker's same routes and domains; the last 100 versions are kept.
+- Changing routes or custom domains needs Workers Routes Edit on the zone as well as edit
+  rights on the Worker. Creating a Worker needs account-wide rights.
+- A custom domain creates its own DNS record and certificate, and cannot be created over an
+  existing CNAME.
+
+Not yet proven on a real deploy (no token existed when this was written): the deploy,
+preview and rollback steps themselves. `wrangler deploy --dry-run` passes for both
+environments, and the health check, the indexing rules and the public-file list are proven
+against a local `wrangler dev`.

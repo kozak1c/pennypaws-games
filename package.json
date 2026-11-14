@@ -1,0 +1,22 @@
+{
+  "name": "pennypaws-site",
+  "private": true,
+  "description": "Checks and deploy tooling for pennypawsgames.com. The site itself is the static files listed in ops/public-files.txt.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node ops/check.mjs",
+    "walk": "playwright test",
+    "check:all": "node ops/check.mjs && playwright test",
+    "dev": "wrangler dev --env staging --ip 127.0.0.1 --port 8787",
+    "health": "node ops/with-site.mjs -- python ops/health.py http://127.0.0.1:8787 --expect staging"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
+    "html-validate": "11.21.1",
+    "wrangler": "4.162.0"
+  }
+}
