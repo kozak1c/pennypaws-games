@@ -186,8 +186,9 @@ Fix: open the pull request from the alert, read the failing step, and fix or clo
 ### Watchdog issue (the check from GitHub)
 
 The `watchdog` workflow failed `ops/health.py` against the live site twice, a minute apart,
-and opened the issue "[watchdog] pennypawsgames.com is failing its health check". GitHub emails
-it to the owner. The issue holds the failing lines; it gets a comment at most every six hours
+and opened the issue "[watchdog] pennypawsgames.com is failing its health check", assigned to
+the repository's owner so that GitHub emails it. GitHub also emails "Run failed: watchdog". The
+issue holds the failing lines; it gets a comment at most every six hours
 while the site stays down, and closes itself when the check passes. If the owner's PC is on, its
 own "Site check failed" alert arrives as well.
 
@@ -206,6 +207,13 @@ Fix: as for "Site check failed". To run the check now: GitHub app > `pennypaws-g
 `npm ci` 6 s with a warm package cache, checks 48 s, dry run 9 s; Node 24, wrangler 4.162.0).
 No scratch Worker was deployed: a real deploy runs only from the workflows, and the rollback
 drill above proves them. Expect a few minutes longer on a computer with an empty package cache.
+
+**Watchdog drill, 2026-11-14.** `gh workflow run watchdog.yml --ref main -f drill=true` checked
+an address that does not exist: the check failed twice, the issue opened with the report, and
+the run failed (3 minutes in all, one of them the wait between the two tries). An ordinary run
+straight after closed the issue with "The health check passes again". GitHub emailed "Run
+failed: watchdog" within a minute, but not the new issue: a new issue is emailed only to
+people who watch the whole repository. The issue is assigned to the owner since then.
 
 **Spending limit and rate rule, 2026-11-14.** Both were read in the Cloudflare dashboard and
 are as the print service's runbook says.

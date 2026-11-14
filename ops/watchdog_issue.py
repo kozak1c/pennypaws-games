@@ -7,6 +7,9 @@
   check passes, issue open          comment and close it
   check passes, no issue            nothing
 
+The issue is assigned to the repository's owner (GITHUB_REPOSITORY_OWNER), because GitHub
+emails a new issue only to people who watch the whole repository, and always to its assignee.
+
 Only an issue the workflow itself opened counts: this repository is public, and an issue with
 the same title from anyone else must not be able to silence or close the alert. It talks to
 GitHub through the `gh` command, which reads GH_TOKEN. Standard library only.
@@ -14,6 +17,7 @@ GitHub through the `gh` command, which reads GH_TOKEN. Standard library only.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
@@ -55,7 +59,7 @@ def body(report: str, run: str, now: datetime) -> str:
             "when the check passes again.\n")
 
 
-def main(argv: list[str], run=gh, now: datetime | None = None) -> int:
+def main(argv: list[str], run=gh, now: datetime | None = None, owner: str | None = None) -> int:
     if len(argv) != 3 or argv[0] not in ("true", "false"):
         print(__doc__)
         return 2
@@ -67,7 +71,9 @@ def main(argv: list[str], run=gh, now: datetime | None = None) -> int:
     alert = open_alert(listed)
     action = decide(ok, alert, now)
     if action == "create":
-        run(["issue", "create", "--title", TITLE, "--body", body(report, run_url, now)])
+        owner = os.environ.get("GITHUB_REPOSITORY_OWNER", "") if owner is None else owner
+        run(["issue", "create", "--title", TITLE, "--body", body(report, run_url, now),
+             *(["--assignee", owner] if owner else [])])
     elif action == "comment":
         run(["issue", "comment", str(alert["number"]), "--body", "Still failing.\n\n" + body(report, run_url, now)])
     elif action == "close":
