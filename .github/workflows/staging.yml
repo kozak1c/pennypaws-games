@@ -63,14 +63,16 @@ jobs:
       pull-requests: write  # the comment on the merged pull request
     env:
       CONTEXT: staging/smoke
-      GH_TOKEN: ${{ github.token }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
+      # The workflow token goes only to the steps that call gh.
       - name: Status pending
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" -f state=pending \
             -f context="$CONTEXT" -f description="Deploying to staging" -f target_url="$RUN_URL" >/dev/null
@@ -109,6 +111,7 @@ jobs:
       - name: Report (commit status, pull request comment, summary)
         if: ${{ !cancelled() }}
         env:
+          GH_TOKEN: ${{ github.token }}
           URL: ${{ steps.deploy.outputs.url }}
           VERSION: ${{ steps.deploy.outputs.version }}
           RC: ${{ steps.health.outputs.rc }}
@@ -149,6 +152,8 @@ jobs:
       # A newer push cancelled this run. Say so, rather than "deploy failed".
       - name: Report superseded
         if: ${{ cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${GITHUB_REPOSITORY}/statuses/${GITHUB_SHA}" -f state=error \
             -f context="$CONTEXT" -f description="Superseded by a newer staging push" \
