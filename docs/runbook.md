@@ -200,12 +200,21 @@ Fix: wake or restart the PC; the next run within 15 minutes sends the heartbeat 
 No scratch Worker was deployed: a real deploy runs only from the workflows, and the rollback
 drill above proves them. Expect a few minutes longer on a computer with an empty package cache.
 
-**Spending limit and rate rule, 2026-11-14.** The print service's runbook records a USD 10
-Workers spending limit on the account and one rate limiting rule on the zone (150 requests per
-10 seconds per address). The read-only token used by the checks cannot read either: the spend
-policy needs Account Billing Read, and the rule needs Zone WAF Read, and both answer
-"Authentication error". So they are not confirmed by a machine yet. To confirm by hand: Billing >
-Spend Management, and pennypawsgames.com > Security > WAF > Rate limiting rules.
+**Spending limit and rate rule, 2026-11-14.** Both were read in the Cloudflare dashboard and
+are as the print service's runbook says.
+
+- Workers spending limit (Manage account > Billing > Spend limits): USD 10.00 a billing period,
+  and usage above it is blocked. It covers Workers only. Durable Objects has no limit set and R2
+  has no row there; neither is in use yet. Set a limit before the first Durable Object, and watch
+  R2 through the health task's counts.
+- Rate limiting (pennypawsgames.com > Security > Security rules > Rate limiting rules): one
+  rule, active, 150 requests per 10 seconds per address, then a 10-second block. It matches every
+  path on every hostname of the zone, so it covers this site and staging as well as the print
+  service. It is the one rule the free plan allows.
+
+The read-only token used by the checks cannot read either setting (the spend policy needs
+Account Billing Read, the rule needs Zone WAF Read), so a change to them shows up only in the
+dashboard. Read them again there after any change to the account's plan.
 
 ## Turning deploys on
 
