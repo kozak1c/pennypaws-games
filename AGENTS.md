@@ -60,7 +60,7 @@ Python 3.11 or later and Node 22 or later. The Python scripts use the standard l
 
 `ops/never-break.toml` lists what must keep answering: `/app-ads.txt` byte for byte (AdMob),
 each privacy page with its title, the home page, the security headers, no script from
-another origin, and that only the public address may be indexed. `ops/health.py` checks it
+another origin, that only the public address may be indexed, and that `www` redirects to it. `ops/health.py` checks it
 against a local copy in `ci`, against staging after each deploy and against the live site
 after each release.
 
