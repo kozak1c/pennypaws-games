@@ -35,12 +35,3 @@ test("every public privacy or policy page is pinned", () => {
   for (const f of Object.keys(PRIVACY_PAGES)) assert.ok(publicFiles.includes(f), `${f} is pinned but not a public file`);
 });
 
-// GitHub Pages serves the default branch from the root until the domain moves to Cloudflare.
-// Delete this test in the pull request that follows the move (docs/runbook.md).
-test("the files GitHub Pages needs are still at the root", () => {
-  assert.equal(readFileSync(path.join(root, "CNAME"), "utf8"), "pennypawsgames.com\n");
-  assert.equal(readFileSync(path.join(root, ".nojekyll"), "utf8"), "");
-  for (const f of ["index.html", "app-ads.txt", "squishy-bop/privacy/index.html"]) {
-    assert.ok(readFileSync(path.join(root, f)).length > 0, f);
-  }
-});

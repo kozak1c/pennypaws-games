@@ -58,7 +58,7 @@ for (const env of ["staging", "production"]) {
 
 test("the tree this ran in holds the clutter the ignore list must keep out", () => {
   const files = new Set(allFiles());
-  for (const f of ["README.md", "wrangler.jsonc", "package.json", "_headers", ".assetsignore", "CNAME",
+  for (const f of ["README.md", "wrangler.jsonc", "package.json", "_headers", ".assetsignore",
     "ops/health.py", "node_modules/wrangler/package.json"]) {
     assert.ok(files.has(f), `${f} should exist in the tree under test`);
   }
@@ -67,13 +67,9 @@ test("the tree this ran in holds the clutter the ignore list must keep out", () 
     "expected an index.html somewhere under node_modules");
 });
 
-test("every allow-listed file is tracked by git, and unchanged files GitHub Pages serves stay put", () => {
+test("every allow-listed file is tracked by git", () => {
   const tracked = new Set(execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).split("\n").filter(Boolean));
   for (const f of allowList()) assert.ok(tracked.has(f), `${f} is allow-listed but not committed`);
-  // Until the domain moves to Cloudflare, GitHub Pages serves the default branch from the root.
-  for (const f of ["index.html", "app-ads.txt", "CNAME", ".nojekyll", "squishy-bop/privacy/index.html"]) {
-    assert.ok(tracked.has(f), `${f} must stay at the repo root for GitHub Pages`);
-  }
 });
 
 test("the allow-list holds no file that could not be a public page or asset", () => {

@@ -16,11 +16,16 @@ address it is given:
     (staging, pull request previews, workers.dev, a local server) must send it
   * a missing page answers 404, and repository files that are not part of the site answer 404
   * over HTTPS on our own domain, the plain http:// address redirects to https://
+  * over HTTPS, the certificate is valid for at least --cert-days more days (default 14;
+    Cloudflare renews its certificates about 30 days before they expire)
 
 --expect says which indexing rule applies: "production" (must be indexable) or "staging"
 (must be noindex; also right for previews and local servers). The default, "auto", decides
 from the host name: production_host in the never-break list is production, anything else is
 staging.
+
+--json writes the results for other tools: {"base", "expect", "failed", "checks": [{"name",
+"ok", "detail"}], "certificate": {"expires", "days_left"} or null}.
 
 Exit code 0 when nothing failed, else 1.
 """
@@ -29,6 +34,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import socket
+import ssl
 import sys
 import time
 import tomllib
@@ -36,6 +43,7 @@ import urllib.error
 import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
@@ -59,6 +67,18 @@ class Resp:
 
 # (absolute url) -> Resp, never following a redirect
 Http = Callable[[str], Resp]
+
+# (host, port) -> when the certificate that host serves stops being valid
+CertProbe = Callable[[str, int], datetime]
+
+
+def tls_not_after(host: str, port: int = 443, timeout: float = 20) -> datetime:
+    """The expiry date of the certificate a host serves, after the usual verification."""
+    ctx = ssl.create_default_context()
+    with socket.create_connection((host, port), timeout=timeout) as sock:
+        with ctx.wrap_socket(sock, server_hostname=host) as tls:
+            cert = tls.getpeercert()
+    return datetime.fromtimestamp(ssl.cert_time_to_seconds(cert["notAfter"]), UTC)
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
@@ -137,7 +157,10 @@ class Health:
     http: Http
     spec: dict
     expect: str = "auto"  # production | staging | auto
+    cert: CertProbe | None = None  # None: the certificate is not checked
+    cert_days: float = 14
     checks: list[Check] = field(default_factory=list)
+    certificate: dict | None = None  # {"expires", "days_left"} once measured
 
     def __post_init__(self) -> None:
         self.base = self.base.rstrip("/")
@@ -302,6 +325,21 @@ class Health:
         except Exception as exc:
             self.add("http redirects to https", False, f"{type(exc).__name__}: {exc}")
 
+    def certificate_valid(self, now: datetime | None = None) -> None:
+        """Over HTTPS, the certificate is valid for at least cert_days more days."""
+        u = urlsplit(self.base)
+        if self.cert is None or u.scheme != "https" or not u.hostname:
+            return
+        name = f"certificate valid for {self.cert_days:g}+ days"
+        try:
+            expires = self.cert(u.hostname, u.port or 443)
+        except Exception as exc:
+            self.add(name, False, f"{type(exc).__name__}: {exc}")
+            return
+        days = (expires - (now or datetime.now(UTC))).total_seconds() / 86400
+        self.certificate = {"expires": expires.isoformat(timespec="seconds"), "days_left": round(days, 1)}
+        self.add(name, days >= self.cert_days, f"expires {expires:%Y-%m-%d}, {days:.0f} day(s) left")
+
     def redirects(self) -> None:
         """Other addresses that must send visitors on to the public one (the never-break list's
         [[redirect]] entries). They live outside this site, so they are only checked when the
@@ -328,6 +366,7 @@ class Health:
         self.indexing()
         self.not_found()
         self.https_only()
+        self.certificate_valid()
         self.redirects()
         return self
 
@@ -359,10 +398,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--never-break", default=str(NEVER_BREAK), help="the never-break list to read")
     ap.add_argument("--markdown", help="write a Markdown table here")
     ap.add_argument("--json", dest="json_out", help="write the results as JSON here")
+    ap.add_argument("--cert-days", type=float, default=14,
+                    help="over HTTPS, fail when the certificate expires in fewer days than this "
+                         "(default 14; 0 skips the certificate check)")
     args = ap.parse_args(argv)
     if urlsplit(args.base_url).scheme not in ("http", "https"):
         ap.error("base_url must start with http:// or https://")
-    health = Health(args.base_url, urllib_http(), load_spec(Path(args.never_break)), args.expect)
+    health = Health(args.base_url, urllib_http(), load_spec(Path(args.never_break)), args.expect,
+                    cert=tls_not_after if args.cert_days > 0 else None, cert_days=args.cert_days)
     health.run(args.wait)
     print(f"{health.base} ({health.expect} rules)")
     for c in health.checks:
@@ -373,7 +416,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.json_out:
         with open(args.json_out, "w", encoding="utf-8") as f:
             json.dump({"base": health.base, "expect": health.expect, "failed": health.failed,
-                       "checks": [c.__dict__ for c in health.checks]}, f, indent=2)
+                       "checks": [c.__dict__ for c in health.checks],
+                       "certificate": health.certificate}, f, indent=2)
     return 1 if health.failed else 0
 
 

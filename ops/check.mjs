@@ -45,8 +45,8 @@ const steps = [
   ["links", [python, "ops/check_site.py"]],
   ["dry-run staging", [node, bin("wrangler", "bin/wrangler.js"), "deploy", "--dry-run", "--env", "staging"]],
   ["dry-run production", [node, bin("wrangler", "bin/wrangler.js"), "deploy", "--dry-run", "--env", "production"]],
-  ["health (noindex address)", [node, "ops/with-site.mjs", "--", python, "ops/health.py", "http://127.0.0.1:8787", "--expect", "staging"]],
-  ["health (public address)", [node, "ops/with-site.mjs", "--as-production", "--", python, "ops/health.py", "http://127.0.0.1:8788", "--expect", "production"]],
+  ["health (noindex address)", [node, "ops/with-site.mjs", "--", python, "ops/health.py", "{site}", "--expect", "staging"]],
+  ["health (public address)", [node, "ops/with-site.mjs", "--as-production", "--", python, "ops/health.py", "{site}", "--expect", "production"]],
 ];
 
 const onlyAt = process.argv.indexOf("--only");
