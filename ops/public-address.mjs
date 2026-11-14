@@ -1,7 +1,7 @@
 // Print the custom-domain address of an environment in wrangler.jsonc, or nothing.
 //
 //   node ops/public-address.mjs staging      https://staging.pennypawsgames.com
-//   node ops/public-address.mjs production   (nothing, until the domain has moved)
+//   node ops/public-address.mjs production   https://pennypawsgames.com
 //
 // The rollback workflow uses it to know where to run the health check. A deploy does not
 // need it: it reads the address from wrangler's own output (ops/site_url.py).

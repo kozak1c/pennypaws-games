@@ -2,8 +2,7 @@
 #
 #   1. Note the Worker version that is live now.
 #   2. wrangler deploy --env production.
-#   3. ops/health.py against the address wrangler deployed to: https://pennypawsgames.com once
-#      the domain is on Cloudflare, the Worker's workers.dev address before that.
+#   3. ops/health.py against the address wrangler deployed to: https://pennypawsgames.com.
 #   4. If the deploy or the health check failed: wrangler rollback to the version from step 1,
 #      check again, and fail this run. A red run here means "the release did not go out",
 #      and the summary says whether production is healthy on the old version.

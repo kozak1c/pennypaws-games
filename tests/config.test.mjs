@@ -50,13 +50,13 @@ test("wrangler production: the Worker pennypaws-site, the same from the top leve
   assert.equal(prod.preview_urls, false);
 });
 
-// Flip this test in the pull request that moves the domain (docs/runbook.md, "Moving the domain").
-test("wrangler production: not on the domain until the cutover", () => {
+// The domain moved from GitHub Pages with the release that added this route (PAWS-005).
+test("wrangler production: on pennypawsgames.com as a custom domain, and nowhere else", () => {
   const prod = config("production");
-  assert.equal(prod.routes, undefined,
-    "a custom-domain route for pennypawsgames.com moves the live site on the next release: see docs/runbook.md");
+  assert.deepEqual(prod.routes, [{ pattern: "pennypawsgames.com", custom_domain: true }],
+    "the one public address; www is a redirect rule on the zone, not a second custom domain");
   assert.equal(prod.route, undefined);
-  assert.equal(prod.workers_dev, true, "before the cutover the production Worker is checked on workers.dev");
+  assert.equal(prod.workers_dev, false, "the public site has one address: no workers.dev copy");
 });
 
 test("wrangler staging: its own Worker on staging.pennypawsgames.com, with pull request previews", () => {

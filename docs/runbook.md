@@ -11,9 +11,10 @@ Written to be used from a phone. Each section starts with what to tap.
 | Roll back | [rollback workflow](https://github.com/kozak1c/pennypaws-games/actions/workflows/rollback.yml) |
 | Cloudflare | [Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages), Workers `pennypaws-site` (production) and `pennypaws-site-staging` |
 
-**Where things stand (2026-11-14).** The pipeline is built. Deploys are off until the
-Cloudflare secrets exist ("Turning deploys on"). pennypawsgames.com is still served by
-GitHub Pages from `main` ("Moving the domain"). Update this paragraph when either changes.
+**Where things stand (2026-11-14).** Deploys are on. pennypawsgames.com is served by the
+production Worker on Cloudflare. GitHub Pages is still switched on as the way back and
+`www` still redirects through it ("The domain is on Cloudflare" lists what is left).
+Update this paragraph when either changes.
 
 ## Deploy
 
@@ -123,10 +124,16 @@ pull requests still merge into staging on `ci` alone.
    adds the DNS record and certificate) and turns on preview addresses. Do this before
    expecting a preview on a pull request.
 
-## Moving the domain to Cloudflare
+## The domain is on Cloudflare
 
-Today the apex has four DNS-only `A` records to GitHub Pages and `www` is a DNS-only
-`CNAME`. Write-up of the records, so they can be put back:
+`pennypawsgames.com` is a custom domain of the production Worker (`routes` in
+`wrangler.jsonc`). It moved from GitHub Pages with the release that added that route:
+in CI, wrangler takes over a hostname's existing DNS records when it attaches a custom
+domain, so that release replaced the four GitHub Pages `A` records.
+
+**The way back to GitHub Pages** (kept for 14 days after the move): in the Cloudflare
+dashboard remove the custom domain from the Worker (Workers & Pages > `pennypaws-site` >
+Settings > Domains & Routes), then put these records back, DNS only:
 
 | Name | Type | Value |
 |---|---|---|
@@ -136,41 +143,27 @@ Today the apex has four DNS-only `A` records to GitHub Pages and `www` is a DNS-
 | `pennypawsgames.com` | A | `185.199.111.153` |
 | `www` | CNAME | `kozak1c.github.io` |
 
-**Know this first.** `wrangler.jsonc` deliberately has no production `routes` yet. In CI,
-wrangler replaces a hostname's existing DNS records without asking when it attaches a custom
-domain (it only asks in an interactive terminal). So the pull request that adds the route
-below **is** the cutover: once it is released, the live site moves. Do not add it early.
+Then revert the route in `wrangler.jsonc` through a pull request, or the next release moves
+the domain again. Rolling the Worker back (`rollback` workflow) does not move the domain:
+it only changes which version the domain serves.
 
-Order:
+Still to do after the move, in this order:
 
-1. Staging is green on `staging.pennypawsgames.com`.
-2. The first release has deployed production. Its run health-checks the Worker on its
-   workers.dev address (noindex there). Open that address and look.
-3. Cut over, either way:
-   - **By release (one step):** a pull request into staging that adds, at the top level of
-     `wrangler.jsonc`, `"routes": [{ "pattern": "pennypawsgames.com", "custom_domain": true }]`
-     and sets `"workers_dev": false`; flips the test "not on the domain until the cutover"
-     in `tests/config.test.mjs`; and updates this page. Releasing it attaches the domain.
-   - **By hand first:** in the Cloudflare dashboard delete the four `A` records, then
-     Workers & Pages > `pennypaws-site` > Settings > Domains & Routes > Add > Custom Domain >
-     `pennypawsgames.com`. Follow with the same pull request so the repository matches.
-4. `www`: a custom domain only answers its exact host name, so `www` is a redirect, not a
-   second custom domain. Replace the `www` CNAME with a proxied `A` record to `192.0.2.0`
-   and add a redirect rule from `www.pennypawsgames.com/*` to `https://pennypawsgames.com/$1`
-   (301). Turn on **Always Use HTTPS** for the zone: the health check requires
-   `http://` to redirect to `https://`.
-5. Check the live domain: `python ops/health.py https://pennypawsgames.com`, then by eye:
-   `/app-ads.txt`, `/squishy-bop/privacy/`, the padlock, `www` and `http://` redirecting.
-6. Rollback drill: release a harmless visible change, roll it back from a phone, time it,
+1. Check the live domain: `python ops/health.py https://pennypawsgames.com`, then by eye:
+   `/app-ads.txt`, `/squishy-bop/privacy/`, the padlock, and `http://` redirecting.
+2. `www`: a custom domain only answers its exact host name, so `www` is a redirect, not a
+   second custom domain. Until this step is done `www` still points at GitHub Pages, which
+   redirects it to the apex. Replace the `www` CNAME with a proxied `A` record to
+   `192.0.2.0` and add a redirect rule from `www.pennypawsgames.com/*` to
+   `https://pennypawsgames.com/$1` (301). Then add `www` to `ops/never-break.toml`.
+3. Rollback drill: release a harmless visible change, roll it back from a phone, time it,
    and write the time here.
-7. Keep GitHub Pages switched on for 14 days as the way back (restore the five records
-   above). Pages cannot renew its certificate while the domain points elsewhere, so check
-   the certificate is still valid before relying on this. Then switch Pages off, and in a
-   follow-up pull request remove `CNAME`, `.nojekyll` and the test "the files GitHub Pages
-   needs are still at the root".
+4. Keep GitHub Pages switched on for 14 days as the way back. Pages cannot renew its
+   certificate while the domain points elsewhere, so check the certificate is still valid
+   before relying on it. Then switch Pages off, and in a follow-up pull request remove
+   `CNAME`, `.nojekyll` and the test "the files GitHub Pages needs are still at the root".
 
-After the move, `/404.html` and `_headers` at the root are Cloudflare's alone. Before it,
-GitHub Pages also picks up `404.html` as its not-found page once `main` has it.
+`/404.html` and `_headers` at the root are Cloudflare's alone.
 
 ## Facts this page relies on
 
