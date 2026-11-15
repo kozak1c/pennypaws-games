@@ -236,7 +236,8 @@
     box-shadow: 0 0.75rem 1.5rem rgb(15 20 51 / 0.4);
   }
 
-  .phone {
+  /* Not on a door's art: there the phone is placed absolutely inside the door. */
+  .phone:not(.door__art) {
     position: relative;
   }
 

@@ -1,6 +1,8 @@
 ---
 // A game in phone frames: first a short clip of real play at a person's pace, then screenshots.
 // The clips are recorded from each game through its real touch input, moved the way a hand moves.
+// On phones and tablets it is a gallery (src/scripts/gallery.ts): one phone at a time, whole, and a
+// row of small pictures to pick from. On desktop the phones stand in one row.
 import { getImage, Image } from 'astro:assets';
 import type { Played } from '../data/games';
 interface Props {
@@ -9,21 +11,39 @@ interface Props {
 }
 const { name, played } = Astro.props;
 const poster = await getImage({ src: played.poster, width: 360 });
+const posterThumb = await getImage({ src: played.poster, width: 96 });
+const thumbs = await Promise.all(played.shots.map((shot) => getImage({ src: shot.src, width: 96 })));
 ---
 
-<section class="shots" aria-label={`${name} in play`} tabindex="0">
-  <figure>
-    <span class="phone block">
-      <video data-autoplay muted loop playsinline preload="none" poster={poster.src} width="360" height="640" aria-label={played.label}>
-        <source src={played.clip} type="video/mp4" />
-      </video>
-    </span>
-    <figcaption>{played.caption}</figcaption>
-  </figure>
-  {played.shots.map((shot) => (
+<div class="gallery" data-gallery>
+  <section class="shots" aria-label={`${name} in play`} tabindex="0" data-gallery-stage>
     <figure>
-      <span class="phone block"><Image src={shot.src} alt={shot.alt} width={360} /></span>
-      <figcaption>{shot.caption}</figcaption>
+      <span class="phone block">
+        <video data-autoplay muted loop playsinline preload="none" poster={poster.src} width="360" height="640" aria-label={played.label}>
+          <source src={played.clip} type="video/mp4" />
+        </video>
+      </span>
+      <figcaption>{played.caption}</figcaption>
     </figure>
-  ))}
-</section>
+    {played.shots.map((shot) => (
+      <figure>
+        <span class="phone block"><Image src={shot.src} alt={shot.alt} width={360} /></span>
+        <figcaption>{shot.caption}</figcaption>
+      </figure>
+    ))}
+  </section>
+  <div class="gallery__thumbs gallery__thumbs--phones" data-gallery-thumbs hidden>
+    <button type="button" class="gallery__thumb gallery__thumb--clip" aria-label={`Show: ${played.caption}`}>
+      <img src={posterThumb.src} alt="" width="48" height="85" />
+    </button>
+    {played.shots.map((shot, i) => (
+      <button type="button" class="gallery__thumb" aria-label={`Show: ${shot.caption}`}>
+        <img src={thumbs[i].src} alt="" width="48" height="85" />
+      </button>
+    ))}
+  </div>
+</div>
+
+<script>
+  import '../scripts/gallery';
+</script>

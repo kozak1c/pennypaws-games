@@ -9,15 +9,15 @@ interface Props {
 const { game, button = 'Take a look' } = Astro.props;
 ---
 
-<a class="card" href={`/${game.id}/`}>
+<a class="card card--game" href={`/${game.id}/`}>
   <span class="card__art card__art--wide">
     <Image src={game.feature.src} alt={game.feature.alt} width={1024} widths={[480, 800, 1024]} sizes="(min-width: 60rem) 24rem, 72vw" />
   </span>
-  <span class="flex items-center gap-3 px-2">
-    <Image class="w-12 rounded-[22%] shadow-[0_0.25rem_0.5rem_rgb(15_20_51/0.25)]" src={game.icon.src} alt="" width={96} />
+  <span class="card__head flex items-center gap-3 px-2 max-desk:flex-col max-desk:items-start max-desk:gap-2.5 max-desk:px-0.5 max-[25rem]:contents">
+    <Image class="card__icon w-12 max-desk:w-[4.5rem] rounded-[22%] shadow-[0_0.25rem_0.5rem_rgb(15_20_51/0.25)]" src={game.icon.src} alt="" width={192} />
     <span class="card__name px-0">{game.name}</span>
   </span>
-  <span class="flex flex-wrap gap-1.5 px-2">
+  <span class="card__chips flex flex-wrap gap-1.5 px-2 max-desk:px-0.5">
     <span class="chip chip--navy text-[0.8125rem]">{game.status}</span>
     {game.forWhom && <span class="chip text-[0.8125rem]">{game.forWhom}</span>}
   </span>

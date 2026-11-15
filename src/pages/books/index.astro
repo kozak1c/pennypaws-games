@@ -15,7 +15,7 @@ import { books } from '../../data/catalog';
         <h1 class="tray__title" id="h-books">Books</h1>
         <p class="tray__line">Our coloring books in paperback: big pages, bold lines, printed and delivered by Amazon.</p>
       </div>
-      <div class="grid gap-[clamp(0.75rem,1.6vw,1.25rem)] desk:grid-cols-2">
+      <div class="grid gap-[clamp(0.75rem,1.6vw,1.25rem)] desk:grid-cols-3">
         {books.map((b) => <BookCard book={b} heading="h2" />)}
       </div>
     </section>
