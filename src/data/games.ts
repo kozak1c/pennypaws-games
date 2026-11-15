@@ -52,6 +52,8 @@ export interface SoonGame extends GameCard {
   parts: { title: string; text: string }[];
   grownUps: { term: string; text: string }[];
   played: Played;
+  /** The game's privacy policy on this site, from the feed. */
+  privacy?: string;
 }
 
 export const bopPlayed: Played = {
@@ -172,6 +174,7 @@ export const soonGames: SoonGame[] = Object.entries(gameWords).flatMap(([id, wor
       name: smart(game.name),
       tagline: smart(game.tagline),
       status: statusWords[game.status],
+      privacy: game.privacy ?? undefined,
       ...fill(`Game "${id}"`, words, game.facts),
       // Who it is for: the site's own words when it has them, else the game's ages from the feed.
       forWhom: words.forWhom ?? agesWords(game),
