@@ -208,10 +208,13 @@ Fix: as for "Site check failed". To run the check now: GitHub app > `pennypaws-g
 **Rebuild from nothing, with the Astro build, 2026-11-14.** The drill since the engine swap: a
 fresh clone in an empty folder, `npm ci`, `npm run check` (it builds `dist/` first, from an empty
 image cache, then runs every `ci` step but the browser, including both dry runs and the health
-check in both modes) and `npx wrangler deploy --dry-run --env production`. Run on the engine-swap
-branch before it merged: all passed in 47 seconds (clone 2 s, `npm ci` 13 s with a warm package
-cache, checks 28 s of which the build 7 s, dry run 4 s; Node 24, Astro 7.4.12, wrangler
-4.162.0). Run it again from `main` after the release. No scratch Worker was deployed.
+check in both modes) and `npx wrangler deploy --dry-run --env production`. It needs the network:
+the build fetches the feed's product pictures from `media.pennypawsgames.com` (with no network
+the build stops with "fetch failed" and nothing else runs; checked by hand). Run on the
+engine-swap branch, with the product feed merged in, before it merged: all passed in 70 seconds
+(clone 1 s, `npm ci` 15 s with a warm package cache, checks 46 s of which the build 15 s with
+all 10 feed pictures fetched, dry run 8 s; Node 24, Astro 7.4.12, wrangler 4.162.0). Run it
+again from `main` after the release. No scratch Worker was deployed.
 
 **Rebuild from nothing, 2026-11-14 (before the engine swap).** A fresh clone of `main` in an empty folder, `npm ci`,
 `npm run check` (every `ci` step but the browser, including a production dry run) and
