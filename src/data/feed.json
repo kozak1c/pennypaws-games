@@ -79,22 +79,28 @@
       "ads_personalized": false,
       "purchases": [
         {
-          "kind": "consumable"
+          "kind": "consumable",
+          "price_usd": "1.99"
         },
         {
-          "kind": "consumable"
+          "kind": "consumable",
+          "price_usd": "4.99"
         },
         {
-          "kind": "consumable"
+          "kind": "consumable",
+          "price_usd": "9.99"
         },
         {
-          "kind": "consumable"
+          "kind": "consumable",
+          "price_usd": "19.99"
         },
         {
-          "kind": "consumable"
+          "kind": "consumable",
+          "price_usd": "2.99"
         },
         {
-          "kind": "consumable"
+          "kind": "consumable",
+          "price_usd": "0.99"
         }
       ],
       "play_url": null,
