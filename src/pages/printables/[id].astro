@@ -66,11 +66,11 @@ const squishy = item.id.includes('squish');
     {item.sheets.length > 0 && (
       <section class="tray tray--paper" aria-labelledby="h-pages">
         <h2 class="tray__title text-[clamp(1.625rem,1.2rem+1.8vw,2.5rem)]" id="h-pages">A look at the pages</h2>
-        <div class="pages" role="region" aria-label="Sample pages" tabindex="0">
+        <section class="pages" aria-label="Sample pages" tabindex="0">
           {item.sheets.map((s) => (
             <span class="sheet"><Image src={s.src} alt={s.alt} width={420} /></span>
           ))}
-        </div>
+        </section>
       </section>
     )}
 
