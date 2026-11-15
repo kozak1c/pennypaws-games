@@ -14,7 +14,9 @@ The site is an Astro project (`astro.config.mjs`, `src/`, `public/`) built into 
 it (`wrangler.jsonc`). `dist/` is never committed; every check and every deploy builds it
 fresh from the commit it runs on.
 
-`npm run build` is `astro build` plus `ops/postbuild.mjs`, which:
+`npm run build` is `astro build` (which first fetches the feed's product pictures; see "Product
+facts come from the feed") plus the post-build step `ops/postbuild-cli.mjs` (the work is in
+`ops/postbuild.mjs`), which:
 
 - moves every inline script into a hashed file under `dist/_astro/`, because `_headers` sends
   `script-src 'self'` and Astro writes its island bootstrap inline. Never loosen the header
@@ -76,6 +78,32 @@ after each release.
 Add an entry whenever an address is given to an outside party (a store listing, an ad
 network, a printed product). Removing or loosening an entry needs the owner's say-so, in the
 pull request.
+
+## Product facts come from the feed
+
+No product fact is typed in this repository. `src/data/feed.json` is the public feed: every game,
+printable and book the site may name, with its name, price, store address, status, counts and
+listing pictures. It is generated from each product's own source and arrives as a pull request
+titled "Feed: ...". Do not edit it by hand: a fact that is wrong is fixed where the product
+lives, and the next feed carries it.
+
+- `src/content.config.ts` reads the feed into the `games`, `printables` and `books` collections
+  and refuses a feed of another schema version or with an address off the known stores.
+- `src/data/catalog.ts` and `src/data/games.ts` join those facts with the site's own words and
+  art. The words may quote a number only if the product's facts hold the same number, and a
+  game's counts are written as `{fact_name}`; the build fails otherwise.
+- A product is on the site because the feed names it. A printable needs nothing else; a book or
+  a game also needs its art here, and the build says which ones are waiting for it.
+- Listing pictures are fetched from `media.pennypawsgames.com` before the build, checked against
+  the SHA-256 in the feed, and served from our own origin (`ops/feed-images.mjs`). So a build
+  needs the network the first time: it downloads each printable's cover (ten today, about 18 MB)
+  into `src/assets/feed/` (not tracked) and reuses them afterwards. A picture that cannot be
+  fetched, or does not match its hash, fails the build; nothing is published without it. The
+  workflows start from a fresh checkout, so every workflow build fetches them.
+- Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
+  allows exactly those through its `feed:printables` line.
+  `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
+- `tests/feed.test.mjs` fails if a page or data file types a price or a product's store address.
 
 ## Privacy pages
 

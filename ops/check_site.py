@@ -29,6 +29,7 @@ third party's outage must not block a release.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 import urllib.error
@@ -43,25 +44,31 @@ DIST = ROOT / "dist"
 PUBLIC_FILES = ROOT / "ops" / "public-files.txt"
 SITE = "https://pennypawsgames.com"  # only used to resolve relative links; nothing is fetched from it
 
-# Size budgets, in bytes, for one file of each kind. Measured on the build of 2026-11-14 and set
-# with modest headroom (the largest file then is in the comment); raise one only on purpose.
+# Size budgets, in bytes, for one file of each kind. Measured on the build of 2026-11-14 (with
+# the product feed) and set with modest headroom (the largest file then is in the comment);
+# raise one only on purpose.
 KB = 1024
-MAX_HTML_BYTES = 44 * KB          # a page; largest 35,740 (the home page)
+MAX_HTML_BYTES = 48 * KB          # a page; largest 41,313 (the home page)
 BUDGETS = {
     ".html": MAX_HTML_BYTES,
-    ".css": 44 * KB,              # the one stylesheet, 35,700
+    ".css": 44 * KB,              # the one stylesheet, 35,901
     ".js": 256 * KB,              # one script; largest 212,853 (React's client)
     ".woff2": 48 * KB,            # one font file; largest 39,128
-    ".webp": 256 * KB,            # one picture; largest 208,664 (a printable's listing image)
+    ".webp": 200 * KB,            # one picture of the site's own art; largest 168,902 (a book cover)
     ".mp4": 720 * KB,             # one gameplay clip; largest 604,640
 }
 MAX_FILE_BYTES = 64 * KB          # anything else (app-ads.txt, favicon.svg)
-# Named exceptions, by the start of the path. Penny's high five is 16 drawn frames in one sheet.
+# Exceptions, by a pattern on the path, checked before the budgets above.
 BUDGET_EXCEPTIONS = {
-    "_astro/penny-highfive.": 1280 * KB,  # 1,072,292
+    # Penny's high five is 16 drawn frames in one sheet; 1,072,292.
+    r"^_astro/penny-highfive\.": 1280 * KB,
+    # Product pictures from the feed (ops/feed-images.mjs names them by the first 16 hex digits
+    # of their SHA-256). The originals are 3000 px wide and each page's <img src> fallback is
+    # built at that full size (largest 890,808); the srcset sizes are at most 223,142.
+    r"^_astro/[0-9a-f]{16}\.": 1024 * KB,
 }
 KIND_TOTALS = {".js": 448 * KB}   # every script together; 376,456
-TOTAL_BUDGET = 9728 * KB          # the whole build; 7,886,284
+TOTAL_BUDGET = 17408 * KB         # the whole build; 15,013,247 (7,886,284 before the feed)
 
 # attribute -> tags whose value is a resource the browser loads by itself
 RESOURCE_ATTRS = {
@@ -83,9 +90,34 @@ def _lines(path: Path) -> list[str]:
     return out
 
 
+FEED = ROOT / "src" / "data" / "feed.json"
+FEED_ID = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
+
+def feed_paths(line: str, feed: Path = FEED) -> list[str]:
+    """A "feed:<collection> <path with {id}>" line: one path per product in the feed."""
+    m = re.match(r"^feed:(\w+)\s+(\S*\{id\}\S*)$", line)
+    if not m:
+        raise ValueError(f"ops/public-files.txt: cannot read {line!r}")
+    rows = json.loads(feed.read_text(encoding="utf-8")).get(m.group(1))
+    if not isinstance(rows, list):
+        raise ValueError(f"ops/public-files.txt: the feed has no collection {m.group(1)!r}")
+    out = []
+    for row in rows:
+        if not FEED_ID.match(str(row.get("id"))):
+            raise ValueError(f"ops/public-files.txt: feed id {row.get('id')!r} is not a plain id")
+        out.append(m.group(2).replace("{id}", row["id"]))
+    return out
+
+
 def read_public_files(path: Path = PUBLIC_FILES) -> list[str]:
-    """The listed files (paths inside dist/), without the patterns."""
-    return [line for line in _lines(path) if not line.startswith("re:")]
+    """The listed files (paths inside dist/, feed: lines expanded), without the patterns."""
+    out: list[str] = []
+    for line in _lines(path):
+        if line.startswith("re:"):
+            continue
+        out.extend(feed_paths(line) if line.startswith("feed:") else [line])
+    return out
 
 
 def read_public_patterns(path: Path = PUBLIC_FILES) -> list[re.Pattern[str]]:
@@ -94,8 +126,8 @@ def read_public_patterns(path: Path = PUBLIC_FILES) -> list[re.Pattern[str]]:
 
 
 def budget_for(file: str) -> int:
-    for prefix, limit in BUDGET_EXCEPTIONS.items():
-        if file.startswith(prefix):
+    for pattern, limit in BUDGET_EXCEPTIONS.items():
+        if re.search(pattern, file):
             return limit
     return BUDGETS.get(PurePosixPath(file).suffix, MAX_FILE_BYTES)
 

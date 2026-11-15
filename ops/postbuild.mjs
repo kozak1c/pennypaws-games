@@ -1,4 +1,4 @@
-// The step after "astro build" (npm run build runs both). It makes dist/ fit the site's
+// The step after "astro build" (npm run build runs both, through ops/postbuild-cli.mjs). It makes dist/ fit the site's
 // security header and the allow-list, and fails the build when it cannot.
 //
 //   1. Inline scripts become files. _headers sends "script-src 'self'", which forbids inline
@@ -20,8 +20,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import process from "node:process";
-import { pathToFileURL } from "node:url";
 import { auditBuild, dist, filesUnder } from "./public-files.mjs";
 
 const SCRIPT = /<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi;
@@ -94,20 +92,27 @@ export function postbuild(dir = dist) {
   return { pages, scripts: [...written.keys()] };
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+// The whole step as the build runs it: rewrite, then audit. Returns the exit code. The command
+// line entry is ops/postbuild-cli.mjs, which calls this unconditionally: an "is this file the
+// main module" guard here would compare a junction path with the real path on some machines,
+// come out false, and let the build skip this step and still succeed.
+export const DONE_LINE = "postbuild: dist/ holds exactly the allow-listed files";
+
+export function run(dir = dist, { log = console.log, error = console.error } = {}) {
   try {
-    const { pages, scripts } = postbuild();
-    console.log(`postbuild: ${pages} page(s) rewritten, ${scripts.length} inline script(s) moved to files${scripts.length ? ` (${scripts.join(", ")})` : ""}`);
-    const { unexpected, missing } = auditBuild();
-    for (const f of unexpected) console.error(`postbuild: dist/${f} is not allowed by ops/public-files.txt`);
-    for (const f of missing) console.error(`postbuild: dist/${f} is listed in ops/public-files.txt but the build did not write it`);
+    const { pages, scripts } = postbuild(dir);
+    log(`postbuild: ${pages} page(s) rewritten, ${scripts.length} inline script(s) moved to files${scripts.length ? ` (${scripts.join(", ")})` : ""}`);
+    const { unexpected, missing } = auditBuild(dir);
+    for (const f of unexpected) error(`postbuild: dist/${f} is not allowed by ops/public-files.txt`);
+    for (const f of missing) error(`postbuild: dist/${f} is listed in ops/public-files.txt but the build did not write it`);
     if (unexpected.length || missing.length) {
-      console.error("postbuild: the build does not match the allow-list. Add a new public file to ops/public-files.txt, or remove what should not be public.");
-      process.exit(1);
+      error("postbuild: the build does not match the allow-list. Add a new public file to ops/public-files.txt, or remove what should not be public.");
+      return 1;
     }
-    console.log("postbuild: dist/ holds exactly the allow-listed files");
+    log(DONE_LINE);
+    return 0;
   } catch (err) {
-    console.error(`postbuild: ${err.message}`);
-    process.exit(1);
+    error(`postbuild: ${err.message}`);
+    return 1;
   }
 }

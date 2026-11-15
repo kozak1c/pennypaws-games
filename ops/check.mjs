@@ -7,7 +7,7 @@
 // if it fails, nothing after it runs. After the build, a failing step does not stop the later
 // ones, so one run shows everything that is wrong; the exit code is 1 if any step failed.
 //
-//   build      npm run build: the site into dist/ (astro build, then ops/postbuild.mjs, which
+//   build      npm run build: the site into dist/ (astro build, then ops/postbuild-cli.mjs, which
 //              moves inline scripts into files and fails on any file not in
 //              ops/public-files.txt). "--only" with another step skips it and checks the
 //              dist/ that is there.
@@ -47,7 +47,7 @@ const nodeTests = readdirSync(path.join(root, "tests")).filter((f) => f.endsWith
 
 // [name, ...commands]: a step passes when each of its commands exits 0, run one after another.
 const steps = [
-  ["build", [node, bin("astro", "bin/astro.mjs"), "build"], [node, "ops/postbuild.mjs"]],
+  ["build", [node, bin("astro", "bin/astro.mjs"), "build"], [node, "ops/postbuild-cli.mjs"]],
   ["unit", [python, "-m", "unittest", "discover", "-s", "tests", "-p", "test_*.py"]],
   ["config", [node, "--test", ...nodeTests]],
   ["html", [node, bin("html-validate", "bin/html-validate.mjs"), ...builtPages]],

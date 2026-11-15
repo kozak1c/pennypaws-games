@@ -3,10 +3,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { mkdirSync, mkdtempSync, readFileSync, rmdirSync, rmSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { externalizeScripts, moveBodyStyles, postbuild } from "../ops/postbuild.mjs";
+import { DONE_LINE, externalizeScripts, moveBodyStyles, postbuild } from "../ops/postbuild.mjs";
 
 const name = (text) => `inline.${createHash("sha256").update(text).digest("hex").slice(0, 12)}.js`;
 
@@ -37,6 +38,34 @@ test("a <style> in <body> moves to the end of <head>; one inside an SVG stays", 
     `<html><head><link rel="stylesheet" href="/a.css"><style>a{b:c}</style></head><body><div><svg><style>.s{fill:red}</style></svg></div></body></html>`);
   const plain = "<html><head><style>a{}</style></head><body></body></html>";
   assert.equal(moveBodyStyles(plain), plain);
+});
+
+// The step must really run when npm run build calls it. A guard that decides whether the file
+// is the main module can come out false through a directory junction, and the build would then
+// skip the step and still exit 0. So: run the command exactly as package.json writes it, from
+// the real path and through a link to the checkout, and require the line it prints at the end.
+// Needs a build in dist/ (npm run check builds first); running the step again changes nothing.
+test("npm run build's post-build command really runs, also through a directory link", () => {
+  const root = path.resolve(import.meta.dirname, "..");
+  const build = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8")).scripts.build;
+  const parts = build.split("&&").map((s) => s.trim());
+  assert.equal(parts[0], "astro build");
+  const command = parts.at(-1);
+  assert.match(command, /^node ops\/postbuild-cli\.mjs$/);
+  const link = path.join(mkdtempSync(path.join(tmpdir(), "pennypaws-link-")), "checkout");
+  symlinkSync(root, link, "junction");
+  try {
+    for (const cwd of [root, link]) {
+      const r = spawnSync(command, { cwd, shell: true, encoding: "utf8" });
+      assert.equal(r.status, 0, `${command} in ${cwd} failed:\n${r.stdout}\n${r.stderr}`);
+      assert.ok(r.stdout.includes(DONE_LINE), `${command} in ${cwd} did not print "${DONE_LINE}": the step did not run\n${r.stdout}`);
+      assert.match(r.stdout, /inline script\(s\) moved to files/);
+    }
+  } finally {
+    // Remove the link itself, never what it points at, then the empty folder that held it.
+    unlinkSync(link);
+    rmdirSync(path.dirname(link));
+  }
 });
 
 test("postbuild rewrites only pages with inline scripts and writes the scripts under _astro/", () => {

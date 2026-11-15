@@ -1,8 +1,12 @@
 // Every game the site names, in the order it lists them. Squishy Bop! has its own fuller page; the games
 // that are not out yet share one page layout and say "Coming soon" in place of a store button.
-// The words for Plush Hour and Giggle Bomb come from each game's own store listing.
+//
+// Which games are named, and each one's name, tagline and status, come from the feed
+// (src/data/feed.json): a game is here only while the feed names it. The words and art below are
+// the site's own. They never type a count: write {fact_name} and the feed's value is filled in,
+// and any number they do state must be among the game's facts (see catalog.ts).
 import type { ImageMetadata } from 'astro';
-import { squishyBop, type Pic } from './catalog';
+import { checkNumbers, feedGames, fill, saidOfGame, smart, squishyBop, statusWords, type Pic } from './catalog';
 
 const art = import.meta.glob<{ default: ImageMetadata }>('../assets/games/**/*.{webp,png}', { eager: true });
 const img = (path: string): ImageMetadata => {
@@ -58,12 +62,12 @@ export const bopPlayed: Played = {
   shots: squishyBop.shots.slice(1),
 };
 
-export const soonGames: SoonGame[] = [
-  {
-    id: 'plush-hour',
-    name: 'Plush Hour',
-    tagline: 'Merge cozy plush toys, reopen Grandma’s shop and find the memories she lost.',
-    status: 'Coming soon',
+/** The site's words and art for a game on the shared page. Name, tagline and status are the feed's. */
+type GameWords = Omit<SoonGame, 'id' | 'name' | 'tagline' | 'status'>;
+
+// Keyed by the game's id in the feed, in the order the site lists them.
+const gameWords: Record<string, GameWords> = {
+  'plush-hour': {
     forWhom: 'For teens and adults',
     tone: 'rose',
     icon: { src: img('plush-hour/icon.png'), alt: '' },
@@ -110,11 +114,7 @@ export const soonGames: SoonGame[] = [
       ],
     },
   },
-  {
-    id: 'giggle-bomb',
-    name: 'Giggle Bomb',
-    tagline: 'Pass the phone, beat a tiny game, and do not get caught holding the bomb!',
-    status: 'Coming soon',
+  'giggle-bomb': {
     tone: 'sunset',
     icon: { src: img('giggle-bomb/icon.png'), alt: '' },
     feature: {
@@ -122,7 +122,7 @@ export const soonGames: SoonGame[] = [
       alt: 'Giggle Bomb title art: Sparky, a fuzzy round bomb with a smiling face, on pink clouds under a rainbow',
     },
     pitch:
-      'A party game for 2 to 5 players on one phone. Sparky the bomb has a hidden fuse, and nobody knows how long it is. Beat a quick minigame, pass Sparky on, and whoever is holding him when he blows spins the dare wheel.',
+      'A party game for 2 to {max_players} players on one phone. Sparky the bomb has a hidden fuse, and nobody knows how long it is. Beat a quick minigame, pass Sparky on, and whoever is holding him when he blows spins the dare wheel.',
     parts: [
       {
         title: 'Quick minigames',
@@ -156,7 +156,26 @@ export const soonGames: SoonGame[] = [
       ],
     },
   },
-];
+};
+
+const withoutArt = feedGames.filter((g) => g.id !== squishyBop.id && !gameWords[g.id]).map((g) => g.id);
+if (withoutArt.length) console.warn(`[feed] no art yet, so not listed: ${withoutArt.map((id) => `game ${id}`).join(', ')}`);
+
+export const soonGames: SoonGame[] = Object.entries(gameWords).flatMap(([id, words]) => {
+  const game = feedGames.find((g) => g.id === id);
+  if (!game) return [];
+  const { icon, feature, played, ...text } = words;
+  checkNumbers(`Game "${id}"`, [text, played.label, played.caption, played.shots.map((s) => s.caption)], saidOfGame(game));
+  return [
+    {
+      id,
+      name: smart(game.name),
+      tagline: smart(game.tagline),
+      status: statusWords[game.status],
+      ...fill(`Game "${id}"`, words, game.facts),
+    },
+  ];
+});
 
 export const allGames: GameCard[] = [
   {

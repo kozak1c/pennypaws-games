@@ -69,7 +69,7 @@ the same thing locally with `npm run check` (or `node ops/check.mjs --only <step
 | Step | It means |
 |---|---|
 | Lint the workflows | a workflow file has a mistake; the message names the line |
-| Build (in Set up), build | `astro build` failed (the message names the file), **or** the build wrote a file that is not in `ops/public-files.txt` or did not write one that is (the message names it): list a new public file there, or remove what should not be public. Nothing after a failed build runs |
+| Build (in Set up), build | `astro build` failed (the message names the file), **or** `[feed-images]` could not fetch a product picture from `media.pennypawsgames.com` ("fetch failed", "answered 404") or it does not match the feed's SHA-256: check the media bucket, then rerun, **or** the build wrote a file that is not in `ops/public-files.txt` or did not write one that is (the message names it): list a new public file there, or remove what should not be public. Nothing after a failed build runs |
 | unit | a test of the ops scripts failed |
 | config | `wrangler.jsonc`, `public/_headers` or a workflow broke a rule, **or** wrangler would upload a file `ops/public-files.txt` does not allow (or the reverse), **or** a privacy page changed (see AGENTS.md, "Privacy pages"), **or** a built page has an inline script or loads something from another origin (`tests/policy.test.mjs`) |
 | html, links | a built page has broken markup, a dead link, loads something from another origin, or a file is over its size budget (`ops/check_site.py` lists the budgets) |

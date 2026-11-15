@@ -5,9 +5,11 @@
 # one (ops/postbuild.mjs), and tests/assets.test.mjs proves wrangler would upload exactly this.
 # So a new page or file is public only once its line is here.
 #
-# Each line is a path inside dist/. A line starting with "re:" is a regular expression that
-# allows a whole family of files: the build's content-hashed output under _astro/ (scripts,
-# the stylesheet, fonts, pictures, clips), which changes name whenever its content changes.
+# Each line is a path inside dist/. A line starting with "feed:" names a collection of the
+# product feed (src/data/feed.json) and a path with {id} in it: one path per product. A line
+# starting with "re:" is a regular expression that allows a whole family of files: the build's
+# content-hashed output under _astro/ (scripts, the stylesheet, fonts, pictures, clips), which
+# changes name whenever its content changes.
 # dist/_headers is not listed: wrangler reads it as configuration and never serves it.
 
 # Pages
@@ -18,12 +20,10 @@ squishy-bop/index.html
 plush-hour/index.html
 giggle-bomb/index.html
 printables/index.html
-printables/christmas-mystery-mosaics/index.html
-printables/paper-squishies/index.html
-printables/squishy-bundle/index.html
-printables/squishy-christmas-coloring-pages/index.html
-printables/squishy-coloring-pages/index.html
-printables/who-took-santas-sleigh/index.html
+# One page per printable the feed names (src/data/feed.json), at the feed's id. A "feed:" line
+# stands for one path per row of that collection in the feed, so a feed that adds or drops a
+# printable changes this list with it and nothing else.
+feed:printables printables/{id}/index.html
 books/index.html
 grown-ups/index.html
 

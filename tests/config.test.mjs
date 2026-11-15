@@ -227,13 +227,15 @@ test("package.json: wrangler is pinned to a version with Worker Previews (4.135.
 
 test("package.json: build is the Astro build plus the post-build step; the checks and the walk build first", () => {
   const { scripts } = JSON.parse(read("package.json"));
-  assert.equal(scripts.build, "astro build && node ops/postbuild.mjs");
+  assert.equal(scripts.build, "astro build && node ops/postbuild-cli.mjs");
   assert.match(scripts.walk, /^npm run build && /);
   assert.match(scripts.dev, /^npm run build && wrangler dev /);
   assert.equal(scripts["site:build"], undefined, "a bare astro build skips the post-build step; use npm run build");
   const check = read("ops/check.mjs");
   const first = check.match(/const steps = \[\s*\["([^"]+)"/);
   assert.equal(first?.[1], "build", "ops/check.mjs builds before it checks anything");
+  assert.match(check, /\["build", \[node, bin\("astro", "bin\/astro\.mjs"\), "build"\], \[node, "ops\/postbuild-cli\.mjs"\]\]/,
+    "ops/check.mjs builds the way npm run build does");
 });
 
 // Astro states the Node version it needs; package.json and the workflows must meet it.

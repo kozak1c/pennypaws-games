@@ -8,10 +8,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { auditBuild, CONFIG_FILES, dist, filesUnder, isPublic, readPublicFiles, root } from "../ops/public-files.mjs";
+import { auditBuild, CONFIG_FILES, dist, feedPaths, filesUnder, isPublic, readPublicFiles, root } from "../ops/public-files.mjs";
 
 const wrangler = path.join(root, "node_modules", "wrangler", "bin", "wrangler.js");
 const unix = (p) => p.split(path.sep).join("/").replaceAll("\\", "/");
@@ -92,6 +92,23 @@ test("every listed file that is not a built page is committed in public/", () =>
   for (const f of tracked) {
     const rel = f.slice("public/".length);
     assert.ok(CONFIG_FILES.includes(rel) || isPublic(rel, list), `${f} is in public/ but not in ops/public-files.txt`);
+  }
+});
+
+// The printable pages follow the feed: one page per printable it names, at its id, and only
+// those. An id that is not a plain id (a path trick such as "../x") is refused.
+test("the allow-list has one page per printable in the feed, and refuses an id that is not plain", () => {
+  const feed = JSON.parse(readFileSync(path.join(root, "src", "data", "feed.json"), "utf8"));
+  const pages = list.files.filter((f) => /^printables\/[^/]+\/index\.html$/.test(f));
+  assert.deepEqual(pages.sort(), feed.printables.map((p) => `printables/${p.id}/index.html`).sort());
+  const dir = mkdtempSync(path.join(tmpdir(), "pennypaws-feed-"));
+  try {
+    const bad = path.join(dir, "feed.json");
+    writeFileSync(bad, JSON.stringify({ printables: [{ id: "../../README" }] }));
+    assert.throws(() => feedPaths("feed:printables printables/{id}/index.html", bad), /not a plain id/);
+    assert.throws(() => feedPaths("feed:nothing printables/{id}/index.html", bad), /no collection/);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 });
 

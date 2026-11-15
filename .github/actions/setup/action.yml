@@ -22,7 +22,7 @@ runs:
       shell: bash
       run: npm ci
 
-    # astro build, then ops/postbuild.mjs (inline scripts into files, and dist/ must match
+    # astro build, then ops/postbuild-cli.mjs (inline scripts into files, and dist/ must match
     # ops/public-files.txt, or the build fails and nothing deploys).
     - name: Build
       if: inputs.build != 'false'

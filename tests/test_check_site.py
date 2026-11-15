@@ -43,6 +43,18 @@ class RealSiteTest(unittest.TestCase):
                   "squishy-bop/index.html", "printables/index.html", "books/index.html", "grown-ups/index.html"):
             self.assertIn(f, files)
 
+    def test_printable_pages_follow_the_feed(self):
+        import json
+        feed = json.loads(check_site.FEED.read_text(encoding="utf-8"))
+        files = check_site.read_public_files()
+        for p in feed["printables"]:
+            self.assertIn(f"printables/{p['id']}/index.html", files)
+        with tempfile.TemporaryDirectory() as d:
+            bad = Path(d) / "feed.json"
+            bad.write_text('{"printables": [{"id": "../x"}]}', encoding="utf-8")
+            with self.assertRaises(ValueError):
+                check_site.feed_paths("feed:printables printables/{id}/index.html", bad)
+
     def test_the_hashed_build_output_is_checked_too(self):
         hashed = check_site.hashed_files(check_site.DIST, check_site.read_public_patterns())
         for ext in (".css", ".js", ".woff2", ".webp", ".mp4"):
@@ -80,7 +92,10 @@ class StructureTest(unittest.TestCase):
         self.assertEqual(check_site.budget_for("_astro/a.ABCDEFGH.js"), check_site.BUDGETS[".js"])
         self.assertEqual(check_site.budget_for("app-ads.txt"), check_site.MAX_FILE_BYTES)
         self.assertEqual(check_site.budget_for("_astro/penny-highfive.ABCDEFGH.webp"),
-                         check_site.BUDGET_EXCEPTIONS["_astro/penny-highfive."])
+                         check_site.BUDGET_EXCEPTIONS[r"^_astro/penny-highfive\."])
+        self.assertEqual(check_site.budget_for("_astro/7dd42291d3f822ad.CfUTeBV9_H692A.webp"),
+                         check_site.BUDGET_EXCEPTIONS[r"^_astro/[0-9a-f]{16}\."])
+        self.assertEqual(check_site.budget_for("_astro/penny-rest.ABCDEFGH.webp"), check_site.BUDGETS[".webp"])
         with tempfile.TemporaryDirectory() as d:
             (Path(d) / "_astro").mkdir()
             (Path(d) / "index.html").write_text(html('<img src="/_astro/a.ABCDEFGH.webp" alt="">'), encoding="utf-8")

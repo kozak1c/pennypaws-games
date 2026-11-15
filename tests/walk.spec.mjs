@@ -109,6 +109,9 @@ test("home links lead to pages that answer", async ({ page, baseURL }, testInfo)
   const hrefs = await page.locator("a[href]").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   const inside = [...new Set(hrefs.filter((h) => !/^(https?:|mailto:|tel:|#)/.test(h)))];
   expect(inside.length, "the home page links to at least one page of the site").toBeGreaterThan(0);
+  // Every link is a round trip (home, then the page, each until its network is quiet), so the
+  // time this test may take grows with the number of links instead of being one fixed limit.
+  test.setTimeout(30_000 + inside.length * 5_000);
   // Each page is left once its network is quiet. Clicking scrolls the link into view, which can
   // start lazy pictures that the navigation then cancels: those cancellations are not failures.
   for (const href of inside) {

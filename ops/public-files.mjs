@@ -13,14 +13,30 @@ export const CONFIG_FILES = ["_headers"];
 
 const unix = (p) => p.split(path.sep).join("/").replaceAll("\\", "/");
 
-// { files: exact paths inside dist/, patterns: RegExps for families of hashed files }
-export function readPublicFiles(file = path.join(root, "ops", "public-files.txt")) {
+const FEED_ID = /^[a-z0-9]+(-[a-z0-9]+)*$/; // the feed's own id rule (src/content.config.ts)
+
+// "feed:<collection> <path with {id}>" -> one path per product of that collection in the feed.
+export function feedPaths(line, feedFile = path.join(root, "src", "data", "feed.json")) {
+  const m = line.match(/^feed:(\w+)\s+(\S*\{id\}\S*)$/);
+  if (!m) throw new Error(`ops/public-files.txt: cannot read "${line}" (want feed:<collection> <path with {id}>)`);
+  const rows = JSON.parse(readFileSync(feedFile, "utf8"))[m[1]];
+  if (!Array.isArray(rows)) throw new Error(`ops/public-files.txt: the feed has no collection "${m[1]}"`);
+  return rows.map((row) => {
+    if (!FEED_ID.test(String(row.id))) throw new Error(`ops/public-files.txt: feed ${m[1]} id ${JSON.stringify(row.id)} is not a plain id`);
+    return m[2].replaceAll("{id}", row.id);
+  });
+}
+
+// { files: exact paths inside dist/ (feed: lines expanded), patterns: RegExps for families of
+// hashed files }
+export function readPublicFiles(file = path.join(root, "ops", "public-files.txt"), feedFile = undefined) {
   const files = [];
   const patterns = [];
   for (const raw of readFileSync(file, "utf8").split("\n")) {
     const line = raw.trim();
     if (!line || line.startsWith("#")) continue;
     if (line.startsWith("re:")) patterns.push(new RegExp(line.slice(3).trim()));
+    else if (line.startsWith("feed:")) files.push(...feedPaths(line, feedFile));
     else files.push(line);
   }
   return { files, patterns };
