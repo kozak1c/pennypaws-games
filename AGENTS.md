@@ -67,6 +67,10 @@ standard library only. Build from the repository's real path, not through a dire
 junction: through a junction the build finishes but leaves the stylesheet link out of every
 page.
 
+A worktree inside this checkout (such as `.local/wt-<name>`) also needs `npm ci` in the
+checkout that holds it: Vite finds the outer checkout's `tsconfig.json` too, and without that
+checkout's `node_modules` the build stops at "Tsconfig not found astro/tsconfigs/strict".
+
 ## The never-break list
 
 `ops/never-break.toml` lists what must keep answering: `/app-ads.txt` byte for byte (AdMob),
@@ -104,6 +108,9 @@ lives, and the next feed carries it.
   fetched, or does not match its hash, fails the build; nothing is published without it. The
   workflows keep the folder in the Actions cache (`.github/actions/setup`), keyed on the feed;
   a restored file is checked against its hash like any other.
+- A book's cover in `src/assets/books/` is the front panel of the cover file uploaded to Amazon,
+  cut from that PDF at the trim (bleed and spine removed), never a draft, a reference or a poster
+  from the product's working folders.
 - Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
   allows exactly those through its `feed:printables` line.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
