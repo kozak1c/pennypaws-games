@@ -22,6 +22,17 @@ runs:
       shell: bash
       run: npm ci
 
+    # The feed's product pictures (src/assets/feed/, about 18 MB), so a build does not download
+    # them again. Safe to restore: ops/feed-images.mjs checks every kept file against the
+    # SHA-256 in the feed, fetches any that does not match and deletes any the feed no longer names.
+    - name: Feed pictures
+      if: inputs.build != 'false'
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: src/assets/feed
+        key: feed-pictures-${{ hashFiles('src/data/feed.json', 'src/data/covers.json') }}
+        restore-keys: feed-pictures-
+
     # astro build, then ops/postbuild-cli.mjs (inline scripts into files, and dist/ must match
     # ops/public-files.txt, or the build fails and nothing deploys).
     - name: Build

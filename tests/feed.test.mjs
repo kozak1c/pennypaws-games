@@ -7,7 +7,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmdirSync, statSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -112,4 +113,24 @@ test("a picture address off the media bucket is refused", async () => {
   writeFileSync(path.join(base, "src/data/feed.json"), JSON.stringify({ printables: [{ id: "toy", images: [image] }] }));
   writeFileSync(path.join(base, "src/data/covers.json"), "{}");
   await assert.rejects(fetchFeedImages({ base, log: () => {}, get: async () => assert.fail("fetched") }), /Not a media bucket address/);
+});
+
+// "node ops/feed-images.mjs" must really fetch when run by hand, also through a directory link:
+// a plain "am I the main module" comparison is false through a junction and the script would
+// exit 0 having done nothing. Needs the pictures in place (npm run check builds first), so it
+// asks the network for nothing.
+test("node ops/feed-images.mjs really runs, also through a directory link", () => {
+  const root = path.resolve(import.meta.dirname, "..");
+  const link = path.join(mkdtempSync(path.join(tmpdir(), "pennypaws-link-")), "checkout");
+  symlinkSync(root, link, "junction");
+  try {
+    for (const cwd of [root, link]) {
+      const r = spawnSync(process.execPath, ["ops/feed-images.mjs"], { cwd, encoding: "utf8" });
+      assert.equal(r.status, 0, `node ops/feed-images.mjs in ${cwd} failed:\n${r.stdout}\n${r.stderr}`);
+      assert.match(r.stdout, /feed pictures: \d+ in use, 0 fetched/, `nothing ran in ${cwd}:\n${r.stdout}`);
+    }
+  } finally {
+    unlinkSync(link);
+    rmdirSync(path.dirname(link));
+  }
 });
