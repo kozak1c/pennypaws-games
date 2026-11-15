@@ -13,12 +13,15 @@ Written to be used from a phone. Each section starts with what to tap.
 
 **Where things stand (2026-11-14).** Deploys are on. pennypawsgames.com is served by the
 production Worker on Cloudflare, and `www` is a redirect rule on the zone. GitHub Pages is
-switched off. Update this paragraph when the hosting changes.
+switched off. The Worker serves the site's build, `dist/`, which every deploying workflow
+makes with `npm ci && npm run build` right before it deploys; until the release that brings
+the Astro build, production still serves the hand-written pages that were at the repository
+root. Update this paragraph when the hosting changes.
 
 ## Deploy
 
 **To staging:** merge a pull request into `staging`. Nothing else to do. The `staging`
-workflow checks the merged tree, deploys it and posts the `staging/smoke` status on the
+workflow checks the merged tree, builds it, deploys the build and posts the `staging/smoke` status on the
 commit, with a comment on the pull request. About 5 minutes.
 
 **To production:** the owner merges the release pull request.
@@ -66,9 +69,10 @@ the same thing locally with `npm run check` (or `node ops/check.mjs --only <step
 | Step | It means |
 |---|---|
 | Lint the workflows | a workflow file has a mistake; the message names the line |
+| Build (in Set up), build | `astro build` failed (the message names the file), **or** the build wrote a file that is not in `ops/public-files.txt` or did not write one that is (the message names it): list a new public file there, or remove what should not be public. Nothing after a failed build runs |
 | unit | a test of the ops scripts failed |
-| config | `wrangler.jsonc`, `_headers` or a workflow broke a rule, **or** a file would be published that is not in `ops/public-files.txt` (or the reverse), **or** a privacy page changed (see AGENTS.md, "Privacy pages") |
-| html, links | a page has broken markup, a dead link, or loads something from another origin |
+| config | `wrangler.jsonc`, `public/_headers` or a workflow broke a rule, **or** wrangler would upload a file `ops/public-files.txt` does not allow (or the reverse), **or** a privacy page changed (see AGENTS.md, "Privacy pages"), **or** a built page has an inline script or loads something from another origin (`tests/policy.test.mjs`) |
+| html, links | a built page has broken markup, a dead link, loads something from another origin, or a file is over its size budget (`ops/check_site.py` lists the budgets) |
 | dry-run | wrangler rejects the configuration |
 | health | the local copy of the site fails the never-break list |
 | Browser walk | a page does not load cleanly, is wider than the screen, or fails the accessibility scan; screenshots are in the run's `walk-screenshots` file |
@@ -201,7 +205,15 @@ Fix: as for "Site check failed". To run the check now: GitHub app > `pennypaws-g
 
 ## Checked live
 
-**Rebuild from nothing, 2026-11-14.** A fresh clone of `main` in an empty folder, `npm ci`,
+**Rebuild from nothing, with the Astro build, 2026-11-14.** The drill since the engine swap: a
+fresh clone in an empty folder, `npm ci`, `npm run check` (it builds `dist/` first, from an empty
+image cache, then runs every `ci` step but the browser, including both dry runs and the health
+check in both modes) and `npx wrangler deploy --dry-run --env production`. Run on the engine-swap
+branch before it merged: all passed in 47 seconds (clone 2 s, `npm ci` 13 s with a warm package
+cache, checks 28 s of which the build 7 s, dry run 4 s; Node 24, Astro 7.4.12, wrangler
+4.162.0). Run it again from `main` after the release. No scratch Worker was deployed.
+
+**Rebuild from nothing, 2026-11-14 (before the engine swap).** A fresh clone of `main` in an empty folder, `npm ci`,
 `npm run check` (every `ci` step but the browser, including a production dry run) and
 `npx wrangler deploy --dry-run --env production`: all passed in 63 seconds (clone under a second,
 `npm ci` 6 s with a warm package cache, checks 48 s, dry run 9 s; Node 24, wrangler 4.162.0).
@@ -273,8 +285,10 @@ needs them removed by hand before a custom domain can take it; a new hostname (a
 
 **There is no second host.** GitHub Pages was switched off on 2026-11-14, once the move was
 checked, and `CNAME` and `.nojekyll` left the repository. A bad release is undone with the
-`rollback` workflow (below, "Rollback drill"). If Cloudflare itself is the problem, the files
-are plain static files at the repository root and will serve from any static host; the
+`rollback` workflow (below, "Rollback drill"). If Cloudflare itself is the problem, `npm ci &&
+npm run build` makes the site as plain static files in `dist/`, which will serve from any
+static host (the security headers in `dist/_headers` are Cloudflare's format, so set them
+again in the other host's own way); the
 domain's DNS is on Cloudflare too, so pointing it elsewhere needs the Cloudflare dashboard.
 The records GitHub Pages used, for the record: four `A` records for the apex
 (`185.199.108.153` to `185.199.111.153`) and `www` as a CNAME to `kozak1c.github.io`.
@@ -294,7 +308,9 @@ was gone from the live site 25 seconds after the workflow was started, and the w
 including its own health check, took 53 seconds. All checks passed on the rolled-back
 version. From the GitHub phone app allow a little longer for finding the button.
 
-`/404.html` and `_headers` at the root are Cloudflare's alone.
+`dist/404.html` (built from `src/pages/404.astro`) is what Cloudflare sends for a missing
+address, and `dist/_headers` (copied from `public/_headers`) is read by Cloudflare as
+configuration and never served.
 
 ## Facts this page relies on
 
