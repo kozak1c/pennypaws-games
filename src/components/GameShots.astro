@@ -1,34 +1,26 @@
 ---
-// The game in phone frames: first a short clip of real play at the game's own speed, then screenshots.
+// A game in phone frames: first a short clip of real play at a person's pace, then screenshots.
+// The clips are recorded from each game through its real touch input, moved the way a hand moves.
 import { getImage, Image } from 'astro:assets';
-import { squishyBop as game } from '../data/catalog';
-import playClip from '../assets/games/squishy-bop/play.mp4?url';
-import playPoster from '../assets/games/squishy-bop/play-poster.png';
-
-// Recorded from the game's staged demo board (--demo --drop=75): one piece dropped to fill two rows, and the pop.
-const poster = await getImage({ src: playPoster, width: 360 });
+import type { Played } from '../data/games';
+interface Props {
+  name: string;
+  played: Played;
+}
+const { name, played } = Astro.props;
+const poster = await getImage({ src: played.poster, width: 360 });
 ---
 
-<div class="shots" role="region" aria-label="Squishy Bop! in play" tabindex="0">
+<div class="shots" role="region" aria-label={`${name} in play`} tabindex="0">
   <figure>
     <span class="phone block">
-      <video
-        data-autoplay
-        muted
-        loop
-        playsinline
-        preload="none"
-        poster={poster.src}
-        width="360"
-        height="640"
-        aria-label="Squishy Bop! being played: a piece drops into place, two rows of squishies fill and pop, and a sticker is won"
-      >
-        <source src={playClip} type="video/mp4" />
+      <video data-autoplay muted loop playsinline preload="none" poster={poster.src} width="360" height="640" aria-label={played.label}>
+        <source src={played.clip} type="video/mp4" />
       </video>
     </span>
-    <figcaption>{game.shots[0].caption}</figcaption>
+    <figcaption>{played.caption}</figcaption>
   </figure>
-  {game.shots.slice(1).map((shot) => (
+  {played.shots.map((shot) => (
     <figure>
       <span class="phone block"><Image src={shot.src} alt={shot.alt} width={360} /></span>
       <figcaption>{shot.caption}</figcaption>

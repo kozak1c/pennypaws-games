@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import Card from '../../components/Card.astro';
 import GameShots from '../../components/GameShots.astro';
 import GameCard from '../../components/GameCard.astro';
-import { soonGames } from '../../data/games';
+import { bopPlayed, soonGames } from '../../data/games';
 import Shape from '../../components/Shape.astro';
 import { book, printable, squishyBop as game } from '../../data/catalog';
 
@@ -54,7 +54,7 @@ const paperback = book('squishy-coloring-book');
 
     <section class="tray" aria-labelledby="h-play">
       <h2 class="tray__title" id="h-play">See it played</h2>
-      <GameShots />
+      <GameShots name={game.name} played={bopPlayed} />
     </section>
 
     <section class="tray tray--paper" aria-labelledby="h-do">

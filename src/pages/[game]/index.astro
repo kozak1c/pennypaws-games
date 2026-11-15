@@ -3,6 +3,7 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import GameCard from '../../components/GameCard.astro';
+import GameShots from '../../components/GameShots.astro';
 import Shape from '../../components/Shape.astro';
 import { allGames, soonGames, type SoonGame } from '../../data/games';
 
@@ -43,6 +44,11 @@ const others = allGames.filter((g) => g.id !== game.id);
           <p class="tray__line">{game.tagline}</p>
         </div>
       </div>
+    </section>
+
+    <section class:list={['tray', `tray--${game.tone}`]} aria-labelledby="h-play">
+      <h2 class="tray__title" id="h-play">See it played</h2>
+      <GameShots name={game.name} played={game.played} />
     </section>
 
     <section class="tray tray--paper" aria-labelledby="h-about">

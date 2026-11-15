@@ -10,7 +10,7 @@ import Shape from '../components/Shape.astro';
 import Penny from '../components/Penny.tsx';
 import Door, { type Art } from '../components/Door.tsx';
 import { brand, books, printable, squishyBop as game, stores } from '../data/catalog';
-import { soonGames } from '../data/games';
+import { bopPlayed, soonGames } from '../data/games';
 import pennySheet from '../assets/brand/penny-highfive.webp?url';
 
 const url = async (src: ImageMetadata, width: number) => (await getImage({ src, width })).src;
@@ -171,7 +171,7 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
           </ul>
         </div>
       </div>
-      <GameShots />
+      <GameShots name={game.name} played={bopPlayed} />
       <a class="candy candy--white justify-self-start" href="/squishy-bop/">Meet Squishy Bop!</a>
       <h3 class="mt-2 text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]">Coming soon</h3>
       <div class="rail rail--two">

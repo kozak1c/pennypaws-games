@@ -11,6 +11,23 @@ const img = (path: string): ImageMetadata => {
   return hit.default;
 };
 
+const clips = import.meta.glob<string>('../assets/games/**/play.mp4', { eager: true, query: '?url', import: 'default' });
+const clip = (id: string): string => {
+  const hit = clips[`../assets/games/${id}/play.mp4`];
+  if (!hit) throw new Error(`Missing clip: src/assets/games/${id}/play.mp4`);
+  return hit;
+};
+
+/** A game's "See it played" strip: one clip of real play, then captioned screenshots. */
+export interface Played {
+  clip: string;
+  poster: ImageMetadata;
+  /** What happens in the clip, for people who cannot see it. */
+  label: string;
+  caption: string;
+  shots: (Pic & { caption: string })[];
+}
+
 export interface GameCard {
   id: string;
   name: string;
@@ -28,7 +45,16 @@ export interface SoonGame extends GameCard {
   audience?: string;
   parts: { title: string; text: string }[];
   grownUps: { term: string; text: string }[];
+  played: Played;
 }
+
+export const bopPlayed: Played = {
+  clip: clip('squishy-bop'),
+  poster: img('squishy-bop/play-poster.png'),
+  label: 'Squishy Bop! being played: a piece is dragged from the tray onto the board, two rows of squishies fill and pop, and a sticker is won',
+  caption: squishyBop.shots[0].caption,
+  shots: squishyBop.shots.slice(1),
+};
 
 export const soonGames: SoonGame[] = [
   {
@@ -68,6 +94,18 @@ export const soonGames: SoonGame[] = [
       { term: 'Purchases', text: 'Gem packs are there if you want them, never in the way if you do not.' },
       { term: 'Offline', text: 'The game plays without a connection.' },
     ],
+    played: {
+      clip: clip('plush-hour'),
+      poster: img('plush-hour/play-poster.png'),
+      label: 'Plush Hour being played at the start of the game: thread spools are dragged together to make a button, a yarn basket is tapped for more, and they merge into a yarn ball',
+      caption: 'Drag two of a kind together',
+      shots: [
+        { src: img('plush-hour/shot-room_front.webp'), alt: 'The Storefront, partly restored, with three plush neighbors outside', caption: 'Bring the shop back room by room' },
+        { src: img('plush-hour/shot-pick_look.webp'), alt: 'Choosing one of three looks for a yarn basket in the Workshop', caption: 'Choose a look for each piece' },
+        { src: img('plush-hour/shot-room_alive.webp'), alt: 'The Tea Room, restored, with plush friends having tea', caption: 'Watch each room fill up' },
+        { src: img('plush-hour/shot-chapter.webp'), alt: 'A story card: Chapter 2 complete, The Workshop', caption: 'Follow a story in six chapters' },
+      ],
+    },
   },
   {
     id: 'giggle-bomb',
@@ -97,6 +135,18 @@ export const soonGames: SoonGame[] = [
       },
     ],
     grownUps: [],
+    played: {
+      clip: clip('giggle-bomb'),
+      poster: img('giggle-bomb/play-poster.png'),
+      label: 'Giggle Bomb being played: a player pops every bubble without touching the bombs, gets a Perfect, and the next player’s game is picked',
+      caption: 'Beat a quick minigame',
+      shots: [
+        { src: img('giggle-bomb/shot-whack.webp'), alt: 'A minigame: splat the goo monsters as they pop out of their holes', caption: 'Each one takes seconds' },
+        { src: img('giggle-bomb/shot-dare.webp'), alt: 'The dare wheel, landed on a silly face dare for everyone but one player', caption: 'Get splatted and spin for a dare' },
+        { src: img('giggle-bomb/shot-table.webp'), alt: 'Four players sitting round the table with their plush animals', caption: 'Up to five players on one phone' },
+        { src: img('giggle-bomb/shot-win.webp'), alt: 'The winner’s screen: a crown and the words Giggle Champion', caption: 'Play for the crown' },
+      ],
+    },
   },
 ];
 

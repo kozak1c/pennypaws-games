@@ -85,9 +85,12 @@ cards from top to bottom.
   still. Her movement is drawn animation: her high five is a 16-frame sequence, drawn on a canvas, each
   frame dissolving into the next, with hand-set timing (slow wind-up, fast thrust, held slap).
 - **Every Penny picture passes two independent art reviews** before it goes on the live site.
-- **Game footage is real play at the game's own speed.** One staged moment (a piece dropped to fill a
-  row, a superpower going off), recorded from the game. Never the game's autoplay, which plays far
-  faster than a person.
+- **Game footage is real play, by a hand, at a person's pace.** Every game page has a "See it played"
+  strip that opens with a short clip, recorded from the game through its real touch input. The moves
+  look like a person's: a pause to take the screen in, a piece carried along a curved path that starts
+  slow and slows in, taps a little off centre at an uneven pace. Never the game's autoplay or test
+  bot, which plays far faster than anyone. The clip shows one moment from the start of the game, on a
+  simple board; a late-game board is too busy to read in a small phone frame.
 - **Everything that looks pressable reacts.** If one block has a hover or press response, its
   neighbours do too.
 - **Overlap is for depth, in small amounts.** Penny may overlap the headline by a fraction of a line;
