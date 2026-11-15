@@ -34,6 +34,10 @@ def page(title: str, body: str = "") -> bytes:
     return f"<!doctype html><html lang=en><head><title>{title}</title></head><body>{body}</body></html>".encode()
 
 
+# Every page on the never-break list: a header every page must send fails all of them.
+EVERY_PAGE = ["page " + e["path"] for e in SPEC["page"]]
+
+
 class Site:
     """A fake site: path -> (status, headers, body). Unknown paths answer 404."""
 
@@ -47,6 +51,8 @@ class Site:
             "/squishy-bop/privacy/": (200, {}, page("Squishy Bop! Privacy Policy",
                                                     '<a href="https://policies.google.com/privacy">Google</a>')),
             "/squishy-bop/privacy": (307, {"location": "/squishy-bop/privacy/"}, b""),
+            "/plush-hour/privacy/": (200, {}, page("Plush Hour Privacy Policy")),
+            "/giggle-bomb/privacy/": (200, {}, page("Giggle Bomb Privacy Policy")),
             "/app-ads.txt": (200, {"content-type": "text/plain; charset=utf-8"}, APP_ADS),
         }
         self.http_redirect = True
@@ -160,19 +166,19 @@ class BrokenTest(unittest.TestCase):
     def test_cache_control_without_no_transform(self):
         s = Site()
         s.headers["cache-control"] = "public, max-age=0, must-revalidate"
-        self.assertEqual(failed(s.run()), ["page /", "page /squishy-bop/privacy/"])
+        self.assertEqual(failed(s.run()), EVERY_PAGE)
 
     def test_missing_security_header(self):
         for name in ("content-security-policy", "strict-transport-security",
                      "x-content-type-options", "referrer-policy", "cache-control"):
             s = Site()
             del s.headers[name]
-            self.assertEqual(failed(s.run()), ["page /", "page /squishy-bop/privacy/"], name)
+            self.assertEqual(failed(s.run()), EVERY_PAGE, name)
 
     def test_weak_header_value(self):
         s = Site()
         s.headers["content-security-policy"] = "default-src *"
-        self.assertEqual(failed(s.run()), ["page /", "page /squishy-bop/privacy/"])
+        self.assertEqual(failed(s.run()), EVERY_PAGE)
 
     def test_outside_script_on_a_listed_page(self):
         s = Site()
