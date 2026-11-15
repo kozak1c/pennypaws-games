@@ -28,8 +28,8 @@ const clay = {
 const coloring = printable('squishy-coloring');
 const gamesArt: Art[] = [
   { kind: 'appicon', src: await url(game.icon.src, 192), className: 'bottom-[1.25rem] left-[clamp(1.125rem,2.2vw,1.75rem)] w-[4.25rem]', lift: 0 },
-  { kind: 'phone', src: await url(game.shots[1].src, 360), className: 'bottom-[-34%] right-[27%] w-[27%] -rotate-[7deg]', lift: 12 },
-  { kind: 'phone', src: await url(game.shots[0].src, 360), className: 'bottom-[-22%] right-[4%] w-[30%] rotate-[6deg]', lift: 16 },
+  { kind: 'phone', src: await url(game.shots[1].src, 360), className: 'bottom-[-34%] right-[27%] w-[27%] max-w-[9rem] -rotate-[7deg]', lift: 12 },
+  { kind: 'phone', src: await url(game.shots[0].src, 360), className: 'bottom-[-22%] right-[4%] w-[30%] max-w-[10rem] rotate-[6deg]', lift: 16 },
 ];
 const printArt: Art[] = [
   { kind: 'sheet', src: await url(coloring.sheets[2].src, 320), className: 'bottom-[-24%] right-[44%] w-[42%] max-w-[7rem] -rotate-[14deg]', lift: 10 },
@@ -201,7 +201,7 @@ const shelfRail = shelf.length % 3 === 1 ? 'rail' : 'rail rail--three';
         <p class="tray__line">Our coloring books in paperback: big pages, bold lines, printed and delivered by Amazon.</p>
       </div>
       <div class="grid gap-[clamp(0.75rem,1.6vw,1.25rem)] desk:grid-cols-2">
-        {books.map((b) => <BookCard book={b} />)}
+        {books.map((b) => <BookCard book={b} compact />)}
       </div>
     </section>
 

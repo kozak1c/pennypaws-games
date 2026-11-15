@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage, Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Card from '../../components/Card.astro';
 import Shape from '../../components/Shape.astro';
@@ -15,6 +15,7 @@ interface Props {
 const { item } = Astro.props;
 const paperback = books.find((b) => b.id === item.book);
 const squishy = item.id.includes('squish');
+const sheetThumbs = await Promise.all(item.sheets.map((s) => getImage({ src: s.src, width: 88 })));
 ---
 
 <Base title={`${item.name} | Penny Paws Games`} description={item.hook} section="printables">
@@ -66,11 +67,20 @@ const squishy = item.id.includes('squish');
     {item.sheets.length > 0 && (
       <section class="tray tray--paper" aria-labelledby="h-pages">
         <h2 class="tray__title text-[clamp(1.625rem,1.2rem+1.8vw,2.5rem)]" id="h-pages">A look at the pages</h2>
-        <section class="pages" aria-label="Sample pages" tabindex="0">
-          {item.sheets.map((s) => (
-            <span class="sheet"><Image src={s.src} alt={s.alt} width={420} /></span>
-          ))}
-        </section>
+        <div class="gallery" data-gallery>
+          <section class="pages" aria-label="Sample pages" tabindex="0" data-gallery-stage>
+            {item.sheets.map((s) => (
+              <span class="sheet"><Image src={s.src} alt={s.alt} width={420} /></span>
+            ))}
+          </section>
+          <div class="gallery__thumbs" data-gallery-thumbs hidden>
+            {sheetThumbs.map((thumb, i) => (
+              <button type="button" class="gallery__thumb gallery__thumb--sheet" aria-label={`Show page ${i + 1}: ${item.sheets[i].alt}`}>
+                <img src={thumb.src} alt="" width="44" height="57" />
+              </button>
+            ))}
+          </div>
+        </div>
       </section>
     )}
 
@@ -108,11 +118,12 @@ const squishy = item.id.includes('squish');
             <Card href="/books/" name={paperback.name} line={paperback.line} price={paperback.price} cover={paperback.cover} kind="Paperback" button="See the paperback" tone="yellow" />
           )}
           {squishy && (
-            <a class="card" href="/squishy-bop/">
+            <a class="card card--item" href="/squishy-bop/">
               <span class="card__art">
                 <Image class="card__blur" src={game.feature.src} alt="" width={120} aria-hidden="true" />
                 <Image src={game.feature.src} alt={game.feature.alt} width={640} widths={[360, 640]} sizes="(min-width: 60rem) 18rem, 72vw" />
               </span>
+              <span class="card__meta"><span class="chip">Game</span></span>
               <span class="card__name">{game.name}</span>
               <span class="card__line">The same squishy friends in a game for your phone.</span>
               <span class="candy candy--small">Meet the game</span>
@@ -123,3 +134,7 @@ const squishy = item.id.includes('squish');
     )}
   </div>
 </Base>
+
+<script>
+  import '../../scripts/gallery';
+</script>

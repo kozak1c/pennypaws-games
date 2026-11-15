@@ -73,43 +73,29 @@
     line-height: 1.4;
   }
 
-  /* Rails swipe on phones and sit in one row on desktop. */
+  /* Rails: a grid of tiles on phones and tablets (two across, three on a tablet) and one row on
+     desktop. Nothing scrolls sideways and nothing is cut off at the edge. */
   .rail {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: min(76%, 19rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: clamp(0.75rem, 1.6vw, 1.25rem);
-    margin-inline: calc(-1 * var(--pad));
-    padding: 0.25rem var(--pad) 1rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--pad);
-    scrollbar-width: none;
-    overscroll-behavior-x: contain;
+    padding-bottom: 0.5rem;
   }
 
-  .rail::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media (hover: hover) and (pointer: fine) and (max-width: 59.99rem) {
-    .rail,
-    .shots,
-    .pages {
-      scrollbar-width: thin;
-      scrollbar-color: rgb(255 255 255 / 0.7) transparent;
+  /* On a tablet the rails count across the way desktop does (four, or three when four would leave
+     one alone), so no tile sits by itself on the last row. */
+  @media (min-width: 40rem) and (max-width: 59.99rem) {
+    .rail {
+      grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
     }
 
-    .rail::-webkit-scrollbar,
-    .shots::-webkit-scrollbar,
-    .pages::-webkit-scrollbar {
-      display: block;
-      height: 0.5rem;
+    .rail--three {
+      --cols: 3;
     }
-  }
 
-  .rail > * {
-    scroll-snap-align: start;
+    .rail--two {
+      --cols: 2;
+    }
   }
 
   @media (min-width: 60rem) {
@@ -131,6 +117,7 @@
       max-width: 46rem;
     }
   }
+
 
   /* A product card: white paper, the listing picture, a price sticker and one button. */
   .card {
@@ -270,16 +257,18 @@
     color: #fff;
   }
 
-  /* Game screenshots in phone frames, on a strip that swipes. */
+  /* Game screenshots in phone frames. On phones and tablets a gallery stage: one phone at a time
+     (two on a tablet), whole and centred, with the row of small pictures under it. */
   .shots {
-    display: flex;
-    gap: clamp(0.75rem, 1.6vw, 1.25rem);
-    margin-inline: calc(-1 * var(--pad));
-    padding: 0.5rem var(--pad) 0.25rem;
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    padding-block: 0.5rem 0.25rem;
     overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scroll-padding-inline: var(--pad);
+    scroll-snap-type: x mandatory;
     scrollbar-width: none;
+    overscroll-behavior-x: contain;
   }
 
   .shots::-webkit-scrollbar {
@@ -287,11 +276,211 @@
   }
 
   .shots figure {
-    flex: none;
-    width: min(58%, 13.5rem);
+    justify-self: center;
+    width: min(66%, 15rem);
     margin: 0;
-    scroll-snap-align: start;
+    scroll-snap-align: center;
     transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+  }
+
+  @media (min-width: 40rem) and (max-width: 59.99rem) {
+    .shots {
+      grid-auto-columns: 50%;
+    }
+  }
+
+  /* On phones and tablets a product is a tile: its picture with the price on it, then its name and
+     what kind of thing it is. The whole tile is the link, so it carries no button. A tile left alone
+     on the last row of two takes the whole row, picture beside words. */
+  @media (max-width: 59.99rem) {
+    .card--item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: 'art' 'name' 'kind';
+      align-content: start;
+      gap: 0.375rem;
+      padding: 0.5rem 0.5rem 0.75rem;
+      border-radius: 1.25rem;
+    }
+
+    .card--item .card__art {
+      grid-area: art;
+      aspect-ratio: 1;
+      margin: 0;
+      border-radius: 0.875rem;
+    }
+
+    .card--item .card__meta {
+      display: contents;
+    }
+
+    .card--item .sticker {
+      grid-area: art;
+      z-index: 2;
+      align-self: start;
+      justify-self: end;
+      margin: 0.4375rem;
+      padding-inline: 0.625rem;
+      font-size: 0.9375rem;
+    }
+
+    .card--item .chip {
+      grid-area: kind;
+      justify-self: start;
+      margin-inline: 0.25rem;
+      padding: 0.0625rem 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .card--item .card__name {
+      grid-area: name;
+      padding-inline: 0.25rem;
+      font-size: 1.0625rem;
+    }
+
+    .card--item .card__line,
+    .card--item .candy {
+      display: none;
+    }
+
+    /* A game is a tile too, led by its app icon; its page has the big picture. */
+    .card--game {
+      gap: 0.5rem;
+      padding: 0.875rem 0.75rem 1rem;
+      border-radius: 1.25rem;
+    }
+
+    .card--game .card__art--wide,
+    .card--game .candy {
+      display: none;
+    }
+
+    .card--game .card__head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.625rem;
+      padding-inline: 0.125rem;
+    }
+
+    .card--game .card__icon {
+      width: 4.5rem;
+    }
+
+    .card--game .card__chips,
+    .card--game .card__line {
+      padding-inline: 0.125rem;
+    }
+
+    .card--game .card__line {
+      font-size: 0.875rem;
+    }
+  }
+
+  @media (max-width: 39.99rem) {
+    .rail > .card--item:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      grid-template-areas: 'art name' 'art kind' 'art line';
+      grid-template-rows: auto auto 1fr;
+      column-gap: 0.875rem;
+    }
+
+    .rail > .card--item:last-child:nth-child(odd) .card__line {
+      display: block;
+      padding-inline: 0.25rem;
+      font-size: 0.875rem;
+    }
+
+    .rail > .card--game:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas: 'head chips' 'head line';
+      align-items: start;
+      column-gap: 1rem;
+    }
+
+    .rail > .card--game:last-child:nth-child(odd) .card__head {
+      grid-area: head;
+    }
+  }
+
+  /* The gallery's row of small pictures: all of them fit, the one showing is lifted and ringed. */
+  .gallery__thumbs {
+    display: flex;
+    justify-content: center;
+    gap: clamp(0.25rem, 1.6vw, 0.5rem);
+    margin-top: 1rem;
+  }
+
+  .gallery__thumbs[hidden] {
+    display: none;
+  }
+
+  .gallery__thumb {
+    position: relative;
+    flex: 0 1 2.375rem;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0.5rem;
+    background: none;
+    cursor: pointer;
+    opacity: 0.6;
+    transition:
+      opacity 0.2s,
+      transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.6);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .gallery__thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: inherit;
+    box-shadow: 0 0.25rem 0.5rem rgb(15 20 51 / 0.3);
+  }
+
+  .gallery__thumb--sheet {
+    flex-basis: 2.75rem;
+    border-radius: 0.25rem;
+  }
+
+  .gallery__thumb--sheet img {
+    background: #fff;
+  }
+
+  .gallery__thumb[aria-current='true'] {
+    opacity: 1;
+    transform: translateY(-0.25rem);
+  }
+
+  .gallery__thumb[aria-current='true'] img {
+    outline: 3px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .gallery__thumb:focus-visible {
+    outline: 3px solid var(--color-sun);
+    outline-offset: 3px;
+  }
+
+  /* The clip's small picture carries a play sign, so it reads as the moving one. */
+  .gallery__thumb--clip::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -40% -50%;
+    border-block: 0.4rem solid transparent;
+    border-left: 0.625rem solid #fff;
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.5));
+  }
+
+  @media (min-width: 60rem) {
+    .gallery__thumbs {
+      display: none;
+    }
   }
 
   .shots figcaption {
@@ -315,6 +504,7 @@
 
   @media (min-width: 60rem) {
     .shots {
+      display: flex;
       justify-content: space-between;
       margin-inline: 0;
       padding-inline: 0;
@@ -381,6 +571,81 @@
 
     .bookcard:hover .sheet--3 {
       transform: translateX(76%) rotate(14deg);
+    }
+  }
+
+  /* On phones and tablets a paperback stands beside its words: the cover on the left; its name,
+     price, Buy button and the print-at-home link on the right; the blurb and facts underneath (left
+     out on the home page). The peeking pages need more room than that column has. */
+  @media (max-width: 59.99rem) {
+    .bookcard {
+      grid-template-columns: minmax(0, min(40%, 12rem)) minmax(0, 1fr);
+      grid-template-areas: 'show name' 'show buy' 'show print' 'blurb blurb' 'facts facts';
+      grid-template-rows: auto auto 1fr;
+      column-gap: 1rem;
+      row-gap: 0.625rem;
+    }
+
+    .bookcard--compact {
+      grid-template-areas: 'show name' 'show buy' 'show print';
+    }
+
+
+    .bookcard__show {
+      grid-area: show;
+      align-self: start;
+      height: auto;
+      margin: 0;
+    }
+
+    .bookcard__show .cover {
+      width: 100%;
+      height: auto;
+      transform: rotate(-2deg);
+    }
+
+    .bookcard__show .cover img {
+      width: 100%;
+      height: auto;
+      border-radius: 0.25rem;
+      box-shadow: 0 0.5rem 1rem rgb(30 37 80 / 0.3);
+    }
+
+    .bookcard__show .sheet {
+      display: none;
+    }
+
+    .bookcard__name {
+      grid-area: name;
+      font-size: 1.25rem;
+    }
+
+    .bookcard:not(.bookcard--compact) .bookcard__blurb {
+      grid-area: blurb;
+    }
+
+    .bookcard:not(.bookcard--compact) .bookcard__facts {
+      grid-area: facts;
+    }
+
+    .bookcard__buy {
+      grid-area: buy;
+      margin: 0;
+    }
+
+    .bookcard__buy .sticker {
+      font-size: 0.9375rem;
+    }
+
+    .bookcard__buy .candy {
+      padding-inline: 1rem;
+      font-size: 1rem;
+    }
+
+    .bookcard__print {
+      grid-area: print;
+      align-self: start;
+      font-size: 0.9375rem;
     }
   }
 

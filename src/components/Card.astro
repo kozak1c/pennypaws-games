@@ -17,7 +17,7 @@ interface Props {
 const { href, name, line, price, cover, button, kind, tone = 'red' } = Astro.props;
 ---
 
-<a class="card" href={href}>
+<a class="card card--item" href={href}>
   <span class="card__art">
     <Image class="card__blur" src={cover.src} alt="" width={120} aria-hidden="true" />
     <Image src={cover.src} alt={cover.alt} width={640} widths={[360, 640]} sizes="(min-width: 60rem) 18rem, 72vw" />

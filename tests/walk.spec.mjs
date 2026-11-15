@@ -5,7 +5,9 @@
 //   * it answers 200 and has a title and one <h1>
 //   * the browser reports no console error, no failed request and no request to another origin
 //     (a page that broke the security header, say with an inline script, shows up here)
-//   * nothing is wider than the screen (no sideways scrolling on a phone)
+//   * nothing is wider than the screen (no sideways scrolling on a phone), and nothing inside the
+//     page scrolls sideways either, except a gallery stage, which must have its row of small
+//     pictures showing (one per picture) so a visitor sees there is more and can pick it
 //   * the accessibility scan (axe, WCAG 2.1 A and AA plus best practices) finds nothing
 //   * screenshots are saved to test-results/walk/ (whole page) and test-results/walk/fold/
 //     (the top of the page; the release pull request shows those)
@@ -85,6 +87,20 @@ for (const address of pages) {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow, "the page is wider than the screen").toBeLessThanOrEqual(0);
 
+    // A strip that hides cards past the edge is not allowed: content is a grid, or a gallery with
+    // its row of small pictures.
+    const sideways = await page.evaluate(() => [...document.querySelectorAll("body *")]
+      .filter((e) => { const s = getComputedStyle(e); return /auto|scroll/.test(s.overflowX) && e.scrollWidth > e.clientWidth + 1; })
+      .map((e) => {
+        const gallery = e.closest("[data-gallery]");
+        const bar = gallery?.querySelector("[data-gallery-thumbs]");
+        const ok = e.hasAttribute("data-gallery-stage") && bar && !bar.hidden && getComputedStyle(bar).display !== "none"
+          && bar.querySelectorAll("button").length === e.children.length;
+        return ok ? null : `${e.tagName.toLowerCase()}.${[...e.classList].join(".")}`;
+      })
+      .filter(Boolean));
+    expect(sideways, "something scrolls sideways without a gallery's row of small pictures").toEqual([]);
+
     // The whole page, and the top of it as a visitor first sees it (the release pull request shows that one).
     const shot = `${testInfo.project.name}-${slug(address)}.png`;
     await page.screenshot({ path: path.join(root, "test-results", "walk", shot), fullPage: true });
@@ -94,6 +110,26 @@ for (const address of pages) {
     expect(problems, "browser problems").toEqual([]);
   });
 }
+
+test("a gallery's small pictures bring their picture into view", async ({ page }, testInfo) => {
+  lightOnly(testInfo);
+  await page.goto("/squishy-bop/");
+  const stage = page.locator("[data-gallery-stage]").first();
+  const thumbs = page.locator("[data-gallery-thumbs]").first().locator("button");
+  test.skip(!(await thumbs.first().isVisible()), "every picture is in view at this size; the row is hidden");
+  const count = await thumbs.count();
+  expect(count).toBeGreaterThan(1);
+  await expect(thumbs.first()).toHaveAttribute("aria-current", "true");
+  await thumbs.nth(count - 1).click();
+  await expect(thumbs.nth(count - 1)).toHaveAttribute("aria-current", "true");
+  await expect(thumbs.first()).toHaveAttribute("aria-current", "false");
+  // Once the smooth scroll settles, the last picture is the one in the middle of the stage.
+  await expect.poll(() => stage.evaluate((el) => {
+    const last = el.children[el.children.length - 1].getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    return Math.abs(last.left + last.width / 2 - (box.left + box.width / 2));
+  }), { message: "the picture is centred in the stage" }).toBeLessThan(4);
+});
 
 test("the dark pass still covers the pages that have a dark style", async () => {
   for (const p of ["/squishy-bop/privacy/", "/plush-hour/privacy/", "/giggle-bomb/privacy/"]) {
