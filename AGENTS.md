@@ -1,5 +1,7 @@
 # Penny Paws Games site
 
+## What this repo is
+
 The static site at pennypawsgames.com and the pipeline that releases it. This repository is
 **public**: write every file, commit message and pull request as something anyone may read.
 
@@ -7,7 +9,7 @@ The plan this implements is tracker task PAWS-001 (hosting, releases, rollback, 
 Read it before changing hosting, branches or deploys. Operating steps are in
 [docs/runbook.md](docs/runbook.md): read it when deploying, rolling back, or when a check is red.
 
-## What is served
+### What is served
 
 The site is an Astro project (`astro.config.mjs`, `src/`, `public/`) built into `dist/` by
 `npm run build`. Cloudflare serves `dist/` as a static-assets Worker with no code in front of
@@ -51,6 +53,10 @@ workflow); report it. Going forward again is the owner's call.
 
 ## Commands
 
+`paws.toml` names this repo's four standard commands for the shared Penny Paws tools (`check` is
+`npm run check`, `gate` is `npm run check:all`, `release` lists the open release pull request, `status`
+runs the health check against the live site).
+
 | Command | What it does |
 |---|---|
 | `npm ci` | install the pinned tools |
@@ -71,7 +77,9 @@ A worktree inside this checkout (such as `.local/wt-<name>`) also needs `npm ci`
 checkout that holds it: Vite finds the outer checkout's `tsconfig.json` too, and without that
 checkout's `node_modules` the build stops at "Tsconfig not found astro/tsconfigs/strict".
 
-## The never-break list
+## Rules
+
+### The never-break list
 
 `ops/never-break.toml` lists what must keep answering: `/app-ads.txt` byte for byte (AdMob),
 each privacy page with its title, the home page, the section and game pages, the security headers, no script from
@@ -83,7 +91,7 @@ Add an entry whenever an address is given to an outside party (a store listing, 
 network, a printed product). Removing or loosening an entry needs the owner's say-so, in the
 pull request.
 
-## Product facts come from the feed
+### Product facts come from the feed
 
 No product fact is typed in this repository. `src/data/feed.json` is the public feed: every game,
 printable and book the site may name, with its name, price, store address, status, counts and
@@ -123,7 +131,7 @@ lives, and the next feed carries it.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
 - `tests/feed.test.mjs` fails if a page or data file types a price, a game's ages or a product's store address.
 
-## Privacy pages
+### Privacy pages
 
 The words of a privacy page change only after an independent privacy review: a second
 reviewer who did not write the change checks it against the law, against what it commits the
@@ -134,7 +142,7 @@ built copy is the same bytes; update the hash in the same pull request, after th
 Moving or restyling a page without changing its words still changes the hash: say so in the
 pull request.
 
-## Looking at a visible change
+### Looking at a visible change
 
 `ci` proves the pages load, fit the screen and pass the accessibility scan. It cannot judge
 whether a page makes sense. For a change a visitor can see (a new page, new layout, new
@@ -142,7 +150,7 @@ navigation), have an independent reviewer walk the real pages in a browser at ph
 desktop sizes before marking the pull request ready, and fix what they find. Look at the
 screenshots in `test-results/walk/` yourself too.
 
-## Public-repository rules
+### Public-repository rules
 
 - Secrets live only in GitHub environment secrets. The repository holds none, and no
   workflow prints one. `.env` files stay out of git.
@@ -165,6 +173,7 @@ screenshots in `test-results/walk/` yourself too.
 | `dist/` | the build, never committed; what the Worker serves |
 | `wrangler.jsonc` | the two Workers (production, staging), serving `dist/` |
 | `ops/` | the post-build step, the allow-list, the health check, the never-break list, the local-server helpers |
+| `paws.toml` | this repo's four standard commands for the shared Penny Paws tools |
 | `tests/` | unit tests, configuration rules, the security policy of the built pages, the browser walk |
 | `.github/workflows/` | `ci`, `preview`, `staging`, `release-pr`, `release-guard`, `release`, `rollback`, `watchdog` (the live check from GitHub, twice an hour) |
 | `docs/runbook.md` | deploy, roll back, a red check, turning deploys on, the domain |
