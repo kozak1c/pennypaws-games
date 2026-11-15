@@ -12,6 +12,7 @@
 import type { ImageMetadata } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import covers from './covers.json';
+import shelf from './shelf.json';
 
 const art = import.meta.glob<{ default: ImageMetadata }>('../assets/**/*.{webp,png}', { eager: true });
 const img = (path: string): ImageMetadata => {
@@ -331,8 +332,9 @@ export interface Book {
   seasonal?: boolean;
 }
 
-/** The site's words for a book; the shelf holds the books named here, in this order. Its cover is
- *  not typed here: it is the front of the cover uploaded to Amazon, from the feed. */
+/** The site's words for a book on the shelf (src/data/shelf.json names the shelf, in order; a book
+ *  there without words here shows the feed's subtitle). Its cover is not typed here: it is the
+ *  front of the cover uploaded to Amazon, from the feed. */
 interface BookWords {
   line?: string;
   blurb?: string;
@@ -371,17 +373,20 @@ const bookWords: Record<string, BookWords> = {
   },
 };
 
-/** Books the feed names that the site has no words for yet. They are left off the shelf. */
-export const booksWithoutWords = feedBooks.filter((b) => !bookWords[b.id]).map((b) => b.id);
-if (booksWithoutWords.length) {
-  console.warn(`[feed] no shelf words yet, so not on the shelf: ${booksWithoutWords.map((id) => `book ${id}`).join(', ')}`);
+/** Books the feed names that are not on the shelf (src/data/shelf.json). */
+export const booksOffShelf = feedBooks.filter((b) => !shelf.books.includes(b.id)).map((b) => b.id);
+if (booksOffShelf.length) {
+  console.warn(`[feed] not on the shelf (src/data/shelf.json): ${booksOffShelf.map((id) => `book ${id}`).join(', ')}`);
+}
+for (const id of Object.keys(bookWords)) {
+  if (!shelf.books.includes(id)) throw new Error(`Book "${id}" has words in catalog.ts but is not in src/data/shelf.json`);
 }
 
 export const books: Book[] = inOrder(
-  feedBooks.filter((b) => bookWords[b.id]),
-  Object.keys(bookWords),
+  feedBooks.filter((b) => shelf.books.includes(b.id)),
+  shelf.books,
 ).map((b) => {
-  const { peek, ...text } = bookWords[b.id];
+  const { peek, ...text } = bookWords[b.id] ?? {};
   const pages = feedPrintables.find((p) => p.id === b.printable);
   checkNumbers(`Book "${b.id}"`, text, [saidOfBook(b), pages ? said(pages) : []]);
   const subtitle = b.subtitle ? smart(b.subtitle) : '';

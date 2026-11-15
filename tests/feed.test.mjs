@@ -80,9 +80,11 @@ test("no page or data file types a price, a game's ages or a product's store add
 });
 
 test("each printable's cover and each book's cover is a picture the feed names", async () => {
-  const pictures = await wanted();
-  assert.equal(pictures.length, feed.printables.length + feed.books.length);
-  for (const book of feed.books) assert.ok(pictures.includes(book.cover), `book ${book.id} has no cover fetched`);
+  const pictures = (await wanted()).map((p) => p.sha256);
+  const shelf = JSON.parse(readFileSync(path.join(root, "src/data/shelf.json"), "utf8")).books;
+  const onShelf = feed.books.filter((b) => shelf.includes(b.id));
+  assert.equal(pictures.length, feed.printables.length + onShelf.length, "a cover only for each printable and each book on the shelf");
+  for (const book of onShelf) assert.ok(pictures.includes(book.cover.sha256), `book ${book.id} has no cover fetched`);
 });
 
 // A book's cover is the front of the cover file uploaded to Amazon, which the feed carries with
@@ -92,7 +94,7 @@ test("each printable's cover and each book's cover is a picture the feed names",
 test("a book's cover comes from the feed and from nowhere else", () => {
   assert.ok(!existsSync(path.join(root, "src/assets/books")), "src/assets/books/ is back; book covers come from the feed");
   const catalog = readFileSync(path.join(root, "src/data/catalog.ts"), "utf8");
-  const words = catalog.slice(catalog.indexOf("const bookWords"), catalog.indexOf("export const booksWithoutWords"));
+  const words = catalog.slice(catalog.indexOf("const bookWords"), catalog.indexOf("export const booksOffShelf"));
   assert.ok(words.length > 0, "src/data/catalog.ts no longer has bookWords where this test looks");
   assert.doesNotMatch(words, /\bcover\s*:/, "bookWords types a cover; book covers come from the feed");
   assert.doesNotMatch(words, /\.(webp|png|jpe?g|avif)\b/, "bookWords names an image file");
@@ -119,6 +121,7 @@ test("a picture that does not match the feed's SHA-256 is refused, and a matchin
   };
   writeFileSync(path.join(base, "src/data/feed.json"), JSON.stringify({ printables: [{ id: "toy", images: [image] }] }));
   writeFileSync(path.join(base, "src/data/covers.json"), "{}");
+  writeFileSync(path.join(base, "src/data/shelf.json"), JSON.stringify({ books: [] }));
   const answer = (bytes) => async () => ({ ok: true, status: 200, arrayBuffer: async () => bytes });
   const quiet = { base, log: () => {} };
 
@@ -138,6 +141,7 @@ test("a picture address off the media bucket is refused", async () => {
   const image = { url: "https://example.org/p/toy/abc-01_listing.jpg", sha256: "0".repeat(64) };
   writeFileSync(path.join(base, "src/data/feed.json"), JSON.stringify({ printables: [{ id: "toy", images: [image] }] }));
   writeFileSync(path.join(base, "src/data/covers.json"), "{}");
+  writeFileSync(path.join(base, "src/data/shelf.json"), JSON.stringify({ books: [] }));
   await assert.rejects(fetchFeedImages({ base, log: () => {}, get: async () => assert.fail("fetched") }), /Not a media bucket address/);
 });
 
