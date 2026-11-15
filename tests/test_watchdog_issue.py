@@ -44,7 +44,7 @@ class OwnAlertOnly(unittest.TestCase):
 
 
 class Main(unittest.TestCase):
-    def run_main(self, ok, listed):
+    def run_main(self, ok, listed, owner="the-owner"):
         calls = []
 
         def fake(args):
@@ -54,7 +54,7 @@ class Main(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             report = Path(d) / "health.md"
             report.write_text("FAIL exact /app-ads.txt: HTTP 404\n", encoding="utf-8")
-            code = w.main(["true" if ok else "false", str(report), "https://example.test/run/1"], run=fake, now=NOW)
+            code = w.main(["true" if ok else "false", str(report), "https://example.test/run/1"], run=fake, now=NOW, owner=owner)
         return code, calls
 
     def test_a_failure_opens_the_issue_with_the_report_and_the_run(self):
@@ -62,8 +62,15 @@ class Main(unittest.TestCase):
         self.assertEqual(code, 0)
         create = calls[-1]
         self.assertEqual(create[:4], ["issue", "create", "--title", w.TITLE])
-        self.assertIn("FAIL exact /app-ads.txt: HTTP 404", create[-1])
-        self.assertIn("https://example.test/run/1", create[-1])
+        text = create[create.index("--body") + 1]
+        self.assertIn("FAIL exact /app-ads.txt: HTTP 404", text)
+        self.assertIn("https://example.test/run/1", text)
+
+    def test_the_new_issue_is_assigned_to_the_owner_so_github_emails_it(self):
+        _, calls = self.run_main(False, [])
+        self.assertEqual(calls[-1][-2:], ["--assignee", "the-owner"])
+        _, calls = self.run_main(False, [], owner="")
+        self.assertNotIn("--assignee", calls[-1])
 
     def test_a_stranger_cannot_silence_the_alert(self):
         _, calls = self.run_main(False, [issue(login="a-stranger", hours_ago=0.1)])

@@ -6,7 +6,7 @@
 #
 # When the check fails (twice, a minute apart, so one blip from a runner is not an outage) it
 # opens the issue "[watchdog] pennypawsgames.com is failing its health check" with the report.
-# GitHub emails the owner. While the site stays down it adds a comment at most every six hours,
+# The issue is assigned to the repository's owner, so GitHub emails it. While the site stays down it adds a comment at most every six hours,
 # and it closes the issue with a comment when the check passes again. The run itself fails
 # while the site is failing, so the Actions tab shows it too.
 #
