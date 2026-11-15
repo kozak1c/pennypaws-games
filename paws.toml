@@ -1,0 +1,12 @@
+# The four standard commands every Penny Paws repository has, for the shared Penny Paws tools.
+kind = "site"
+id = "pennypaws-games"
+
+[commands]
+# What the ci check runs except the browser walk.
+check = "npm run check"
+# Everything ci runs, the browser walk included.
+gate = "npm run check:all"
+# Going live is the owner's merge of the draft release pull request from staging into main.
+release = "gh pr list --repo kozak1c/pennypaws-games --base main --head staging --state open"
+status = "python ops/health.py https://pennypawsgames.com"
