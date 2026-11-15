@@ -131,7 +131,7 @@ export default function Door({
         onFocus={() => hover.set(1)}
         onBlur={() => hover.set(0)}
       >
-        <motion.span aria-hidden="true" className="door__glare" style={{ background: glare }} />
+        <motion.span aria-hidden="true" className="door__glare" style={{ background: glare, opacity: lifted }} />
         <span className="door__label">{label}</span>
         <span className={`door__sub ${subClass}`}>{sub}</span>
         {art.map((item) => (

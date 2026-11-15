@@ -128,9 +128,9 @@ export const printables: Printable[] = [
       src: img('printables/squishy-bundle/01_listing.webp'),
       alt: 'The squishy bundle: 70 pages of coloring and paper crafts',
     },
-    facts: ['70 pages', 'Three sets in one', 'Instant download'],
+    facts: ['50 pages to color', '20 paper squishies to make', 'Instant download'],
     get: [
-      'Squishy coloring pages: 25 pages, plus 3 paper squishies to make',
+      'Squishy coloring pages: 25 pages',
       'Squishy Christmas coloring pages: 25 pages',
       'Paper squishies: 20 to color, cut, tape, stuff and squish',
       'A fully colored example of every coloring page',
@@ -179,7 +179,7 @@ export const printables: Printable[] = [
     get: [
       'A warm-up case: 48 elves and 8 clues, about 10 minutes',
       'The main case: a roster of 4,000 elves and 16 clues in three chapters',
-      'Hints and the solution, each in its own file',
+      'Hints and the solution, each in its own PDF',
       'A short case briefing video',
     ],
     sheets: [],

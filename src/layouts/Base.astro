@@ -83,6 +83,7 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
             stopped.add(clip);
             clip.pause();
           }
+          clip.parentElement?.toggleAttribute('data-paused', stopped.has(clip));
         };
         clip.tabIndex = 0;
         clip.title = 'Tap to pause or play';

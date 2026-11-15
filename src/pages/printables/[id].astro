@@ -51,12 +51,12 @@ const squishy = item.id.includes('squish');
               <span class="sheet"><Image src={item.pair.blank.src} alt={item.pair.blank.alt} width={420} /></span>
               <span class="sheet"><Image src={item.pair.colored.src} alt={item.pair.colored.alt} width={420} /></span>
             </div>
-            <figcaption class="font-extrabold">{item.pair.caption}</figcaption>
+            <figcaption class="text-[1.1875rem] leading-tight font-extrabold">{item.pair.caption}</figcaption>
           </figure>
           {item.made && (
             <figure class="grid gap-3">
               <Image class="w-full rounded-[1rem] shadow-[0_0.75rem_1.5rem_rgb(30_37_80/0.3)]" src={item.made.pic.src} alt={item.made.pic.alt} width={720} />
-              <figcaption class="font-extrabold">{item.made.caption}</figcaption>
+              <figcaption class="text-[1.1875rem] leading-tight font-extrabold">{item.made.caption}</figcaption>
             </figure>
           )}
         </div>
