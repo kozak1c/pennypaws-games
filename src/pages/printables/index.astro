@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+import { printables, stores } from '../../data/catalog';
+
+const everyday = printables.filter((p) => !p.seasonal);
+const season = printables.filter((p) => p.seasonal);
+// Three across, or four when three would leave one card alone on the last row.
+const rail = (n: number) => (n % 3 === 1 ? 'rail' : 'rail rail--three');
+---
+
+<Base
+  title="Printables | Penny Paws Games"
+  description="Coloring pages, paper crafts and mystery games to print at home. Buy once and print as often as you like."
+  section="printables"
+>
+  <div class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.875rem,2vw,1.5rem)] pb-14">
+    <section class="tray tray--heart" aria-labelledby="h-printables">
+      <div class="tray__head">
+        <h1 class="tray__title" id="h-printables">Printables</h1>
+        <p class="tray__line">Coloring pages, paper crafts and mystery games. Buy once, print at home as often as you like.</p>
+      </div>
+      <div class={rail(everyday.length)}>
+        {everyday.map((p) => (
+          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
+        ))}
+      </div>
+    </section>
+
+    <section class="tray tray--leaf" aria-labelledby="h-christmas">
+      <div class="tray__head">
+        <h2 class="tray__title" id="h-christmas">Ready for Christmas</h2>
+        <p class="tray__line">Print them tonight and they are ready for the morning.</p>
+      </div>
+      <div class={rail(season.length)}>
+        {season.map((p) => (
+          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
+        ))}
+      </div>
+    </section>
+
+    <section class="tray tray--paper" aria-labelledby="h-how">
+      <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-how">How printables work</h2>
+      <p class="max-w-[38rem] text-[1.0625rem] font-bold text-navy-soft">
+        You buy a printable in our Etsy shop and download it straight away. Print it at home as many times as you like.
+      </p>
+      <a class="candy candy--red justify-self-start" href={stores.etsy}>Our shop on Etsy</a>
+    </section>
+  </div>
+</Base>

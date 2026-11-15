@@ -1,0 +1,29 @@
+---
+// One product: the listing picture on white paper, what kind of thing it is, its price and one button.
+// The whole card is the link; the button says where it goes.
+import { Image } from 'astro:assets';
+import type { Pic } from '../data/catalog';
+interface Props {
+  href: string;
+  name: string;
+  line: string;
+  price: string;
+  cover: Pic;
+  button: string;
+  /** "Print at home" or "Paperback": a printable and its paperback can share a name and a cover. */
+  kind: string;
+  tone?: 'red' | 'yellow';
+}
+const { href, name, line, price, cover, button, kind, tone = 'red' } = Astro.props;
+---
+
+<a class="card" href={href}>
+  <span class="card__art">
+    <Image class="card__blur" src={cover.src} alt="" width={120} aria-hidden="true" />
+    <Image src={cover.src} alt={cover.alt} width={640} widths={[360, 640]} sizes="(min-width: 60rem) 18rem, 72vw" />
+  </span>
+  <span class="card__meta"><span class="chip">{kind}</span><span class="sticker sticker--plain">{price}</span></span>
+  <span class="card__name">{name}</span>
+  <span class="card__line">{line}</span>
+  <span class:list={['candy candy--small', `candy--${tone}`]}>{button}</span>
+</a>

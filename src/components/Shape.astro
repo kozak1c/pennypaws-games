@@ -1,0 +1,32 @@
+---
+// The flat vector shapes from the brand kit, for sizes where the clay render is too small.
+interface Props {
+  name: 'heart' | 'circle' | 'triangle' | 'square' | 'star' | 'check' | 'back' | 'out';
+}
+const { name } = Astro.props;
+---
+
+{name === 'heart' && (
+  <svg class="shape" viewBox="44 90 112 88" aria-hidden="true"><path fill="#ff5a5f" d="M100 176C64 156 46 134 46 115c0-14 11-23 24-23 12 0 23 6 30 17 7-11 18-17 30-17 13 0 24 9 24 23 0 19-18 41-54 61z" /></svg>
+)}
+{name === 'circle' && (
+  <svg class="shape" viewBox="0 0 42 42" aria-hidden="true"><circle cx="21" cy="21" r="21" fill="#ffc233" /></svg>
+)}
+{name === 'triangle' && (
+  <svg class="shape" viewBox="45 16 56 50" aria-hidden="true"><path fill="#2fbf71" stroke="#2fbf71" stroke-width="8" stroke-linejoin="round" d="M73 22l22 38H51z" /></svg>
+)}
+{name === 'square' && (
+  <svg class="shape" viewBox="103 18 48 48" aria-hidden="true"><rect x="109" y="24" width="36" height="36" rx="8" fill="#2e9bff" transform="rotate(10 127 42)" /></svg>
+)}
+{name === 'star' && (
+  <svg class="shape" viewBox="-25 -26 50 48" aria-hidden="true"><path fill="#8b5cf6" stroke="#8b5cf6" stroke-width="6" stroke-linejoin="round" d="M0-22 6.2-8.5 20.9-6.8 10 3.2 12.9 17.8 0 10.5-12.9 17.8-10 3.2-20.9-6.8-6.2-8.5z" /></svg>
+)}
+{name === 'check' && (
+  <svg class="shape shape--line" viewBox="0 0 20 20" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" d="M4 10.5l4 4 8-9" /></svg>
+)}
+{name === 'back' && (
+  <svg class="shape shape--line" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M10 3L5 8l5 5" /></svg>
+)}
+{name === 'out' && (
+  <svg class="shape shape--line" viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M6 3h7v7M13 3L4 12" /></svg>
+)}

@@ -1,0 +1,26 @@
+---
+// One game on a rail: its title art, its app icon, what it is in a line, and where it stands.
+import { Image } from 'astro:assets';
+import type { GameCard } from '../data/games';
+interface Props {
+  game: GameCard;
+  button?: string;
+}
+const { game, button = 'Take a look' } = Astro.props;
+---
+
+<a class="card" href={`/${game.id}/`}>
+  <span class="card__art card__art--wide">
+    <Image src={game.feature.src} alt={game.feature.alt} width={1024} widths={[480, 800, 1024]} sizes="(min-width: 60rem) 24rem, 72vw" />
+  </span>
+  <span class="flex items-center gap-3 px-2">
+    <Image class="w-12 rounded-[22%] shadow-[0_0.25rem_0.5rem_rgb(15_20_51/0.25)]" src={game.icon.src} alt="" width={96} />
+    <span class="card__name px-0">{game.name}</span>
+  </span>
+  <span class="flex flex-wrap gap-1.5 px-2">
+    <span class="chip chip--navy text-[0.8125rem]">{game.status}</span>
+    {game.forWhom && <span class="chip text-[0.8125rem]">{game.forWhom}</span>}
+  </span>
+  <span class="card__line">{game.tagline}</span>
+  <span class="candy candy--small">{button}</span>
+</a>

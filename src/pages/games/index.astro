@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import GameCard from '../../components/GameCard.astro';
+import { allGames } from '../../data/games';
+---
+
+<Base
+  title="Games | Penny Paws Games"
+  description="Games from Penny Paws: Squishy Bop!, a plush block puzzle, with Plush Hour and Giggle Bomb coming soon."
+  section="games"
+>
+  <div class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.875rem,2vw,1.5rem)] pb-14">
+    <section class="tray" aria-labelledby="h-games">
+      <div class="tray__head">
+        <h1 class="tray__title" id="h-games">Games</h1>
+        <p class="tray__line">Kind, colorful games for phones and tablets. One is in testing now and two more are on the way.</p>
+      </div>
+      <div class="rail rail--three">
+        {allGames.map((game) => (
+          <GameCard game={game} button={game.id === 'squishy-bop' ? 'Meet Squishy Bop!' : 'Take a look'} />
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

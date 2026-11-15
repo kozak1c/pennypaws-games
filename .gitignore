@@ -8,3 +8,12 @@ playwright-report/
 .env
 .env.*
 .dev.vars
+
+# Astro build output and cache
+dist/
+.astro/
+.claude/
+.local-shots/
+
+# Product pictures fetched from the media bucket at build time (ops/feed-images.mjs)
+src/assets/feed/
