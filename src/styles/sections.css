@@ -355,18 +355,13 @@
       display: none;
     }
 
-    .card--game .card__head {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.625rem;
-      padding-inline: 0.125rem;
+    /* The head, icon and chips are laid out by max-desk: utilities in GameCard.astro (utilities
+       outrank this layer). A chip may wrap here: the tile is narrower than "For teens and adults". */
+    .card--game .card__chips .chip {
+      white-space: normal;
+      text-wrap: balance;
     }
 
-    .card--game .card__icon {
-      width: 4.5rem;
-    }
-
-    .card--game .card__chips,
     .card--game .card__line {
       padding-inline: 0.125rem;
     }
@@ -576,21 +571,20 @@
   }
 
   /* On phones and tablets a paperback stands beside its words: the cover on the left; its name,
-     price, Buy button and the print-at-home link on the right; the blurb and facts underneath (left
-     out on the home page). The peeking pages need more room than that column has. */
+     price and the print-at-home link on the right; the Buy button across the card under them; then
+     the blurb and facts (left out on the home page). The peeking pages need more room than that
+     column has. The price and button sit in .bookcard__buy, which is display: contents here
+     (max-desk:contents in BookCard.astro), so each takes its own place in the grid. */
   @media (max-width: 59.99rem) {
     .bookcard {
       grid-template-columns: minmax(0, min(40%, 12rem)) minmax(0, 1fr);
-      grid-template-areas: 'show name' 'show buy' 'show print' 'blurb blurb' 'facts facts';
+      grid-template-areas: 'show name' 'show price' 'show print' 'cta cta' 'blurb blurb' 'facts facts';
       grid-template-rows: auto auto 1fr;
-      column-gap: 1rem;
-      row-gap: 0.625rem;
     }
 
     .bookcard--compact {
-      grid-template-areas: 'show name' 'show buy' 'show print';
+      grid-template-areas: 'show name' 'show price' 'show print' 'cta cta';
     }
-
 
     .bookcard__show {
       grid-area: show;
@@ -629,24 +623,22 @@
       grid-area: facts;
     }
 
-    .bookcard__buy {
-      grid-area: buy;
-      margin: 0;
-    }
-
     .bookcard__buy .sticker {
+      grid-area: price;
+      justify-self: start;
+      align-self: start;
       font-size: 0.9375rem;
     }
 
     .bookcard__buy .candy {
-      padding-inline: 1rem;
-      font-size: 1rem;
+      grid-area: cta;
+      justify-content: center;
+      margin-top: 0.25rem;
     }
 
     .bookcard__print {
       grid-area: print;
       align-self: start;
-      font-size: 0.9375rem;
     }
   }
 
