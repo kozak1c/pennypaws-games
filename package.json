@@ -1,19 +1,19 @@
 {
   "name": "pennypaws-site",
   "private": true,
-  "description": "Checks and deploy tooling for pennypawsgames.com. The site itself is the static files listed in ops/public-files.txt.",
+  "description": "The Penny Paws site (Astro, built to dist/) and the checks and deploy tooling that release it. The public files are listed in ops/public-files.txt.",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.23.4"
   },
   "scripts": {
+    "build": "astro build && node ops/postbuild-cli.mjs",
     "check": "node ops/check.mjs",
-    "walk": "playwright test",
+    "walk": "npm run build && playwright test",
     "check:all": "node ops/check.mjs && playwright test",
-    "dev": "wrangler dev --env staging --ip 127.0.0.1 --port 8787",
-    "health": "node ops/with-site.mjs -- python ops/health.py {site} --expect staging",
+    "dev": "npm run build && wrangler dev --env staging --ip 127.0.0.1 --port 8787",
+    "health": "npm run build && node ops/with-site.mjs -- python ops/health.py {site} --expect staging",
     "site:dev": "astro dev --port 4391",
-    "site:build": "astro build",
     "site:preview": "astro preview --port 4392"
   },
   "devDependencies": {

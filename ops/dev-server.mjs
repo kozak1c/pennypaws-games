@@ -1,5 +1,7 @@
 // How the local copy of the site is started: one place, used by ops/with-site.mjs and by
 // playwright.config.mjs, so the checks and the browser walk run against the same server.
+// It serves the build in dist/ (wrangler.jsonc, "assets"), so build first: npm run build.
+import { existsSync } from "node:fs";
 import { createServer } from "node:net";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -8,6 +10,13 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const wrangler = path.join(root, "node_modules", "wrangler", "bin", "wrangler.js");
 
 export const PRODUCTION_HOST = "pennypawsgames.com";
+
+// Stops with a plain message when there is no build to serve.
+export function requireBuild() {
+  if (!existsSync(path.join(root, "dist", "index.html"))) {
+    throw new Error("there is no build in dist/ to serve: run npm run build first");
+  }
+}
 
 // Ports on 127.0.0.1 that nothing is listening on, all different. The checks ask for them
 // each run instead of using fixed numbers: another program on a fixed port (a second local

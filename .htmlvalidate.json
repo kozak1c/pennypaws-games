@@ -5,6 +5,9 @@
     "doctype-style": "off",
     "no-inline-style": "off",
     "tel-non-breaking": "off",
-    "long-title": "off"
+    "long-title": "off",
+    "void-style": "off",
+    "attr-case": ["error", { "style": ["lowercase", "camelcase"] }],
+    "aria-label-misuse": ["error", { "elements": { "exclude": ["video"] } }]
   }
 }

@@ -1,10 +1,18 @@
-# Node and the locked dependencies (wrangler, Playwright, html-validate). Every job that runs
-# repository tooling starts with this, after its own checkout.
+# Node, the locked dependencies (Astro, wrangler, Playwright, html-validate) and the built
+# site in dist/, which is what wrangler serves and deploys. Every job that runs repository
+# tooling starts with this, after its own checkout, so every check, preview and deploy uses a
+# build of exactly the commit it checked out.
 name: Set up
-description: Install Node and the locked npm dependencies.
+description: Install Node and the locked npm dependencies, and build the site.
+inputs:
+  build:
+    description: Build the site into dist/. Only a job that uploads nothing (a rollback, deleting a Preview) may say "false".
+    required: false
+    default: "true"
 runs:
   using: composite
   steps:
+    # Astro needs Node 22.23.4 or later; every Node 24 release is newer.
     - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
       with:
         node-version: 24
@@ -13,3 +21,10 @@ runs:
     - name: Install
       shell: bash
       run: npm ci
+
+    # astro build, then ops/postbuild-cli.mjs (inline scripts into files, and dist/ must match
+    # ops/public-files.txt, or the build fails and nothing deploys).
+    - name: Build
+      if: inputs.build != 'false'
+      shell: bash
+      run: npm run build

@@ -54,7 +54,10 @@ jobs:
         with:
           persist-credentials: false
 
+      # A rollback serves a version Cloudflare already holds; nothing is built or uploaded.
       - uses: ./.github/actions/setup
+        with:
+          build: "false"
 
       - name: Roll back production
         env:

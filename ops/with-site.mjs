@@ -3,7 +3,8 @@
 //   node ops/with-site.mjs -- python ops/health.py {site} --expect staging
 //   node ops/with-site.mjs --as-production -- python ops/health.py {site} --expect production
 //
-// It starts "wrangler dev" (the same asset server Cloudflare runs) on 127.0.0.1, waits until
+// It starts "wrangler dev" (the same asset server Cloudflare runs) on 127.0.0.1, serving the
+// build in dist/ (run npm run build first; npm run check and npm run health do), waits until
 // the home page answers, runs the command with every {site} replaced by the server's address,
 // and always stops the server, also on Windows, where wrangler's child processes outlive a
 // plain kill.
@@ -22,7 +23,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import process from "node:process";
-import { devArgs, freePorts, portInUse } from "./dev-server.mjs";
+import { devArgs, freePorts, portInUse, requireBuild } from "./dev-server.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -56,6 +57,12 @@ async function main() {
     return 2;
   }
   const flags = argv.slice(0, split);
+  try {
+    requireBuild();
+  } catch (err) {
+    console.error(`with-site: ${err.message}`);
+    return 1;
+  }
   const portAt = flags.indexOf("--port");
   const [free, inspectorPort] = await freePorts(2);
   const port = portAt >= 0 ? Number(flags[portAt + 1]) : free;

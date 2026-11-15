@@ -1,6 +1,40 @@
+# The public site: every file the build (dist/) must hold, and nothing else.
+#
+# The Worker serves dist/ (wrangler.jsonc, "assets"). The build (npm run build) fails when dist/
+# holds a file that is not listed here or allowed by the pattern below, or is missing a listed
+# one (ops/postbuild.mjs), and tests/assets.test.mjs proves wrangler would upload exactly this.
+# So a new page or file is public only once its line is here.
+#
+# Each line is a path inside dist/. A line starting with "feed:" names a collection of the
+# product feed (src/data/feed.json) and a path with {id} in it: one path per product. A line
+# starting with "re:" is a regular expression that allows a whole family of files: the build's
+# content-hashed output under _astro/ (scripts, the stylesheet, fonts, pictures, clips), which
+# changes name whenever its content changes.
+# dist/_headers is not listed: wrangler reads it as configuration and never serves it.
+
+# Pages
 index.html
 404.html
-app-ads.txt
+games/index.html
+squishy-bop/index.html
+plush-hour/index.html
+giggle-bomb/index.html
+printables/index.html
+# One page per printable the feed names (src/data/feed.json), at the feed's id. A "feed:" line
+# stands for one path per row of that collection in the feed, so a feed that adds or drops a
+# printable changes this list with it and nothing else.
+feed:printables printables/{id}/index.html
+books/index.html
+grown-ups/index.html
+
+# Privacy policies (copied unchanged from public/; pinned in tests/content.test.mjs)
 squishy-bop/privacy/index.html
 plush-hour/privacy/index.html
 giggle-bomb/privacy/index.html
+
+# Fixed files (copied unchanged from public/)
+app-ads.txt
+favicon.svg
+
+# Hashed build output: _astro/<name>.<hash>.<type>, of the types the pages use.
+re:^_astro/[A-Za-z0-9_.-]+\.[A-Za-z0-9_-]{8,}\.(?:js|css|woff2|webp|avif|png|jpg|svg|mp4)$

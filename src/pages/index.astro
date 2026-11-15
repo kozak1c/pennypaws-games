@@ -44,6 +44,8 @@ const bookArt: Art[] = [
 const seasonBook = books.find((b) => b.seasonal)!;
 const season = printables.filter((p) => p.seasonal);
 const shelf = printables.filter((p) => !p.seasonal);
+// Three across, or four when three would leave one card alone on the last row.
+const shelfRail = shelf.length % 3 === 1 ? 'rail' : 'rail rail--three';
 ---
 
 <Base
@@ -184,7 +186,7 @@ const shelf = printables.filter((p) => !p.seasonal);
         <h2 class="tray__title" id="h-printables"><img src={clay.heart} alt="" />Printables</h2>
         <p class="tray__line">Coloring pages, paper crafts and mystery games. Buy once, print at home as often as you like.</p>
       </div>
-      <div class="rail rail--three">
+      <div class={shelfRail}>
         {shelf.map((p) => (
           <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}

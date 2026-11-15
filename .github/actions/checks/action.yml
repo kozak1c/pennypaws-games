@@ -1,11 +1,13 @@
 # Every check a change must pass. Used by ci.yml (pull requests into staging) and by
 # staging.yml (the merged tree, before it deploys), so both run exactly the same thing.
 #
+#   0. setup: npm ci and npm run build (the site, built into dist/)
 #   1. workflow lint (actionlint, with shellcheck on the run: blocks)
-#   2. npm run check: unit tests, configuration rules, the public-file allow-list, HTML,
-#      links, dry-run deploys of staging and production, and ops/health.py against a local
-#      copy of the site (ops/check.mjs lists the steps)
-#   3. the browser walk at 390 x 844 and 1280 x 800, light and dark, with an accessibility scan
+#   2. npm run check: a fresh build, unit tests, configuration rules, the public-file
+#      allow-list, the security policy, HTML, links, dry-run deploys of staging and production,
+#      and ops/health.py against a local copy of the site (ops/check.mjs lists the steps)
+#   3. the browser walk at 390 x 844 and 1280 x 800, with an accessibility scan (and a dark
+#      pass for the pages that have a dark style)
 #
 # Nothing here needs a secret.
 name: Site checks

@@ -1,0 +1,28 @@
+---
+// A missing page. It says so plainly and offers the four ways back in.
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { brand } from '../data/catalog';
+
+const penny = await getImage({ src: brand.pennyRest, width: 480 });
+---
+
+<Base title="Page not found | Penny Paws Games" description="That page is not here. It may have moved, or the link may be mistyped.">
+  <div class="wrap grid grid-cols-[minmax(0,1fr)] pt-[clamp(0.875rem,2vw,1.5rem)] pb-14">
+    <section class="tray tray--paper items-center desk:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]" aria-labelledby="h-lost">
+      <div class="grid justify-items-start gap-4">
+        <h1 class="tray__title" id="h-lost">Page not found</h1>
+        <p class="max-w-[30rem] text-[clamp(1.125rem,1rem+0.5vw,1.3125rem)] font-bold">
+          That page is not here. It may have moved, or the link may be mistyped.
+        </p>
+        <div class="flex flex-wrap gap-x-3 gap-y-4">
+          <a class="candy" href="/">Go to the home page</a>
+          <a class="candy candy--white" href="/games/">Games</a>
+          <a class="candy candy--white" href="/printables/">Printables</a>
+          <a class="candy candy--white" href="/books/">Books</a>
+        </div>
+      </div>
+      <img class="w-[min(70%,18rem)] justify-self-center" src={penny.src} alt="Penny, a plush golden retriever, holding up a paw" width="707" height="704" />
+    </section>
+  </div>
+</Base>
