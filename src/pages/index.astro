@@ -5,10 +5,12 @@ import Base from '../layouts/Base.astro';
 import Card from '../components/Card.astro';
 import BookCard from '../components/BookCard.astro';
 import GameShots from '../components/GameShots.astro';
+import GameCard from '../components/GameCard.astro';
 import Shape from '../components/Shape.astro';
 import Penny from '../components/Penny.tsx';
 import Door, { type Art } from '../components/Door.tsx';
 import { brand, books, printable, squishyBop as game, stores } from '../data/catalog';
+import { soonGames } from '../data/games';
 import pennySheet from '../assets/brand/penny-highfive.webp?url';
 
 const url = async (src: ImageMetadata, width: number) => (await getImage({ src, width })).src;
@@ -58,7 +60,7 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
         Meet Penny. She’s our dog, and she never turns down a high five.
       </p>
       <div class="cta flex gap-2.5 desk:col-start-1 desk:mt-2 desk:flex-col desk:items-start desk:gap-4 desk:self-start">
-        <a class="candy" href="/squishy-bop/">See our games</a>
+        <a class="candy" href="/games/">See our games</a>
         <a class="candy candy--red" href="/printables/">Shop printables</a>
       </div>
       <div class="order-first w-[min(78%,19rem)] justify-self-center desk:order-none desk:col-start-2 desk:row-span-2 desk:row-start-2 desk:-mt-[15%] desk:-mr-[10%] desk:-mb-8 desk:w-[112%] desk:max-w-[30rem] desk:self-end desk:justify-self-end">
@@ -86,10 +88,10 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
     <div class="grid gap-[inherit] desk:grid-rows-[minmax(0,1.05fr)_minmax(0,1fr)]">
       <Door
         client:load
-        href="/squishy-bop/"
+        href="/games/"
         tone="sky"
         label="Games"
-        sub="Meet Squishy Bop!, our plush block puzzle."
+        sub="Squishy Bop! is here. Plush Hour and Giggle Bomb are on the way."
         subClass="max-w-[min(54%,15rem)]"
         art={gamesArt}
         className="min-h-[15rem]"
@@ -171,6 +173,10 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
       </div>
       <GameShots />
       <a class="candy candy--white justify-self-start" href="/squishy-bop/">Meet Squishy Bop!</a>
+      <h3 class="mt-2 text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]">Coming soon</h3>
+      <div class="rail rail--two">
+        {soonGames.map((soon) => <GameCard game={soon} />)}
+      </div>
     </section>
 
     <section class="tray tray--heart" id="printables" aria-labelledby="h-printables">

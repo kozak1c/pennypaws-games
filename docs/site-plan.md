@@ -96,6 +96,14 @@ cards from top to bottom.
   pages are built on it.
 - Copy: "Meet Penny. She's our dog" stays. Lines that explain the brand name do not.
 
+### Which games are named
+
+Decided by the owner on 2026-11-14, replacing call 3 in section 12: the site names three games.
+Squishy Bop! has its full page. Plush Hour and Giggle Bomb each have a page that says "Coming soon"
+where a store button will go, and never link to a tester sign-up. All three are listed at `/games/`,
+which the Games tab opens. A game that is not out yet uses one shared page layout
+(`src/pages/[game]/index.astro`) and its words come from the game's own store listing.
+
 ### Where the build stands
 
 The home page, the Squishy Bop! page, the printables list with a page per printable, Books and the

@@ -7,6 +7,27 @@
     --glow: rgb(94 31 134 / 0.3);
   }
 
+  .tray--rose {
+    --c1: #c85a9c;
+    --c2: #6f3a8c;
+    --glow: rgb(111 58 140 / 0.3);
+  }
+
+  .tray--sunset {
+    --c1: #e9557b;
+    --c2: #b62d6b;
+    --glow: rgb(182 45 107 / 0.3);
+  }
+
+  /* A game's title art is wide, so its card shows it whole. */
+  .card__art--wide {
+    aspect-ratio: 1024 / 500;
+  }
+
+  .card__art--wide img {
+    object-fit: cover;
+  }
+
   .tray__title .shape {
     width: 0.9em;
     height: 0.9em;
