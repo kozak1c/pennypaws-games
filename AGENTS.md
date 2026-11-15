@@ -64,6 +64,26 @@ Add an entry whenever an address is given to an outside party (a store listing, 
 network, a printed product). Removing or loosening an entry needs the owner's say-so, in the
 pull request.
 
+## Product facts come from the feed
+
+No product fact is typed in this repository. `src/data/feed.json` is the public feed: every game,
+printable and book the site may name, with its name, price, store address, status, counts and
+listing pictures. It is generated from each product's own source and arrives as a pull request
+titled "Feed: ...". Do not edit it by hand: a fact that is wrong is fixed where the product
+lives, and the next feed carries it.
+
+- `src/content.config.ts` reads the feed into the `games`, `printables` and `books` collections
+  and refuses a feed of another schema version or with an address off the known stores.
+- `src/data/catalog.ts` and `src/data/games.ts` join those facts with the site's own words and
+  art. The words may quote a number only if the product's facts hold the same number, and a
+  game's counts are written as `{fact_name}`; the build fails otherwise.
+- A product is on the site because the feed names it. A printable needs nothing else; a book or
+  a game also needs its art here, and the build says which ones are waiting for it.
+- Listing pictures are fetched from `media.pennypawsgames.com` before the build, checked against
+  the SHA-256 in the feed, and served from our own origin (`ops/feed-images.mjs`).
+  `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
+- `tests/feed.test.mjs` fails if a page or data file types a price or a product's store address.
+
 ## Privacy pages
 
 The words of a privacy page change only after an independent privacy review: a second

@@ -1,0 +1,1234 @@
+{
+  "schema_version": 1,
+  "games": [
+    {
+      "id": "giggle-bomb",
+      "name": "Giggle Bomb",
+      "tagline": "Beat the little game, pass the bomb, and don't be holding it when it goes BOOM!",
+      "status": "coming-soon",
+      "page": "/giggle-bomb/",
+      "privacy": "/giggle-bomb/privacy/",
+      "ages": null,
+      "rating": null,
+      "child_directed": true,
+      "price": "free",
+      "price_usd": null,
+      "ads": [
+        "interstitial",
+        "rewarded"
+      ],
+      "ads_personalized": false,
+      "purchases": [
+        {
+          "kind": "one-time"
+        }
+      ],
+      "play_url": null,
+      "tester_url": null,
+      "facts": {
+        "animal_count": 24,
+        "brain_minigame_count": 7,
+        "colour_count": 12,
+        "dare_count_about_player": 12,
+        "dare_count_classic": 62,
+        "dare_count_guessing": 4,
+        "dare_count_pass": 30,
+        "dare_count_timed": 11,
+        "dare_pack_count": 4,
+        "free_minigame_count": 24,
+        "fuse_setting_count": 3,
+        "fuse_settings": [
+          "chill",
+          "normal",
+          "wild"
+        ],
+        "max_players": 5,
+        "minigame_count": 43,
+        "nickname_count": 60,
+        "shop_boom_count": 8,
+        "shop_face_count": 3,
+        "shop_hat_count": 20,
+        "shop_party_count": 7,
+        "shop_skin_count": 9,
+        "shop_voice_count": 7,
+        "showdown_count": 9,
+        "turn_modes": [
+          "around",
+          "shuffle",
+          "pick"
+        ],
+        "voice_count": 9,
+        "voice_count_free": 2
+      }
+    },
+    {
+      "id": "plush-hour",
+      "name": "Plush Hour",
+      "tagline": "Merge cozy plush toys, reopen Grandma's shop and find the memories she lost.",
+      "status": "coming-soon",
+      "page": "/plush-hour/",
+      "privacy": "/plush-hour/privacy/",
+      "ages": "13+",
+      "rating": "Everyone",
+      "child_directed": false,
+      "price": "free",
+      "price_usd": null,
+      "ads": [
+        "rewarded"
+      ],
+      "ads_personalized": false,
+      "purchases": [
+        {
+          "kind": "consumable"
+        },
+        {
+          "kind": "consumable"
+        },
+        {
+          "kind": "consumable"
+        },
+        {
+          "kind": "consumable"
+        },
+        {
+          "kind": "consumable"
+        },
+        {
+          "kind": "consumable"
+        }
+      ],
+      "play_url": null,
+      "tester_url": null,
+      "facts": {
+        "announcer_voices": 3,
+        "board_columns": 7,
+        "board_rows": 9,
+        "fair_prizes": 15,
+        "fair_themes": 6,
+        "gem_packs": 4,
+        "generators": 8,
+        "looks_per_room": 3,
+        "merge_chains": 8,
+        "plush_hour_minutes": 5,
+        "purchases": 6,
+        "restorable_spots": 54,
+        "rooms": 6,
+        "save_slots": 3,
+        "spots_per_room": 9,
+        "steps_per_chain": 10,
+        "story_chapters": 6,
+        "story_scenes": 64
+      }
+    },
+    {
+      "id": "squishy-bop",
+      "name": "Squishy Bop!",
+      "tagline": "Drag squishy plush blocks, fill a row and watch them pop.",
+      "status": "testing",
+      "page": "/squishy-bop/",
+      "privacy": "/squishy-bop/privacy/",
+      "ages": "6+",
+      "rating": "Everyone",
+      "child_directed": true,
+      "price": "free",
+      "price_usd": null,
+      "ads": [
+        "rewarded",
+        "interstitial"
+      ],
+      "ads_personalized": false,
+      "purchases": [
+        {
+          "kind": "one-time",
+          "price_usd": "4.99"
+        }
+      ],
+      "play_url": null,
+      "tester_url": null,
+      "facts": {
+        "adventure_level_count": 60,
+        "adventure_levels_per_world": 12,
+        "board_size": 8,
+        "boss_level_count": 5,
+        "buddy_count": 20,
+        "cozy_music_track_count": 6,
+        "level_files_total": 65,
+        "piece_shape_count": 41,
+        "play_modes": [
+          "adventure",
+          "classic",
+          "cozy",
+          "daily_puzzle",
+          "play_together",
+          "playground"
+        ],
+        "power_count": 20,
+        "rare_collection_size": 60,
+        "rarity_tier_count": 4,
+        "scene_count": 7,
+        "squishy_kind_count": 15,
+        "squishy_level_max": 50,
+        "squishy_level_reward_count": 49,
+        "sticker_count": 24,
+        "tray_size": 3,
+        "unlockable_squishy_count": 6,
+        "world_count": 5
+      }
+    }
+  ],
+  "printables": [
+    {
+      "id": "cozy-cats-mosaics",
+      "name": "Cozy Cats Mystery Mosaics",
+      "title": "30 Large Print Cat Mystery Mosaics to Color by Number",
+      "hook": "Color the numbered squares and watch a cat appear. 30 large print mystery mosaics to print at home, with big squares and easy-to-read numbers.",
+      "description": "Color the numbered squares and watch a cat appear. 30 large print mystery mosaics to print at home, with big squares and easy-to-read numbers.\n\nEach page stays a mystery until you've colored it. A short riddle at the top gives you a hint (\"If it fits, she sits\"), and the finished pictures are at the back if you'd like to peek. Tabbies, gingers, a Siamese, a calico, a fluffy Persian and a tuxedo cat in a bow tie are all in here, curled in teacups, boots, baskets and boxes.\n\nWHY YOU'LL LOVE IT\n• Large print: big squares (about 1/4 inch) with clear numbers, kind to tired eyes\n• Short color lists: 6 to 10 colors per page, each with a friendly name (Tangerine, Silver Gray, Rosy Pink...), all found in an ordinary box of colored pencils\n• Light numbers mark the squares you leave white, so you always know what to skip\n• Every fifth line is darker, like a cross-stitch chart, to help you keep your place\n• Relaxing for grown-ups and easy enough for kids, so it's lovely to share with a grandchild who loves cats too\n\nTHE 30 PICTURES\nA kitten in a teacup, a cat playing with yarn, a cat on a quilt, a black cat on the windowsill, a kitten in a flower pot, a cat on the books, a cat asleep in her bed, a pile of kittens, a cat with a teapot, a cat in a laundry basket, a ginger tabby, a Siamese, a tuxedo cat, a black cat on a cushion, a cat watching a fishbowl, a kitten in a garden boot, a cat in a box, a kitten and a butterfly, a kitten with a saucer of milk, two cats in love, a fluffy Persian, a calico, a kitten in a sun hat, a tortie in the armchair, a kitten with a bow, a cat in a bike basket, a cat with a toy mouse, a cat in the sunflowers, a cat on the moon and a cat in a mug.\n\nWHAT YOU RECEIVE\n• Cozy_Cats_Mystery_Mosaics.pdf: one 40-page PDF, US Letter (8.5 x 11 in)\n• A how-it-works page, a page to test your own colors, a \"this book belongs to\" page, 30 mystery pages (one per page) and 5 answer pages with every finished picture\n• This is a digital download. Nothing is shipped.\n\nWHAT YOU NEED\n• A PDF reader and a printer (US Letter paper; it also prints on A4 with \"fit to page\")\n• Colored pencils, fine markers or gel pens. Print single-sided so markers don't show through.\n\nHOW TO START\n1. Download the PDF from your Etsy purchases page.\n2. Print the page you want, or the whole book.\n3. Find a number, color its square with that number's color, and watch the picture appear.\n\nWant all three? The Cozy Mystery Mosaics Bundle has the Christmas, Winter and Cats books in one download, for less than buying them separately.\n\nFor personal use: print as many copies as you like for yourself and your family. Please don't resell or share the file.\nQuestions? Message me through Etsy and I'll help.",
+      "collection": "Holidays & Seasonal",
+      "price": "4.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4610794994",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-cats-mosaics/4d61070f3312-01_cover_listing.jpg",
+          "sha256": "4d61070f3312987323eef740f0c972cce6386432398867dde54c2db5487af5d0",
+          "bytes": 1576018,
+          "alt": "Cozy Cats Mystery Mosaics - a large print kitten-in-a-teacup color by number page, partly colored in pencil, on a wooden table with an orange cat asleep on a knitted blanket and a tabby on the armchair behind"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-cats-mosaics/d399d84f290c-02_reveal_listing.jpg",
+          "sha256": "d399d84f290c7366e9463552c4c1c4b94a5e7303e4aa98a0023a2ca94953173d",
+          "bytes": 847252,
+          "alt": "A real numbered tuxedo cat puzzle page beside the same page finished in colored pencil"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-cats-mosaics/a6b615c9ead1-03_guess_listing.jpg",
+          "sha256": "a6b615c9ead1dbb853564566bf51e79de502c6cee6b43bcb30c613c21f59a505",
+          "bytes": 837607,
+          "alt": "Three numbered puzzle pages, each cat still hidden, with the riddle hints written underneath"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-cats-mosaics/c6559cd817c5-04_large_print_listing.jpg",
+          "sha256": "c6559cd817c52ec74d9ffc9776d13ddf9190cb217f8bc478209104526990fcc5",
+          "bytes": 510284,
+          "alt": "Close-up of the big numbered squares, about a quarter inch each, with light numbers for squares left white"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-cats-mosaics/60bfcc0e1609-05_pictures_listing.jpg",
+          "sha256": "60bfcc0e16097b5ecd271f0bba62a8271c1fc06a69103b3ae4955f8fb1ca8d10",
+          "bytes": 729680,
+          "alt": "Eighteen of the finished cat pictures in the book, including a black cat on the windowsill, a kitten in a boot, two cats in love and a cat in a red mug"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-cats-mosaics/2838e4b0549d-06_inside_listing.jpg",
+          "sha256": "2838e4b0549d49e36dddfc1212072d7eea14aea467d0e62d3de33eaaf33e983a",
+          "bytes": 568103,
+          "alt": "The how-it-works page lying on an answer page that shows six finished cats, including a kitten pile, a ginger tabby and a Siamese"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-cats-mosaics/53a5047149c2-07_gift_listing.jpg",
+          "sha256": "53a5047149c2132b8adf5f22a1f658f5a3a69ecb2a3f2e9538753a03df13e5d8",
+          "bytes": 516555,
+          "alt": "The \"This book belongs to\" gift page, with notes that the download is one 40-page US Letter PDF you can print for your family"
+        }
+      ],
+      "features": [
+        "30 cat mystery mosaics, one per page",
+        "Large print squares (about 1/4 inch) with easy-to-read numbers",
+        "6 to 10 colors per page, each with a friendly name",
+        "A riddle hint on every page, and the finished pictures at the back",
+        "A how-it-works page and a page to test your own colors"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "How big are the squares?",
+          "a": "About 1/4 inch (5.5 to 6.9 mm, depending on the picture), with large, clear numbers."
+        },
+        {
+          "q": "How many colors do I need?",
+          "a": "Each page uses 6 to 10 colors, all found in an ordinary box of colored pencils. Squares with light numbers stay white."
+        },
+        {
+          "q": "What kinds of cats are in it?",
+          "a": "Tabbies, gingers, black cats, a Siamese, a calico, a tortie, a fluffy Persian, a tuxedo cat and a pile of kittens, in teacups, boots, baskets and boxes."
+        },
+        {
+          "q": "Is it for kids too?",
+          "a": "Yes. It is relaxing for grown-ups and easy enough for kids, and lovely to color together."
+        },
+        {
+          "q": "What file do I get?",
+          "a": "One 40-page US Letter PDF with 30 mystery pages, a how-it-works page, a color test page, a \"this book belongs to\" page and 5 answer pages."
+        }
+      ],
+      "related": [],
+      "book": null
+    },
+    {
+      "id": "cozy-christmas-mosaics",
+      "name": "Cozy Christmas Mystery Mosaics",
+      "title": "30 Large Print Christmas Mystery Mosaics to Color by Number",
+      "hook": "Color the numbered squares and watch a cozy Christmas picture appear. 30 large print mystery mosaics to print at home, with big squares and easy-to-read numbers.",
+      "description": "Color the numbered squares and watch a cozy Christmas picture appear. 30 large print mystery mosaics to print at home, with big squares and easy-to-read numbers.\n\nEvery page is a little mystery: you don't know what you're coloring until it's done. A friendly riddle at the top gives you a hint, and the finished pictures are at the back if you want to peek.\n\nWHY YOU'LL LOVE IT\n• Large print: big squares (about 1/4 inch) with clear numbers, kind to tired eyes\n• Short color lists: 5 to 9 colors per page, each with a friendly name (Cranberry Red, Holly Green, Cocoa Brown...), all found in an ordinary box of colored pencils\n• Light numbers mark the squares you leave white, so you always know what to skip\n• Every fifth line is darker, like a cross-stitch chart, to help you keep your place\n• Relaxing for grown-ups and easy enough for kids, so it's lovely to share with grandchildren\n\nTHE 30 PICTURES\nHot cocoa, a cardinal on a snowy branch, a gingerbread house, a jolly snowman, a Christmas tree, an old red truck bringing the tree home, a Christmas wreath, a poinsettia, candy canes, cozy mittens, a Christmas teapot, a kitten in a stocking, a kitty in a Santa hat, a puppy in a scarf, a reindeer, Santa Claus, a snow globe, a gingerbread man, cookies for Santa, a Christmas candle, an ornament, a nutcracker, a penguin in earmuffs, a polar bear, Christmas bells, a stack of presents, a cabin in the snow, a country church, a Christmas sweater and a quilted star.\n\nWHAT YOU RECEIVE\n• Cozy_Christmas_Mystery_Mosaics.pdf: one 40-page PDF, US Letter (8.5 x 11 in)\n• A how-it-works page, a page to test your own colors, 30 mystery pages (one per page) and 5 answer pages with every finished picture\n• This is a digital download. Nothing is shipped.\n\nWHAT YOU NEED\n• A PDF reader and a printer (US Letter paper; it also prints on A4 with \"fit to page\")\n• Colored pencils, fine markers or gel pens. Print single-sided so markers don't show through.\n\nHOW TO START\n1. Download the PDF from your Etsy purchases page.\n2. Print the page you want, or the whole book.\n3. Find a number, color its square with that number's color, and watch the picture appear.\n\nWant all three? The Cozy Mystery Mosaics Bundle has the Christmas, Winter and Cats books in one download, for less than buying them separately.\n\nFor personal use: print as many copies as you like for yourself and your family. Please don't resell or share the file.\nQuestions? Message me through Etsy and I'll help.",
+      "collection": "Holidays & Seasonal",
+      "price": "4.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4606027106",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-christmas-mosaics/0bb44baf5423-01_cover_listing.jpg",
+          "sha256": "0bb44baf542362a85fde1bc970f4378cbf77193a4bd9b5ad3f64aa69a62458fa",
+          "bytes": 1781385,
+          "alt": "Cozy Christmas Mystery Mosaics - a large print Santa color by number page, partly colored in pencil, on a table by the fireplace with hot cocoa and a jar of colored pencils"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-christmas-mosaics/b8e60a0655bf-02_reveal_listing.jpg",
+          "sha256": "b8e60a0655bf3aaac6ac6cdbb7683598008de7f46eab2c414c354b4c40a7fd38",
+          "bytes": 937727,
+          "alt": "A real numbered reindeer puzzle page beside the same page finished in colored pencil"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-christmas-mosaics/d18f6fbd40e1-03_all30_listing.jpg",
+          "sha256": "d18f6fbd40e10d3e5cbd11c46b3ffdf55940816decca240399bbb1c316f6f177",
+          "bytes": 845520,
+          "alt": "All 30 finished Christmas pictures in the book, from hot cocoa to a quilted star"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-christmas-mosaics/c975839e1e2d-04_large_print_listing.jpg",
+          "sha256": "c975839e1e2d0b224099361ea0cd4bcd7e0371e48e955c6b2a41c91ec8cf6129",
+          "bytes": 621394,
+          "alt": "Close-up of the big numbered squares, about a quarter inch each, with light numbers for squares left white"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-christmas-mosaics/095b9e23ecf5-05_inside_listing.jpg",
+          "sha256": "095b9e23ecf5d505446f45dbf118a949ef92fc67e5fcdd88d32993aca7faa316",
+          "bytes": 692010,
+          "alt": "Inside pages - how it works, a page to test your colors, and the answer pages at the back"
+        }
+      ],
+      "features": [
+        "30 Christmas mystery mosaics, one per page",
+        "Large print squares (about 1/4 inch) with easy-to-read numbers",
+        "5 to 9 colors per page, each with a friendly name",
+        "A riddle hint on every page, and the finished pictures at the back",
+        "A how-it-works page and a page to test your own colors"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "How big are the squares?",
+          "a": "About 1/4 inch (5.5 to 7.2 mm, depending on the picture), with large, clear numbers."
+        },
+        {
+          "q": "How many colors do I need?",
+          "a": "Each page uses 5 to 9 colors, all found in an ordinary box of colored pencils. Squares with light numbers stay white."
+        },
+        {
+          "q": "Is it for kids too?",
+          "a": "Yes. It is relaxing for grown-ups and easy enough for kids, and lovely to color together."
+        },
+        {
+          "q": "What file do I get?",
+          "a": "One 40-page US Letter PDF with 30 mystery pages, a how-it-works page, a color test page and 5 answer pages."
+        }
+      ],
+      "related": [],
+      "book": "cozy-christmas-mosaics"
+    },
+    {
+      "id": "cozy-winter-mosaics",
+      "name": "Cozy Winter Mystery Mosaics",
+      "title": "30 Large Print Winter Mystery Mosaics to Color by Number",
+      "hook": "Color the numbered squares and watch a cozy winter picture appear. 30 large print mystery mosaics to print at home, with big squares and easy-to-read numbers.",
+      "description": "Color the numbered squares and watch a cozy winter picture appear. 30 large print mystery mosaics to print at home, with big squares and easy-to-read numbers.\n\nEach page stays a mystery until you've colored it. A short riddle at the top gives you a hint, and the finished pictures are at the back if you'd like to peek. None of the pictures are Christmas ones, so the book keeps you company from the first frost until the groundhog looks for his shadow in February.\n\nWHY YOU'LL LOVE IT\n• Large print: big squares (about 1/4 inch) with clear numbers, kind to tired eyes\n• Short color lists: 3 to 8 colors per page, each with a friendly name (Frost Blue, Midnight Navy, Cocoa Brown...), all found in an ordinary box of colored pencils\n• Light numbers mark the squares you leave white, so you always know what to skip\n• Every fifth line is darker, like a cross-stitch chart, to help you keep your place\n• Relaxing for grown-ups and easy enough for kids, so it's lovely to share with grandchildren on a snow day\n\nTHE 30 PICTURES\nA chickadee, a blue jay, a snowy owl, a red fox, a snow bunny, a husky pup, a woolly sheep in a scarf, the groundhog, a cat at a frosty window, a red sled, ice skates, a bobble hat, a winter boot, wool socks, a basket of yarn, a snowflake quilt block, a snowflake, a red barn in the snow, a winter lighthouse, an igloo, a birdhouse in the snow, a snowy lantern, a pinecone, a wood stove, a pot of soup, a mug of tea, fresh bread, a stack of pancakes, a book and reading glasses by the fire, and a moose.\n\nWHAT YOU RECEIVE\n• Cozy_Winter_Mystery_Mosaics.pdf: one 40-page PDF, US Letter (8.5 x 11 in)\n• A how-it-works page, a page to test your own colors, a \"this book belongs to\" page, 30 mystery pages (one per page) and 5 answer pages with every finished picture\n• This is a digital download. Nothing is shipped.\n\nWHAT YOU NEED\n• A PDF reader and a printer (US Letter paper; it also prints on A4 with \"fit to page\")\n• Colored pencils, fine markers or gel pens. Print single-sided so markers don't show through.\n\nHOW TO START\n1. Download the PDF from your Etsy purchases page.\n2. Print the page you want, or the whole book.\n3. Find a number, color its square with that number's color, and watch the picture appear.\n\nWant all three? The Cozy Mystery Mosaics Bundle has the Christmas, Winter and Cats books in one download, for less than buying them separately.\n\nFor personal use: print as many copies as you like for yourself and your family. Please don't resell or share the file.\nQuestions? Message me through Etsy and I'll help.",
+      "collection": "Holidays & Seasonal",
+      "price": "4.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4610794682",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-winter-mosaics/7dd42291d3f8-01_cover_listing.jpg",
+          "sha256": "7dd42291d3f822ad6407b83dc8079b88fd7255b7b06fde3ac732a1af3098d93b",
+          "bytes": 1880056,
+          "alt": "Cozy Winter Mystery Mosaics - a large print red fox color by number page, partly colored in pencil, on a wooden table by a snowy window with a mug of tea, blue yarn and a jar of colored pencils"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-winter-mosaics/57c3d16b7224-02_reveal_listing.jpg",
+          "sha256": "57c3d16b72249e9f41e23188e4fe89a18a122bc8467640d3f3ebeb8f8d8139e6",
+          "bytes": 815834,
+          "alt": "A real numbered snowy owl puzzle page beside the same page finished in colored pencil"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-winter-mosaics/4d1244996e68-03_guess_listing.jpg",
+          "sha256": "4d1244996e68bb7c754d65417ddfac58ba382cd3f7a8907d5f20df6b339c6e97",
+          "bytes": 904816,
+          "alt": "Three numbered puzzle pages, a husky, a groundhog and a moose still hidden, each with its riddle hint written underneath"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-winter-mosaics/f2d16d792373-04_large_print_listing.jpg",
+          "sha256": "f2d16d792373ffd2614164a3d6f3c91503f8987c69e8aeb283ff50e80fe5de65",
+          "bytes": 579264,
+          "alt": "Close-up of the big numbered squares, about a quarter inch each, with light numbers for squares left white"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-winter-mosaics/4db3472dd8f9-05_pictures_listing.jpg",
+          "sha256": "4db3472dd8f9e651dd66f116a32964448ab5d9ce3dc7423b8e6607ec56d6732a",
+          "bytes": 725646,
+          "alt": "Eighteen of the finished winter pictures in the book, including a chickadee, a snow bunny, an igloo, a lantern, a wood stove and a stack of pancakes"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-winter-mosaics/38436e6d4349-06_inside_listing.jpg",
+          "sha256": "38436e6d4349ff4d5c4f327435ba951854ffad6059e847893446037cc69efda9",
+          "bytes": 618723,
+          "alt": "The how-it-works page lying on an answer page that shows six finished pictures, including a winter boot, wool socks and a red barn"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/cozy-winter-mosaics/bc8722722f68-07_gift_listing.jpg",
+          "sha256": "bc8722722f684c7d91b84aa50d52dd2c1722b0a14cdb617a680ef61a1bc6a041",
+          "bytes": 571400,
+          "alt": "The \"This book belongs to\" gift page, with notes that the download is one 40-page US Letter PDF you can print for your family"
+        }
+      ],
+      "features": [
+        "30 winter mystery mosaics, one per page, none of them Christmas pictures",
+        "Large print squares (about 1/4 inch) with easy-to-read numbers",
+        "3 to 8 colors per page, each with a friendly name",
+        "A riddle hint on every page, and the finished pictures at the back",
+        "A how-it-works page and a page to test your own colors"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "How big are the squares?",
+          "a": "About 1/4 inch (5.8 to 7.4 mm, depending on the picture), with large, clear numbers."
+        },
+        {
+          "q": "How many colors do I need?",
+          "a": "Each page uses 3 to 8 colors, all found in an ordinary box of colored pencils. Squares with light numbers stay white."
+        },
+        {
+          "q": "Are there Christmas pictures?",
+          "a": "No. All 30 are winter pictures (animals, snowy scenes and warm things indoors), so the book fits from November through February."
+        },
+        {
+          "q": "Is it for kids too?",
+          "a": "Yes. It is relaxing for grown-ups and easy enough for kids, and lovely to color together."
+        },
+        {
+          "q": "What file do I get?",
+          "a": "One 40-page US Letter PDF with 30 mystery pages, a how-it-works page, a color test page, a \"this book belongs to\" page and 5 answer pages."
+        }
+      ],
+      "related": [],
+      "book": null
+    },
+    {
+      "id": "mosaics-bundle",
+      "name": "Cozy Mystery Mosaics Bundle",
+      "title": "Color by Number Bundle: 90 Large Print Mystery Mosaics",
+      "hook": "Color the numbered squares and watch a cozy picture appear, 90 times over. This bundle has all three of our large print mystery mosaic books, Christmas, Winter and Cats, for less than buying them one by one.",
+      "description": "Color the numbered squares and watch a cozy picture appear, 90 times over. This bundle has all three of our large print mystery mosaic books, Christmas, Winter and Cats, for less than buying them one by one.\n\nEvery page stays a mystery until it's colored. A short riddle at the top gives you a hint, and the finished pictures are at the back if you'd like to peek. Start with Christmas in December, keep going with Winter until the groundhog looks for his shadow, and save the cats for any day you need one.\n\nWHAT'S INSIDE\n• Cozy Christmas: 30 Christmas pictures, from Santa and a reindeer to hot cocoa and a quilted star\n• Cozy Winter: 30 winter pictures with no Christmas ones, from a snowy owl and a red fox to a husky and a moose\n• Cozy Cats: 30 cats curled in teacups, boots, baskets and boxes, including a tuxedo cat in a bow tie\n• Large print in every book: big squares (about 1/4 inch) with clear numbers, kind to tired eyes\n• In each book: a how-it-works page, a page to test your own colors, a \"this book belongs to\" page and the answers at the back\n\nWHAT YOU RECEIVE\n• Cozy_Christmas_Mystery_Mosaics.pdf: one 40-page PDF, US Letter (8.5 x 11 in)\n• Cozy_Winter_Mystery_Mosaics.pdf: one 40-page PDF, US Letter\n• Cozy_Cats_Mystery_Mosaics.pdf: one 40-page PDF, US Letter\n\nWHAT YOU NEED\n• A PDF reader and a printer (US Letter paper; it also prints on A4 with \"fit to page\")\n• Any box of colored pencils, crayons or markers\n\nPLEASE NOTE\n• Digital download only. Nothing is shipped.\n• These are the same three books sold on their own in the shop. Already have one? You can buy the others separately.\n\nFor personal use: print as many copies as your family needs, and give a printed book as a gift. Please do not redistribute or resell the files.\n\nNeed help with a download or print? Message Penny Paws Printables through your Etsy purchase receipt.",
+      "collection": "Holidays & Seasonal",
+      "price": "9.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4611448256",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/175186182227-01_listing.jpg",
+          "sha256": "175186182227fbd9013b83894ca66b030caf024194e8603200b2de409a0f68ef",
+          "bytes": 2913240,
+          "alt": "Cozy Mystery Mosaics Bundle - 90 color-by-number pictures. What's hiding in the squares? 3 books in 1, save 33% vs. buying separately: large print, big squares, a riddle on every page. Christmas, Winter and Cats, three printable PDFs."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/5e5745074309-02_listing.jpg",
+          "sha256": "5e57450743094478f437d11ecdb96cb01959f53a87344bd03e0dfbc3c19cd375",
+          "bytes": 1043726,
+          "alt": "Three books, one download - 30 Christmas pictures, 30 winter pictures and 30 cat pictures"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/bb5f961d03b0-03_listing.jpg",
+          "sha256": "bb5f961d03b0e94814f696bfea6c50082fdee2732649f9f6a60e8a8c85eb0000",
+          "bytes": 570337,
+          "alt": "A numbered reindeer puzzle page beside the same page finished in colored pencil"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/a805946fb3eb-04_listing.jpg",
+          "sha256": "a805946fb3eb6bbc73b47746202c2ee9bf1e1c2c28392b4e791013e9e0c62895",
+          "bytes": 547845,
+          "alt": "Three numbered winter puzzle pages, a husky, a groundhog and a moose still hidden, each with its riddle hint written underneath"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/9301488414b2-05_listing.jpg",
+          "sha256": "9301488414b22b3cb2820fe720697942e848265566d4a454b7e0e70107ae413f",
+          "bytes": 518244,
+          "alt": "All 30 finished Christmas pictures, from hot cocoa to a quilted star"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/4cdcae35c6a5-06_listing.jpg",
+          "sha256": "4cdcae35c6a51ce736bcea014ab2af1af8081e2d6faffec548c046eeef692267",
+          "bytes": 346109,
+          "alt": "Close-up of the large print grid - each square about 1/4 inch with easy-to-read numbers"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/801fcff415a7-07_listing.jpg",
+          "sha256": "801fcff415a7e77541e55450fbb9bdd967dacbca46288ca4b7529a03862a8579",
+          "bytes": 511445,
+          "alt": "A numbered tuxedo cat puzzle page beside the same page finished in colored pencil"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/5a3b04c1a0d2-08_listing.jpg",
+          "sha256": "5a3b04c1a0d2583a6d61bea272fa373e41e7b5603fe7f6e098a581a06b9219f8",
+          "bytes": 439022,
+          "alt": "18 more of the 30 cat pictures, each a surprise until it's colored"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/7303a7d05232-09_listing.jpg",
+          "sha256": "7303a7d05232528f4543b84b6b6c7d0b16de71b383e5450ac8be29b07976c686",
+          "bytes": 372184,
+          "alt": "The how-it-works page lying on an answer page with six finished winter pictures"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/mosaics-bundle/59f5aeed6af8-10_listing.jpg",
+          "sha256": "59f5aeed6af80c6b19282789761ed06fe55b099dcdc6c1ec6dda9d2f485c513a",
+          "bytes": 458253,
+          "alt": "What you get - three 40-page PDFs, each with 30 pictures, a how-it-works page, a color test page and the answers. US Letter, prints on A4 too. Digital download"
+        }
+      ],
+      "features": [
+        "The Christmas, Winter and Cats mystery mosaic books in one download, 90 pictures",
+        "Large print with big squares (about 1/4 inch) and clear numbers",
+        "A riddle on every page and the finished pictures at the back",
+        "Three 40-page US Letter PDFs",
+        "A how-it-works page and a color test page in every book"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "What is in the bundle?",
+          "a": "Three 40-page books, Cozy Christmas, Cozy Winter and Cozy Cats Mystery Mosaics, each with 30 pictures, a how-it-works page, a color test page and the answers."
+        },
+        {
+          "q": "Is it cheaper than buying the books separately?",
+          "a": "Yes. The three books cost 14.97 USD bought one by one; the bundle is 9.99 USD."
+        },
+        {
+          "q": "How big are the squares?",
+          "a": "About 1/4 inch, with easy-to-read numbers. Light numbers mean leave the square white."
+        }
+      ],
+      "related": [
+        "cozy-christmas-mosaics",
+        "cozy-winter-mosaics",
+        "cozy-cats-mosaics"
+      ],
+      "book": null
+    },
+    {
+      "id": "north-pole-caper",
+      "name": "Who Took Santa's Sleigh?",
+      "title": "Who Took Santa's Sleigh? Printable Christmas Mystery Puzzle, Family Friendly",
+      "hook": "Santa's sleigh is gone, 4,000 elves are on the roster, and one of them took it. A printable Christmas mystery the whole family can solve on Christmas Eve. No murder. Sixteen clues, real evidence, and exactly one answer.",
+      "description": "Santa's sleigh is gone, 4,000 elves are on the roster, and one of them took it. A printable Christmas mystery the whole family can solve on Christmas Eve. No murder. Sixteen clues, real evidence, and exactly one answer.\n\nWHAT IT IS\nA name-elimination puzzle. You get a roster of 4,000 elves, sorted by family name, and a case to read. Each clue tells you which elves to cross off, until one name is left.\n• Start with the warm-up: 48 elves and 8 clues, about 10 minutes, with the answers on the next page.\n• Then the main case: 16 clues in three chapters. Chapter 1 clears whole pages at once. Chapter 3 comes down to a handful of elves and some real thinking.\n• Every clue comes from the story or a piece of evidence: a burnt note, a cookie sign-out sheet, a torn name tag, a cocoa mug and more.\n• About 2 hours on your own, or about an hour as a family with the roster pages dealt out.\n\nWHAT YOU GET (5 files)\n• Who_Took_Santas_Sleigh_Case_File.zip: the case file in three editions, US Letter, A4 and a linked tablet PDF. The same pages in all three.\n• Hints.pdf: three hints for every clue. Stop at the first one that helps. None of them give the answer away.\n• Solution.pdf: the ending, and every step of the answer, so you can see exactly where a count went wrong.\n• Case_Briefing.mp4: a one-minute film that opens the case. Watch it first.\n• START_HERE.pdf: which file is which, how to print, and tips for tablets.\n\nWHY THIS ONE\n• A Progress Check page gives the number of elves left after every clue, so you know the moment something slipped.\n• Three hints per clue, with no spoilers.\n• A ten-minute warm-up case, so you learn how the clues work before the big one.\n• A happy ending. No murder and nothing scary. Kids 10 and up can do every clue; younger ones can cross off names while a grown-up reads.\n• Also in the case file: a Suspect Board for the last eight clues, a notes page, a detective certificate, cut-out badges and a coloring page for the little ones.\n\nPRINT OR TABLET\n• Print at Actual Size / 100%, one-sided. The roster is 50 pages of 80 elves; plain paper is fine.\n• On a tablet, open the Tablet edition in GoodNotes, Notability or Acrobat and use a highlighter. Its contents page and the strip at the top of every page link to each section and every roster page.\n\nPLEASE NOTE\n• Digital download only. Nothing is shipped.\n• The pictures in this listing show the Letter edition. Gallery previews carry a small watermark; your files do not.\n• Illustrations were generated with AI from Penny Paws Printables prompts, then checked by hand.\n• For personal use, and a teacher may print copies for their own class. Please do not share or resell the files.\n\nStuck, or a download problem? Message Penny Paws Printables through your Etsy purchase receipt with the file name and the clue number.",
+      "collection": "Game Night",
+      "price": "5.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4586959797",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/0e875a78be59-01_listing.jpg",
+          "sha256": "0e875a78be59154703bacae67486a19d277c3dd3947debe6a2574979efd56d73",
+          "bytes": 1616495,
+          "alt": "Poster for Who Took Santa's Sleigh, a printable Christmas mystery puzzle, with Officer Pebble the penguin, Mrs. Claus and Blitzen in an empty sleigh hangar and a preview of roster page 1."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/dbb7dcaf08fa-02_listing.jpg",
+          "sha256": "dbb7dcaf08fa72e8bb66c2f9c9482ac37bc6b5bbf20990c89a0ec0e20c9ecb09",
+          "bytes": 1041581,
+          "alt": "The case page, a marked-up roster page and the Chapter 1 clue page of the printable Christmas mystery puzzle."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/f74400446b11-03_listing.jpg",
+          "sha256": "f74400446b11efd8d11442fcb270e3d0ace7c4fff23d2d55462504b4a815c977",
+          "bytes": 715093,
+          "alt": "The numbers in the case, 4,000 elves, 16 clues, 3 chapters and one sleigh, above the Progress Check page."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/de98b1e58091-04_listing.jpg",
+          "sha256": "de98b1e58091c5d2d71ef6748a5632f8e39592858f7c7a333a1e55e0445cf26e",
+          "bytes": 949772,
+          "alt": "How it works in four steps, read the clue, cross off every elf it rules out, check your count, and one name is left."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/88fc8a70fdb3-05_listing.jpg",
+          "sha256": "88fc8a70fdb35ca09073bb9a06652ee61cf1e14ebc1850409c0d035f6b9eeaa9",
+          "bytes": 755265,
+          "alt": "Four evidence pages from the case, the burnt note, the cookie sheet, the name tag and the cocoa mug."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/482df62ac26d-06_listing.jpg",
+          "sha256": "482df62ac26d21663204f7ce965224c53e33b0017a1cb104992c36175a973379",
+          "bytes": 987682,
+          "alt": "Inside pages showing the story with its illustration, a chapter page and a roster page."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/672a040088ee-07_listing.jpg",
+          "sha256": "672a040088eecd2c871b467b737d00cca9a403cfadec0e569ced0069063b823a",
+          "bytes": 698576,
+          "alt": "A hints page with three hints per clue next to the Progress Check page that gives the count after every clue."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/60737670986f-08_listing.jpg",
+          "sha256": "60737670986fffc331af52b7a2abd022a50c776c09f7f7ee3e3ae7cf203b1024",
+          "bytes": 1010339,
+          "alt": "Printed Letter pages beside a tablet showing the linked tablet edition."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/ebb19da3bc10-09_listing.jpg",
+          "sha256": "ebb19da3bc10a864536b5e250e6ae236b96dec043f795d6d44aea7c71b14ecd0",
+          "bytes": 885359,
+          "alt": "Extras for Christmas Eve, a detective certificate, cut-out badges and a coloring page for the little ones."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/north-pole-caper/a201922345c7-10_listing.jpg",
+          "sha256": "a201922345c7f6c39e2edac72c77f21b4aa07942e808ff6d561adfd46a3223e1",
+          "bytes": 956863,
+          "alt": "What you get, the case file in Letter, A4 and tablet editions, Hints, Solution, a one-minute film and a Start Here guide."
+        }
+      ],
+      "features": [
+        "A roster of 4,000 elves on 50 pages, 80 a page, sorted by family name",
+        "16 clues in three chapters, each from the story or a piece of evidence",
+        "A warm-up case with 48 elves and 8 clues, answers included",
+        "Evidence pages, among them a burnt note, a cookie sign-out sheet, a torn name tag and a cocoa mug",
+        "A Progress Check page with the count of elves left after every clue",
+        "Hints.pdf with three spoiler-free hints for every clue",
+        "Solution.pdf with the ending and every step of the answer",
+        "Case_Briefing.mp4, a one-minute film that opens the case",
+        "US Letter, A4 and a linked tablet edition with the same pages",
+        "A Suspect Board for the last eight clues, a notes page, a detective certificate, cut-out badges and a coloring page"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "Is it family-safe?",
+          "a": "Yes. No murder: someone took Santa's sleigh, and the ending is a happy one."
+        },
+        {
+          "q": "How long does it take?",
+          "a": "The warm-up takes about 10 minutes. The main case takes about 2 hours on your own, or about an hour as a family with the roster pages dealt out."
+        },
+        {
+          "q": "What if I get stuck or end up with more than one name?",
+          "a": "The Progress Check page gives the count after every clue, so you can find where a count went wrong. Hints.pdf has three hints per clue, and Solution.pdf shows every step."
+        },
+        {
+          "q": "Can I solve it on a tablet?",
+          "a": "Yes. Open the Tablet edition in GoodNotes, Notability or Acrobat and use a highlighter. Its contents page and top strip link to every section and roster page."
+        },
+        {
+          "q": "What files do I get?",
+          "a": "START_HERE.pdf, a zip with the US Letter, A4 and Tablet case files, Hints.pdf, Solution.pdf and Case_Briefing.mp4."
+        }
+      ],
+      "related": [],
+      "book": null
+    },
+    {
+      "id": "paper-squishy",
+      "name": "Paper Squishy Workshop",
+      "title": "20 Printable DIY Paper Squishy Templates, Full Color and Color Your Own",
+      "hook": "Your kid wants another squishy. With this one, they make it themselves: print a page, cut out the two pieces, tape them together, stuff it with tissue and squish.",
+      "description": "Your kid wants another squishy. With this one, they make it themselves: print a page, cut out the two pieces, tape them together, stuff it with tissue and squish.\n\nThis DIY squishy printable has 20 paper squishy templates, each one in full color and in black and white to color, plus a mystery squishy bag and a squishy shop to play with once the collection grows. It's an instant download, so the first squishy can be on the table tonight, and you can print a new one whenever they want another.\n\nWHAT'S INSIDE\n• 20 paper squishies: Glitter Dumpling, Butter Block, Jelly Cube, Gumdrop, Taba Paw, Cloud, Nugget, Cheese Cube, Bread Loaf, Carrot, Jelly Ball, Crunchy Soap, Boba Buddy, Cupcake, Donut, Ice Cream, Mochi Bunny, Mochi Cat, Mochi Chick and Mochi Frog\n• Two versions of every squishy: painted in full color, ready to print and cut, or in black and white for kids who want to color their own\n• A front with the face and a back with its own little detail (a bunny tail, a curled cat tail, frog spots). Every back is the exact mirror of its front, so the edges meet when you tape them\n• Palm-sized pieces, up to 4.5 inches wide, with a dashed cut line around each one\n• 2 play pages: a fold-over mystery squishy bag with a collect-them-all checklist, and a squishy shop sign with 8 price tags\n\nWHAT YOU RECEIVE\n• Paper_Squishy_Workshop_Full_Color_Letter.pdf: the 20 squishies in full color\n• Paper_Squishy_Workshop_Color_Your_Own_Letter.pdf: the same 20 squishies in black and white\n• Paper_Squishy_Workshop_Play_Pages_Letter.pdf: the mystery bag and the squishy shop\n• Paper_Squishy_Workshop_A4_PDFs.zip: all three PDFs again, sized for A4 paper\n• START_HERE.pdf: printing tips and the steps\n\nHOW TO MAKE ONE\n1. Print at Actual Size / 100% on printer paper or light cardstock.\n2. Color both pieces, or print the full-color page.\n3. Cut out both pieces on the dashed line.\n4. Tape them together, faces out, all around the edge. Leave a small gap.\n5. Stuff with tissue or cotton, tape the gap closed and squish.\nFor the shiny look in the photos, cover the pieces with clear packing tape before you cut them out.\n\nWHAT YOU NEED\n• A PDF reader and a printer\n• Scissors, clear tape and stuffing (tissue, cotton balls or plastic bags)\n• Crayons, colored pencils or markers for the color-your-own pages\n\nPLEASE NOTE\n• Digital download only. No physical item, toys or squishies are shipped.\n• The finished paper squishies in the photo are an example of what you can make.\n• Little hands may need a grown-up's help with the scissors. Paper squishies are craft projects, not toys for children under 3.\n• Want the coloring books too? The Squishy Coloring Bundle has this workshop and both squishy coloring books in one download, for less than buying them separately.\n\nART AND USE\nIllustrations were generated with AI from Penny Paws Printables prompts, then checked page by page. Every outline and cut line is drawn by code so the two pieces line up. These are generic squishy designs, not affiliated with any toy brand.\nFor personal use: print as many copies as your family needs. Please do not redistribute or resell the files.\n\nNeed help with a download or print? Message Penny Paws Printables through your Etsy purchase receipt with the file name and page number.",
+      "collection": "Kids & Coloring",
+      "price": "4.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4610782218",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/70b013e62bfd-01_listing.jpg",
+          "sha256": "70b013e62bfdf6f9336e6c0006ef006f7248a8d741d3a9ac4a7c47af66d5f758",
+          "bytes": 1238909,
+          "alt": "DIY paper squishies printable - a photo of three finished, stuffed paper squishies (a purple gumdrop, a pink paw and a green frog) on a craft table with scissors, tape and colored pencils. 20 printable squishies to color, cut, tape, stuff and squish, plus play pages. Digital download."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/3a59e1f721f3-02_listing.jpg",
+          "sha256": "3a59e1f721f31c9dc5817588048fa3329c1b6976076e53d44529ac28af89b4e7",
+          "bytes": 809267,
+          "alt": "A full-color paper squishy page (the Glitter Dumpling, front and back pieces) beside a photo of finished, stuffed paper squishies made from the pages"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/69cfee273916-03_listing.jpg",
+          "sha256": "69cfee273916331c38c4d548c526a570b82c56fc1290178ec618985e7f63306e",
+          "bytes": 532473,
+          "alt": "The Cupcake paper squishy page in full color, with its front and back pieces and dashed cut lines, ready to print"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/957d22e3f113-04_listing.jpg",
+          "sha256": "957d22e3f113a2369cea5237bf3f54dc14e687b6c9a8004389311fffa9ff09fe",
+          "bytes": 621087,
+          "alt": "The Donut paper squishy page in black and white to color, next to the same page in full color"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/d4e05de34000-05_listing.jpg",
+          "sha256": "d4e05de340002b516329ea660dbd741771c54aa6ca75eaccf3cdd9fb737ac6bb",
+          "bytes": 637152,
+          "alt": "Close-up of the Mochi Cat front piece showing its thick outline and dashed cut line, next to the whole page with the matching back piece"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/1b22c0acba35-06_listing.jpg",
+          "sha256": "1b22c0acba359fd330944f8b78319398eea50fde7b77311be47971e08af684ac",
+          "bytes": 617467,
+          "alt": "Two full-color paper squishy pages side by side - an Ice Cream cone and a Boba Buddy"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/3e495c0b3a53-07_listing.jpg",
+          "sha256": "3e495c0b3a5358a5bb38f3c9086c880d5bb91659cbf35eb301a7be1f423e987e",
+          "bytes": 584105,
+          "alt": "Three full-color paper squishy pages - a Mochi Chick, a Carrot and a Cloud"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/671f974a1724-08_listing.jpg",
+          "sha256": "671f974a172485ff6dc9caad46135c628aa5a0ca98aad8433ff91f64b1987f2b",
+          "bytes": 1077952,
+          "alt": "All 20 paper squishies in the pack, numbered: Glitter Dumpling, Butter Block, Jelly Cube, Gumdrop, Taba Paw, Cloud, Nugget, Cheese Cube, Bread Loaf, Carrot, Jelly Ball, Crunchy Soap, Boba Buddy, Cupcake, Donut, Ice Cream, Mochi Bunny, Mochi Cat, Mochi Chick and Mochi Frog"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/46ca30c9313b-09_listing.jpg",
+          "sha256": "46ca30c9313b4e38d6f0833c592cc72ca675094efef48651047bd90315ff46c1",
+          "bytes": 539533,
+          "alt": "How to make a paper squishy in five steps - print at 100%, cut on the dashed line, tape the pieces together faces out, stuff with tissue or cotton, tape closed and squish. Shown with the Jelly Ball page"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/paper-squishy/70df2f3946c6-10_listing.jpg",
+          "sha256": "70df2f3946c6ee0916af220e310dcadb37cf20bc1f4fe0b369d960c68ec04aab",
+          "bytes": 684332,
+          "alt": "What you get - a full-color PDF, a color-your-own PDF, two play pages (a mystery squishy bag and a squishy shop sign with price tags), Letter and A4 sizes and a START HERE guide. Digital download, no physical item is shipped."
+        }
+      ],
+      "features": [
+        "20 paper squishy templates, each with a front and a matching back",
+        "Every squishy in full color and in black and white to color",
+        "Pieces up to 4.5 inches wide with a dashed cut line",
+        "A fold-over mystery squishy bag and a squishy shop sign with 8 price tags",
+        "Letter PDFs plus the same PDFs for A4, and a START HERE guide with the steps"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "How many paper squishies are included?",
+          "a": "20 different squishies. Each comes as a full-color page and as a black-and-white page to color, so the two PDFs have the same 20 designs."
+        },
+        {
+          "q": "What do I need to make them?",
+          "a": "A printer, scissors, clear tape and stuffing such as tissue, cotton balls or plastic bags. Crayons or markers for the color-your-own pages."
+        },
+        {
+          "q": "What paper should I use?",
+          "a": "Plain printer paper makes the squishiest squishies; light cardstock is sturdier. Print at Actual Size / 100%."
+        },
+        {
+          "q": "Will the front and back line up?",
+          "a": "Yes. Every back is drawn as the exact mirror of its front, so if you cut on the dashed lines the edges meet."
+        }
+      ],
+      "related": [
+        "squishy-coloring"
+      ],
+      "book": null
+    },
+    {
+      "id": "pink-haunted-house",
+      "name": "Who Painted the Haunted House Pink?",
+      "title": "Who Painted the Haunted House Pink? Printable Halloween Mystery Puzzle",
+      "hook": "The scariest house in town is pink this morning, with daisies, balloons and a bouncy castle on the graves, and one of 4,000 ticket holders did it. A printable Halloween mystery the whole family can solve. No murder. Sixteen clues, real evidence, and exactly one answer.",
+      "description": "The scariest house in town is pink this morning, with daisies, balloons and a bouncy castle on the graves, and one of 4,000 ticket holders did it. A printable Halloween mystery the whole family can solve. No murder. Sixteen clues, real evidence, and exactly one answer.\n\nWHAT IT IS\nA name-elimination puzzle. You get a roster of 4,000 Fright Tour ticket holders, one street of Grimsby Hollow to a page, and a case to read. Each clue tells you who to cross off, until one name is left.\n• Start with the warm-up: 48 Garden Society visitors and 8 clues, about 10 minutes, with the worked answers on the next page.\n• Then the main case: 16 clues in three chapters. Chapter 1 clears whole streets at once. Chapter 3 comes down to a handful of names and some real thinking.\n• Every clue comes from a piece of evidence: a glitter trail map, a costume-shop ribbon card, a pumpkin weigh-in sheet, a hardware receipt and more.\n• About 2 hours on your own, or about an hour as a family with the streets dealt out.\n\nWHAT YOU GET (5 files)\n• Who_Painted_The_Haunted_House_Pink_Case_File.zip: the case file in three editions, US Letter, A4 and a linked tablet PDF. The same pages in all three.\n• Hints.pdf: three hints for every clue. Stop at the first one that helps. None of them give the answer away.\n• Solution.pdf: the ending, and every step of the answer, so you can see exactly where a count went wrong.\n• Case_Briefing.mp4: a one-minute film that opens the case. Watch it first.\n• START_HERE.pdf: which file is which, how to print, and tips for tablets.\n\nWHY THIS ONE\n• Thursday's Ledger gives the number of people left after every clue, so you know the moment something slipped.\n• Three hints per clue, with no spoilers.\n• Every clue comes from something Palm found. A glitter trail crosses off whole streets at once.\n• A happy ending. No murder and nothing frightening: spooky, silly and made for kids 8 and up, parents and grandparents at one table.\n• A one-minute film that opens the case.\n• Also in the case file: Thursday's Shortlist for the last eight clues, a notes page, a detective certificate, cut-out badges and a coloring page for the little ones, half spooky and half pink.\n\nPRINT OR TABLET\n• Print at Actual Size / 100%, one-sided. The roster is 50 pages of plain black text, cheap to print; draft mode is fine.\n• On a tablet, open the Tablet edition in GoodNotes, Notability or Acrobat and use a highlighter. Its contents page is a town map where every street is a link.\n\nPLEASE NOTE\n• Digital download only. Nothing is shipped.\n• The pictures in this listing show the Letter edition. Gallery previews carry a small watermark; your files do not.\n• Illustrations were made with AI from Penny Paws Printables prompts, then checked by hand.\n• For personal use, and a teacher may print copies for their own class. Please do not share or resell the files.\n\nStuck, or a download problem? Message Penny Paws Printables through your Etsy purchase receipt with the file name and the clue number.",
+      "collection": "Game Night",
+      "price": "5.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4587715965",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/b5bc67fe6247-01_listing.jpg",
+          "sha256": "b5bc67fe62474618d8748ea5e847cb68ed97645854d9d077fc891751110085eb",
+          "bytes": 1461643,
+          "alt": "Poster for Who Painted the Haunted House Pink, a printable Halloween mystery puzzle: the same gothic house at night on the left and painted pink with balloons, daisies, rubber ducks and a bouncy castle on the right, with a preview of a roster page."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/64f8ccd2f32e-02_listing.jpg",
+          "sha256": "64f8ccd2f32e0c1a0447e92207b6ab402c63a79090ed58e7b990e44e0ed1eac7",
+          "bytes": 874000,
+          "alt": "The case page, a marked-up roster page and the Chapter 1 clue page of the printable Halloween mystery puzzle."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/bfdb1a6dbc88-03_listing.jpg",
+          "sha256": "bfdb1a6dbc88ea6a2df9a179b0189493bce02a6f73d0e00da906c777969674a3",
+          "bytes": 516433,
+          "alt": "The numbers in the case, 4,000 suspects, 16 clues, 50 streets and 112 ducks, above Thursday's Ledger page."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/cae9630ce3c7-04_listing.jpg",
+          "sha256": "cae9630ce3c77f2ddb461ab034fb8a3e30125625c5ae65508cf7c2253d57066a",
+          "bytes": 769859,
+          "alt": "How it works in four steps: read the clue, cross off everyone it rules out, check your count, and one name is left."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/8ed9c43cf3dc-05_listing.jpg",
+          "sha256": "8ed9c43cf3dce737479e3ee99fd110a1c6637f2e2907bb8a50538aa0bd5f5353",
+          "bytes": 659522,
+          "alt": "Four evidence pages from the case: the glitter map, the ribbon card, the pumpkin weigh-in sheet and the hardware receipt."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/d1bda7afdd1c-06_listing.jpg",
+          "sha256": "d1bda7afdd1c6cc8b042a0f2f8a4802f60e9759a927469c1abcad687c44b1c01",
+          "bytes": 837176,
+          "alt": "Inside pages showing the story with its illustration, a chapter page and a roster page."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/5984ae9aa7a4-07_listing.jpg",
+          "sha256": "5984ae9aa7a437fc8b4fa0c1ed73a8a21c555e61f08faabac5b3ec10b86ed338",
+          "bytes": 585446,
+          "alt": "A hints page with three hints per clue next to Thursday's Ledger, which gives the count after every clue."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/7f73c4c5dcd9-08_listing.jpg",
+          "sha256": "7f73c4c5dcd9dcb143e42724c929e567a489029c21164b808deb20b9c6023fad",
+          "bytes": 941290,
+          "alt": "Printed Letter pages beside a tablet showing the linked tablet edition and its town map."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/f59fb41681c1-09_listing.jpg",
+          "sha256": "f59fb41681c1cd3f373ebbc52e8f5851f2d61ce3b213f1e5dcfb43706cd91042",
+          "bytes": 815931,
+          "alt": "Extras for Halloween night: a detective certificate, cut-out badges and a half spooky, half pink coloring page for the little ones."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/pink-haunted-house/884dc32bae7f-10_listing.jpg",
+          "sha256": "884dc32bae7f1050baba1e2cd12d6973d1315a3f1d597c0401c5d0caee09b42a",
+          "bytes": 831126,
+          "alt": "What you get: the case file in Letter, A4 and tablet editions, Hints, Solution, a one-minute film and a Start Here guide."
+        }
+      ],
+      "features": [
+        "A roster of 4,000 Fright Tour ticket holders on 50 pages, one street of Grimsby Hollow to a page, 80 households a page",
+        "16 clues in three chapters, each from a piece of evidence",
+        "A warm-up case with 48 Garden Society visitors and 8 clues, worked answers included",
+        "Evidence pages, among them a glitter trail map, a costume-shop ribbon card, a pumpkin weigh-in sheet and a hardware receipt",
+        "Thursday's Ledger, with the count of people left after every clue",
+        "Hints.pdf with three spoiler-free hints for every clue",
+        "Solution.pdf with the ending and every step of the answer",
+        "Case_Briefing.mp4, a one-minute film that opens the case",
+        "US Letter, A4 and a linked tablet edition with the same pages; the tablet contents page is a town map with every street linked",
+        "Thursday's Shortlist for the last eight clues, a notes page, a detective certificate, cut-out badges and a half spooky, half pink coloring page"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "Is it family-safe?",
+          "a": "Yes. No murder and nothing frightening: someone painted the haunted house pink, and the ending is a happy one."
+        },
+        {
+          "q": "How long does it take?",
+          "a": "The warm-up takes about 10 minutes. The main case takes about 2 hours on your own, or about an hour as a family with the streets dealt out."
+        },
+        {
+          "q": "What if I get stuck or end up with more than one name?",
+          "a": "Thursday's Ledger gives the count after every clue, so you can find where a count went wrong. Hints.pdf has three hints per clue, and Solution.pdf shows every step."
+        },
+        {
+          "q": "Can I solve it on a tablet?",
+          "a": "Yes. Open the Tablet edition in GoodNotes, Notability or Acrobat and use a highlighter. Its contents page is a town map where every street is a link."
+        },
+        {
+          "q": "What files do I get?",
+          "a": "START_HERE.pdf, a zip with the US Letter, A4 and Tablet case files, Hints.pdf, Solution.pdf and Case_Briefing.mp4."
+        }
+      ],
+      "related": [
+        "north-pole-caper"
+      ],
+      "book": null
+    },
+    {
+      "id": "squishy-bundle",
+      "name": "Squishy Coloring Bundle",
+      "title": "Squishy Coloring Pages Bundle: 50 Pages plus 20 Paper Squishies",
+      "hook": "For the kid who lines up their squishies on the shelf: all three squishy printables in one download, for less than buying them one by one.",
+      "description": "For the kid who lines up their squishies on the shelf: all three squishy printables in one download, for less than buying them one by one.\n\nYou get the Squishy Coloring Book, the Squishy Christmas Coloring Book and the Paper Squishy Workshop. That's 50 coloring pages with a fully colored example of every page, plus 20 paper squishies to color, cut, tape, stuff and squish. It's an instant download, so there's no shipping deadline: print tonight and tuck it in a stocking.\n\nWHAT'S INSIDE\n• Squishy Coloring Book: 25 pages of glitter dumplings, butter, jelly cubes, mochi and boba, from easy pages for little hands to a claw machine and a vending machine for big kids, plus 3 paper squishies to make\n• Squishy Christmas Coloring Book: 25 Christmas pages, from trimming the tree and baking cookies to sledding, a snow globe and Christmas morning\n• Paper Squishy Workshop: 20 squishies, each in full color and in black and white to color, with a matching back for every front, plus a mystery squishy bag and a squishy shop to play with\n\nWHAT YOU RECEIVE\n• START_HERE.pdf: what is in each file and how to print\n• Squishy_Coloring_Book.zip: 25 pages as a US Letter PDF and an A4 PDF (the same 25 designs in each), plus the colored examples PDF\n• Squishy_Christmas_Coloring_Book.zip: 25 Christmas pages as a US Letter PDF and an A4 PDF, plus the colored examples PDF\n• Paper_Squishy_Workshop_Letter.zip: the full-color, color-your-own and play pages PDFs for US Letter, with the how-to-make guide\n• Paper_Squishy_Workshop_A4_PDFs.zip: the same three paper squishy PDFs for A4\n\nWHAT YOU NEED\n• A PDF reader and a printer. Print at Actual Size / 100%, one-sided.\n• Crayons, colored pencils or markers. Put scrap paper under marker pages.\n• For paper squishies: scissors, clear tape and stuffing (tissue, cotton balls or plastic bags).\n\nPLEASE NOTE\n• Digital download only. No physical books, toys or squishies are shipped.\n• The coloring pages are black and white; the colored examples come as their own PDFs.\n• The bundle has the PDFs only. The single PNG pages that come with the coloring books on their own are not included.\n• Already have one of the books? Each one is also in the shop on its own.\n\nART AND USE\nIllustrations were generated with AI from Penny Paws Printables prompts based on real squishy toys, then checked page by page. These are generic squishy designs, not affiliated with any toy brand.\nFor personal use: print as many copies as your family needs. Please do not redistribute or resell the files.\n\nNeed help with a download or print? Message Penny Paws Printables through your Etsy purchase receipt with the file name and page number.",
+      "collection": "Kids & Coloring",
+      "price": "9.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4611447262",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/6819b8f8d916-01_listing.jpg",
+          "sha256": "6819b8f8d916c4734f42299a60224710d3fb0ffc3e32bd5e6e5108008dc5c4c4",
+          "bytes": 2678197,
+          "alt": "Squishy Coloring Bundle - 70 squishy friends, 50 to color and 20 to make. 3 books in 1, save 23% vs. buying separately: a coloring page beside its colored example, Christmas pages inside, paper squishies to cut, tape, stuff and squish. PDF download."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/7cd9240fdd96-02_listing.jpg",
+          "sha256": "7cd9240fdd96347b39e2d1aac155efe57f8190718c8d819eb67e7c4cd7a26244",
+          "bytes": 1331497,
+          "alt": "What's in the bundle - 25 squishy coloring pages, 25 Christmas pages, each with a colored example, and 20 paper squishies to cut and stuff"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/11435265a5d5-03_listing.jpg",
+          "sha256": "11435265a5d58166eb2c0346b9d67232d629423f15cbac717f31bf7f25534680",
+          "bytes": 707476,
+          "alt": "A claw machine coloring page in black and white beside its colored example, from the Squishy Coloring Book"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/bdc288b40eb4-04_listing.jpg",
+          "sha256": "bdc288b40eb43986d042e3832885dd7fff6bdb5b0de6f54ad7bc57320eb9d12b",
+          "bytes": 500616,
+          "alt": "The stocking stuffer you can print tonight - no shipping deadline, print and staple a homemade book, print copies for every grandkid"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/2e6019b2a3a4-05_listing.jpg",
+          "sha256": "2e6019b2a3a459194f5d06ec3e2b6ffe059357e14a21862cf8509ab9fc4214e9",
+          "bytes": 488122,
+          "alt": "A printed paper squishy page next to finished paper squishies made from the pages"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/c8bace6e6b7f-06_listing.jpg",
+          "sha256": "c8bace6e6b7f0e1150853651b3d970846d3e6f8165f231031b1730ead0330670",
+          "bytes": 747968,
+          "alt": "Three colored squishy scenes - a dumpling family, a birthday party and a squishy Christmas tree"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/0f2bd590af8f-07_listing.jpg",
+          "sha256": "0f2bd590af8f00de4abdd487700e4db8cc130aac6341f8df2e9a0f832ccde6fa",
+          "bytes": 575571,
+          "alt": "Three colored Christmas pages - a snowman, Santa squishy and squishies in a snow globe"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/54a349d4e117-08_listing.jpg",
+          "sha256": "54a349d4e117d4e9187bf7fb22f83b7ed7bbdc68197e3f075753907da7efc663",
+          "bytes": 678295,
+          "alt": "All 20 paper squishies in the workshop, from a glitter dumpling to a mochi frog"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/f1238fc929cc-09_listing.jpg",
+          "sha256": "f1238fc929cc452837b78184d2a0ad5d13a81d2f28e44aa03fee3778e5fcb5e2",
+          "bytes": 648738,
+          "alt": "Three squishy lettering pages - In my squishy era, Squish it! and the Squishy Squad"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-bundle/ba39f1eb775d-10_listing.jpg",
+          "sha256": "ba39f1eb775dce6ca347df5bff9e44a48fa5932aae8a8ef0c7a78730433175ba",
+          "bytes": 513053,
+          "alt": "What you get - the two coloring books as Letter and A4 PDFs with colored examples, the Paper Squishy Workshop in Letter and A4, and a START HERE guide. Digital download, nothing is shipped"
+        }
+      ],
+      "features": [
+        "The Squishy Coloring Book, the Squishy Christmas Coloring Book and the Paper Squishy Workshop in one download",
+        "50 coloring pages, each with a fully colored example",
+        "20 paper squishies to color, cut, tape, stuff and squish, in full color and in black and white",
+        "US Letter and A4 PDFs, and a START HERE guide",
+        "Print as many copies as your family needs"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "What is in the bundle?",
+          "a": "The Squishy Coloring Book (25 pages), the Squishy Christmas Coloring Book (25 pages), each with colored examples, and the Paper Squishy Workshop (20 paper squishies)."
+        },
+        {
+          "q": "Is it cheaper than buying the books separately?",
+          "a": "Yes. The three books cost 12.97 USD bought one by one; the bundle is 9.99 USD."
+        },
+        {
+          "q": "Are PNG pages included?",
+          "a": "No. The bundle has the PDFs, which hold every page, so each file stays under Etsy's size limit."
+        }
+      ],
+      "related": [
+        "squishy-coloring",
+        "squishy-christmas",
+        "paper-squishy"
+      ],
+      "book": null
+    },
+    {
+      "id": "squishy-christmas",
+      "name": "Squishy Christmas Coloring Pages",
+      "title": "25 Printable Squishy Christmas Coloring Pages with Colored Examples",
+      "hook": "If your grandkid lines up their squishies on the shelf, this one's for them. The glitter dumpling, the butter block, the jelly cube and the rest of the squad are getting ready for Christmas across 25 coloring pages, and every page comes with a fully colored example.",
+      "description": "If your grandkid lines up their squishies on the shelf, this one's for them. The glitter dumpling, the butter block, the jelly cube and the rest of the squad are getting ready for Christmas across 25 coloring pages, and every page comes with a fully colored example.\n\nIt's an instant download, so you don't have to worry about holiday shipping. Print the pages tonight, staple them into a little book and tuck it in a stocking.\n\nWHAT'S INSIDE\n• Christmas at home: trimming the tree, stockings on the mantel, wrapping presents, ornament friends, twinkle lights, a holiday wreath, a cozy Christmas Eve and Christmas morning\n• Treats: a gingerbread buddy, hot cocoa, cookie baking, a gingerbread house, a candy cane crew and a Christmas treat table\n• Snow days: a snowman, reindeer games, sledding, a snow globe, cozy mittens and an igloo\n• Santa squishy and an elf workshop\n• Merry Christmas and Ho Ho Ho bubble-letter pages, plus the whole squishy squad in Santa hats\n\nEASY WAYS TO GIVE IT\n• Print the pages, staple or ribbon-tie them into a homemade coloring book, and wrap it or slip it in a stocking\n• Add a few pages and a pack of crayons to a Christmas Eve box\n• Keep a stack ready for the kids' table, winter break and snow days\n• Print a set for every grandkid. One purchase covers as many copies as your family needs\n\nWHAT YOU RECEIVE\n• Squishy_Christmas_25_PDFs.zip: the 25 pages as one US Letter PDF and one A4 PDF (the same 25 designs in each)\n• Squishy_Christmas_25_Colored_Examples.pdf: every page fully colored, for ideas\n• Squishy_Christmas_25_PNGs.zip: 25 single PNG pages, one per design\n• START_HERE.pdf: how to print\n\nWHAT YOU NEED\n• A PDF reader and a printer. Print at Actual Size / 100%, one-sided.\n• Crayons, colored pencils or markers. Put scrap paper under marker pages.\n\nPLEASE NOTE\n• Digital download only. No physical book, toys or squishies are shipped.\n• The coloring pages are black and white; the colored examples come as their own PDF.\n• Looking for more? The original 25-page Squishy Coloring Book is in the shop too, with different pages and paper squishies to make.\n• Want all three? The Squishy Coloring Bundle has this book, the original Squishy Coloring Book and the Paper Squishy Workshop in one download, for less than buying them separately.\n\nART AND USE\nIllustrations were generated with AI from Penny Paws Printables prompts based on our squishy characters, then checked page by page and prepared as coloring pages. These are generic squishy designs, not affiliated with any toy brand.\nFor personal coloring use: print as many copies as your family needs. Please do not redistribute or resell the files.\n\nNeed help with a download or print? Message Penny Paws Printables through your Etsy purchase receipt with the file name and page number.",
+      "collection": "Kids & Coloring",
+      "price": "3.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4610853433",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/aaa737e6088d-01_listing.jpg",
+          "sha256": "aaa737e6088dd04d978e0d9a2a3ef9cc4e2671d2fd23ba8585d8d0ae03473dfa",
+          "bytes": 1241529,
+          "alt": "Squishy Christmas coloring book cover - a glitter dumpling squishy in a Santa hat with a butter block, paw, gumdrop elf, jelly cube, gingerbread and snowman squishies over an open book showing the real Merry Christmas page in black and white and its colored version. 25 printable pages, colored examples included, digital download."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/10b5bacb0344-02_listing.jpg",
+          "sha256": "10b5bacb03449d5b943e427370fce606f7f9629f651b57e21de5928d2cb78a1b",
+          "bytes": 880058,
+          "alt": "The Trim the Tree coloring page in black and white beside its fully colored example, with squishies decorating a Christmas tree"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/230158d37d42-03_listing.jpg",
+          "sha256": "230158d37d4275b39affa9a5b637ef6242e5166501e04822be28b30b291ee053",
+          "bytes": 804112,
+          "alt": "The stocking stuffer you can print tonight - no shipping deadline, print and staple a homemade book, print copies for the whole family. Shown with the Christmas Morning coloring page"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/69c6102a7cd2-04_listing.jpg",
+          "sha256": "69c6102a7cd26d6b68a0622b5b0182d2de6517701b984f7cb7546d18fd9b51bf",
+          "bytes": 932742,
+          "alt": "Colored examples of three pages - a snowman with a frog and cloud squishy, Santa squishy with a sack of presents, and squishies inside a snow globe"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/98d3ffe74e8d-05_listing.jpg",
+          "sha256": "98d3ffe74e8d1558266aff2939412dbd512a45ff434b462efd1c3987a3463a25",
+          "bytes": 923152,
+          "alt": "Close-up of the Christmas Eve page showing thick black outlines - squishies in Santa hats under a cable-knit blanket - next to the whole page"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/bf7a4342a7b8-06_listing.jpg",
+          "sha256": "bf7a4342a7b8a713f9e10cf049372098738d055cfed21b8300ea4df2f534ed95",
+          "bytes": 1073292,
+          "alt": "Three coloring pages - squishies baking cookies, a gingerbread house and a Christmas treat table"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/7dd56cafd147-07_listing.jpg",
+          "sha256": "7dd56cafd14714ba24b3095135c4b218ba87ae704eee04bb020923c7f9247591",
+          "bytes": 979450,
+          "alt": "Three coloring pages - Merry Christmas and Ho Ho Ho bubble letters, and the whole squishy squad in Santa hats"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/a7e6c2a051a6-08_listing.jpg",
+          "sha256": "a7e6c2a051a6997cc834f4c64d917d50ffceeb7f8ecf275c6c9452a8c9d6de3c",
+          "bytes": 1564289,
+          "alt": "All 25 pages fully colored, as a numbered grid"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/90c7bf4d062b-09_listing.jpg",
+          "sha256": "90c7bf4d062b45737dd6aae600cfefac6e70a68520933f9b4afab559da3a279f",
+          "bytes": 1438579,
+          "alt": "All 25 black-and-white Christmas coloring pages, as a numbered grid"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/a8c1eef454c4-10_listing.jpg",
+          "sha256": "a8c1eef454c40f7ca41bf7a00bd8fcabb037ccb0aef0a1d9cd0e8c08f059439d",
+          "bytes": 638231,
+          "alt": "What you get - Letter and A4 PDFs, a colored examples PDF and 25 single PNG pages. Digital download, no physical item is shipped"
+        }
+      ],
+      "features": [
+        "25 different Christmas coloring pages, plus a colored example of every page",
+        "Trimming the tree, stockings, gingerbread, hot cocoa, sledding, a snow globe and Christmas morning",
+        "Merry Christmas and Ho Ho Ho bubble-letter pages",
+        "Glitter dumplings, butter, gumdrops, jelly cubes, taba paws and mochi in Santa hats",
+        "One US Letter PDF and one A4 PDF with the same 25 designs",
+        "25 single PNG pages and a printing guide"
+      ],
+      "formats": [
+        "pdf",
+        "png"
+      ],
+      "faq": [
+        {
+          "q": "How many coloring pages are included?",
+          "a": "25 different designs. The Letter and A4 PDFs contain the same 25 designs, not 50 different designs."
+        },
+        {
+          "q": "What files do I get?",
+          "a": "A START_HERE.pdf printing guide, a ZIP with one US Letter PDF and one A4 PDF, a ZIP of 25 single PNG pages and a PDF of every page fully colored."
+        },
+        {
+          "q": "Are the pages in color?",
+          "a": "The pages you print to color are black and white. A separate PDF shows every page fully colored, for ideas."
+        },
+        {
+          "q": "Is it the same as the original Squishy Coloring Book?",
+          "a": "No. These are 25 new Christmas pages. The original book has different pages and paper squishies to make."
+        }
+      ],
+      "related": [
+        "squishy-coloring",
+        "paper-squishy"
+      ],
+      "book": "squishy-christmas"
+    },
+    {
+      "id": "squishy-coloring",
+      "name": "Squishy Coloring Book",
+      "title": "25 Printable Squishy Coloring Pages with Colored Examples",
+      "hook": "Squishy coloring pages: 25 printable pages of glitter dumplings, butter, gumdrops, jelly cubes, taba paws, mochi and boba, with a fully colored example of every page.",
+      "description": "Squishy coloring pages: 25 printable pages of glitter dumplings, butter, gumdrops, jelly cubes, taba paws, mochi and boba, with a fully colored example of every page.\n\nPrint them at home as often as you like. Pages come in three levels, so little kids and big kids can both find one they love.\n\nWHAT'S INSIDE\n• Easy pages (7): big, bold squishies for little hands\n• Fun scenes (9): a dumpling steamer, a toast slide, a pillow fort, a bubble bath, a birthday party, a squishy Christmas tree and more\n• Detailed pages (6): a claw machine, a vending machine, a mega pile of 42 squishies and three lettering pages (In my squishy era, Squish it! and the Squishy Squad)\n• Paper squishies (3): a glitter dumpling, a butter block and a jelly cube to color, cut, tape, stuff and squish, each 4.5 inches wide on Letter paper\n\nWHAT YOU RECEIVE\n• Squishy_Coloring_25_PDFs.zip: the 25 pages as one US Letter PDF and one A4 PDF (the same 25 designs in each)\n• Squishy_Coloring_25_Colored_Examples.pdf: every page fully colored, for ideas\n• Squishy_Coloring_25_PNGs.zip: 25 single PNG pages, one per design\n• START_HERE.pdf: how to print\n\nWHAT YOU NEED\n• A PDF reader and a printer. Print at Actual Size / 100%, one-sided.\n• Crayons, colored pencils or markers. Put scrap paper under marker pages.\n• For paper squishies: scissors, clear tape and stuffing (tissue, plastic bags or poly-fill).\n\nPLEASE NOTE\n• Digital download only. No physical book, toys or squishies are shipped.\n• The coloring pages are black and white; the colored examples come as their own PDF.\n• The finished paper squishies in the photo are an example of what you can make.\n• Looking for more? Squishy Christmas Coloring Pages (25 new holiday pages) and the Paper Squishy Workshop (20 squishies to cut, stuff and squish) are in the shop too.\n• Want all three? The Squishy Coloring Bundle has this book, Squishy Christmas and the Paper Squishy Workshop in one download, for less than buying them separately.\n\nART AND USE\nIllustrations were generated with AI from Penny Paws Printables prompts based on real squishy toys, then checked page by page and prepared as coloring pages. These are generic squishy designs, not affiliated with any toy brand.\nFor personal coloring use: print as many copies as your family needs. Please do not redistribute or resell the files.\n\nNeed help with a download or print? Message Penny Paws Printables through your Etsy purchase receipt with the file name and page number.",
+      "collection": "Kids & Coloring",
+      "price": "3.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4604268235",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/1b6e9685614d-01_listing.jpg",
+          "sha256": "1b6e9685614d7ac56664d03eaa7f63580d974a9e581f0e73767df677bb5fa263",
+          "bytes": 1135947,
+          "alt": "Squishy coloring book cover - glossy glitter dumpling, butter, gumdrop, jelly cube, paw and boba squishies over an open book with a black-and-white page and its colored version. 25 printable pages, easy, fun and detailed, paper squishies and colored examples included."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/7b2859049d80-02_listing.jpg",
+          "sha256": "7b2859049d80a87151cf11b0aa73136c5a3a603986e48e3f1c19bee96d9be8d9",
+          "bytes": 1143421,
+          "alt": "A claw machine coloring page in black and white beside its fully colored example"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/40608898c7fd-03_listing.jpg",
+          "sha256": "40608898c7fd9993419b37d63db8c7ebf73f69f95170e52ced4fcc9dfc839b06",
+          "bytes": 924284,
+          "alt": "Easy, fun and detailed coloring pages - a glitter dumpling, a mystery blind box and a claw machine"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/aacde7fc9b09-04_listing.jpg",
+          "sha256": "aacde7fc9b09ede4fabc1fcf184cebe88b14c235670cbb7b7d910e68af87897a",
+          "bytes": 1243078,
+          "alt": "Colored examples of a dumpling steamer, a squishy birthday party and a squishy Christmas tree"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/00d14075b9c2-05_listing.jpg",
+          "sha256": "00d14075b9c2827f22da05cbcfb6cba38c81409e8355602dc348c0fa2ff9b55e",
+          "bytes": 787333,
+          "alt": "A paper squishy template beside a photo of three finished, stuffed paper squishies"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/5a163858177d-06_listing.jpg",
+          "sha256": "5a163858177de78ba33c1a56316ce0ca4e3e3ed1c85a5b787fa34c91239ed6cf",
+          "bytes": 1076257,
+          "alt": "Lettering coloring pages - In my squishy era, Squish it! and the Squishy Squad"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/68cb82449b48-07_listing.jpg",
+          "sha256": "68cb82449b487481322d2371ec78d728455e060bb3bd296e2b59b03d1588a519",
+          "bytes": 1484150,
+          "alt": "All 25 pages fully colored, as a numbered grid"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/9f25de52f145-08_listing.jpg",
+          "sha256": "9f25de52f14528a2a54c4dd0682808ba20e14b787cc2cf5b94b3c494d5607b49",
+          "bytes": 1301591,
+          "alt": "All 25 black-and-white coloring pages, as a numbered grid"
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/004913dadee4-09_listing.jpg",
+          "sha256": "004913dadee4ec2f4cee13b448311a21ddb4033c2c7a66b64a8c69e198bb35b9",
+          "bytes": 554728,
+          "alt": "What you get - Letter and A4 PDFs, a colored examples PDF, 25 single PNG pages and a printing guide"
+        }
+      ],
+      "features": [
+        "25 different coloring pages, plus a colored example of every page",
+        "Three paper squishy templates to color, cut, tape, stuff and squish",
+        "Easy, fun and detailed levels",
+        "Glitter dumplings, butter, gumdrops, jelly cubes, taba paws, mochi and boba",
+        "One US Letter PDF and one A4 PDF with the same 25 designs",
+        "25 single PNG pages and a printing guide"
+      ],
+      "formats": [
+        "pdf",
+        "png"
+      ],
+      "faq": [
+        {
+          "q": "How many coloring pages are included?",
+          "a": "25 different designs. The Letter and A4 PDFs contain the same 25 designs, not 50 different designs."
+        },
+        {
+          "q": "What files do I get?",
+          "a": "A START_HERE.pdf printing guide, a ZIP with one US Letter PDF and one A4 PDF, a ZIP of 25 single PNG pages and a PDF of every page fully colored."
+        },
+        {
+          "q": "Are the pages in color?",
+          "a": "The pages you print to color are black and white. A separate PDF shows every page fully colored, for ideas."
+        },
+        {
+          "q": "What do I need for the paper squishies?",
+          "a": "Scissors, clear tape and stuffing such as tissue, plastic bags or poly-fill."
+        }
+      ],
+      "related": [],
+      "book": "squishy-coloring"
+    }
+  ],
+  "books": [
+    {
+      "id": "cozy-christmas-mosaics",
+      "title": "Cozy Christmas Mystery Mosaics",
+      "subtitle": "Large Print Color by Number for Adults & Kids: 30 Festive Pixel Art Pictures",
+      "asin": "B0HQ1X9L9K",
+      "isbn": "979-8166517081",
+      "price": "10.99",
+      "currency": "USD",
+      "amazon_url": "https://www.amazon.com/dp/B0HQ1X9L9K",
+      "pages": 72,
+      "trim": "8.5 x 11 in",
+      "live_date": "2026-10-30",
+      "printable": "cozy-christmas-mosaics"
+    },
+    {
+      "id": "squishy-christmas",
+      "title": "Squishy Christmas Coloring Book",
+      "subtitle": "25 Cute Kawaii Squishy Pages to Color for Kids",
+      "asin": "B0HR29ZBCB",
+      "isbn": "979-8141296468",
+      "price": "9.99",
+      "currency": "USD",
+      "amazon_url": "https://www.amazon.com/dp/B0HR29ZBCB",
+      "pages": 54,
+      "trim": "8.5 x 11 in",
+      "live_date": "2026-11-09",
+      "printable": "squishy-christmas"
+    },
+    {
+      "id": "squishy-coloring",
+      "title": "Squishy Coloring Book",
+      "subtitle": null,
+      "asin": "B0HPY48PV8",
+      "isbn": "979-8166026293",
+      "price": "9.99",
+      "currency": "USD",
+      "amazon_url": "https://www.amazon.com/dp/B0HPY48PV8",
+      "pages": 52,
+      "trim": "8.5 x 11 in",
+      "live_date": "2026-10-28",
+      "printable": "squishy-coloring"
+    },
+    {
+      "id": "squishy-find",
+      "title": "The Great Squishy Escape",
+      "subtitle": "A Search-and-Find Book",
+      "asin": "B0HRKG142K",
+      "isbn": "979-8-9826122-0-5",
+      "price": "12.99",
+      "currency": "USD",
+      "amazon_url": "https://www.amazon.com/dp/B0HRKG142K",
+      "pages": 40,
+      "trim": "8.5 x 11 in",
+      "live_date": "2026-11-13",
+      "printable": null
+    }
+  ]
+}
