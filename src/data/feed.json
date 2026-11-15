@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "games": [
     {
       "id": "giggle-bomb",
@@ -1193,7 +1193,13 @@
       "pages": 72,
       "trim": "8.5 x 11 in",
       "live_date": "2026-10-30",
-      "printable": "cozy-christmas-mosaics"
+      "printable": "cozy-christmas-mosaics",
+      "cover": {
+        "url": "https://media.pennypawsgames.com/p/cozy-christmas-mosaics/7b1f549f1f2d-cover_front.jpg",
+        "sha256": "7b1f549f1f2d3c87eaaf4758364ef03f6ae526c8e1375e735ecc44920bc5ef67",
+        "bytes": 1051199,
+        "alt": "Cozy Christmas Mystery Mosaics, paperback cover"
+      }
     },
     {
       "id": "squishy-christmas",
@@ -1207,7 +1213,13 @@
       "pages": 54,
       "trim": "8.5 x 11 in",
       "live_date": "2026-11-09",
-      "printable": "squishy-christmas"
+      "printable": "squishy-christmas",
+      "cover": {
+        "url": "https://media.pennypawsgames.com/p/squishy-christmas/0b6772c026de-cover_front.jpg",
+        "sha256": "0b6772c026def605e0218149422116196f8f313268c28cc742ad1a28001b9dca",
+        "bytes": 904204,
+        "alt": "Squishy Christmas Coloring Book, paperback cover"
+      }
     },
     {
       "id": "squishy-coloring",
@@ -1221,7 +1233,13 @@
       "pages": 52,
       "trim": "8.5 x 11 in",
       "live_date": "2026-10-28",
-      "printable": "squishy-coloring"
+      "printable": "squishy-coloring",
+      "cover": {
+        "url": "https://media.pennypawsgames.com/p/squishy-coloring/42b3622fd970-cover_front.jpg",
+        "sha256": "42b3622fd970ea030dea8b16851ce6f9bfaacb0862c2c29583fcf3a40ea78ac8",
+        "bytes": 1108729,
+        "alt": "Squishy Coloring Book, paperback cover"
+      }
     },
     {
       "id": "squishy-find",
@@ -1235,7 +1253,13 @@
       "pages": 40,
       "trim": "8.5 x 11 in",
       "live_date": "2026-11-13",
-      "printable": null
+      "printable": null,
+      "cover": {
+        "url": "https://media.pennypawsgames.com/p/squishy-find/508cfcea3637-cover_front.jpg",
+        "sha256": "508cfcea36379b082e2d243c850029157ddc63d98433b0a91f9143ec2d4827c6",
+        "bytes": 982461,
+        "alt": "The Great Squishy Escape, paperback cover"
+      }
     }
   ]
 }

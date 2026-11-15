@@ -1,5 +1,6 @@
-// Brings the product pictures the pages use from the media bucket into src/assets/feed/, so
-// they go through the same image pipeline as local art and are served from our own origin.
+// Brings the product pictures the pages use (printable and book covers) from the media bucket
+// into src/assets/feed/, so they go through the same image pipeline as local art and are served
+// from our own origin.
 //
 // Each picture's address and SHA-256 come from the feed (src/data/feed.json). A file that
 // does not match its hash is refused. Files already fetched are reused, so a build with a
@@ -20,15 +21,23 @@ export const feedImageName = (image) => `${image.sha256.slice(0, 16)}${extname(n
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
-/** Which pictures the pages use: each printable's cover (src/data/covers.json picks it; the first by default). */
+/** Which pictures the pages use: each printable's cover (src/data/covers.json picks it; the first by
+ *  default) and the cover of each book on the shelf (src/data/shelf.json; the front of the cover
+ *  uploaded to Amazon). A picture no page uses is not fetched, or the build would ship it. */
 export async function wanted(base = root) {
   const feed = JSON.parse(await readFile(join(base, 'src/data/feed.json'), 'utf8'));
   const covers = JSON.parse(await readFile(join(base, 'src/data/covers.json'), 'utf8'));
-  return feed.printables.map((p) => {
+  const printables = (feed.printables ?? []).map((p) => {
     const image = p.images[covers[p.id] ?? 0];
     if (!image) throw new Error(`src/data/covers.json picks picture ${covers[p.id]} of ${p.id}, which has ${p.images.length}`);
     return image;
   });
+  const shelf = JSON.parse(await readFile(join(base, 'src/data/shelf.json'), 'utf8')).books;
+  const books = (feed.books ?? []).filter((b) => shelf.includes(b.id)).map((b) => {
+    if (!b.cover) throw new Error(`The feed gives book ${b.id} no cover`);
+    return b.cover;
+  });
+  return [...printables, ...books];
 }
 
 export async function fetchFeedImages({ base = root, log = console.log, get = fetch } = {}) {

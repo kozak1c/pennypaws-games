@@ -7,8 +7,9 @@ import { defineCollection } from 'astro:content';
 import { file } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-/** The feed shape this build understands. A feed with another version fails the build. */
-export const FEED_SCHEMA = 1;
+/** The feed shape this build understands. A feed with another version fails the build.
+ * 2: each book carries its cover (the front of the cover uploaded to Amazon, on the media bucket). */
+export const FEED_SCHEMA = 2;
 
 const feed = (collection: 'games' | 'printables' | 'books') =>
   file('src/data/feed.json', {
@@ -33,6 +34,13 @@ const on = (...hosts: string[]) =>
   }, `must be an https address on ${hosts.join(' or ')}`);
 
 const id = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+/** A picture on the media bucket: fetched before the build and checked against its SHA-256. */
+const picture = z.strictObject({
+  url: on('media.pennypawsgames.com'),
+  sha256: z.string().regex(/^[0-9a-f]{64}$/),
+  bytes: z.number().int().positive(),
+  alt: z.string().min(1),
+});
 const sitePath = z.string().regex(/^\/[a-z0-9/-]*\/$/);
 const money = z.string().regex(/^\d+\.\d{2}$/);
 const fact = z.union([z.number(), z.string(), z.array(z.string())]);
@@ -75,16 +83,7 @@ const printables = defineCollection({
     price: money,
     currency: z.literal('USD'),
     etsy_url: on('etsy.com'),
-    images: z
-      .array(
-        z.strictObject({
-          url: on('media.pennypawsgames.com'),
-          sha256: z.string().regex(/^[0-9a-f]{64}$/),
-          bytes: z.number().int().positive(),
-          alt: z.string().min(1),
-        }),
-      )
-      .min(1),
+    images: z.array(picture).min(1),
     features: z.array(z.string()),
     formats: z.array(z.string()),
     faq: z.array(z.strictObject({ q: z.string(), a: z.string() })),
@@ -108,6 +107,7 @@ const books = defineCollection({
     trim: z.string().nullable(),
     live_date: z.string().nullable(),
     printable: id.nullable(),
+    cover: picture,
   }),
 });
 
