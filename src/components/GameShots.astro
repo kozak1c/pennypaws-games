@@ -1,0 +1,29 @@
+---
+// A game in phone frames: first a short clip of real play at a person's pace, then screenshots.
+// The clips are recorded from each game through its real touch input, moved the way a hand moves.
+import { getImage, Image } from 'astro:assets';
+import type { Played } from '../data/games';
+interface Props {
+  name: string;
+  played: Played;
+}
+const { name, played } = Astro.props;
+const poster = await getImage({ src: played.poster, width: 360 });
+---
+
+<div class="shots" role="region" aria-label={`${name} in play`} tabindex="0">
+  <figure>
+    <span class="phone block">
+      <video data-autoplay muted loop playsinline preload="none" poster={poster.src} width="360" height="640" aria-label={played.label}>
+        <source src={played.clip} type="video/mp4" />
+      </video>
+    </span>
+    <figcaption>{played.caption}</figcaption>
+  </figure>
+  {played.shots.map((shot) => (
+    <figure>
+      <span class="phone block"><Image src={shot.src} alt={shot.alt} width={360} /></span>
+      <figcaption>{shot.caption}</figcaption>
+    </figure>
+  ))}
+</div>

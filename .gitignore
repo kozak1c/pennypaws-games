@@ -8,3 +8,9 @@ playwright-report/
 .env
 .env.*
 .dev.vars
+
+# Astro build output and cache
+dist/
+.astro/
+.claude/
+.local-shots/
