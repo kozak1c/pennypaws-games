@@ -3,3 +3,4 @@ index.html
 app-ads.txt
 squishy-bop/privacy/index.html
 plush-hour/privacy/index.html
+giggle-bomb/privacy/index.html

@@ -96,7 +96,7 @@ screenshots in `test-results/walk/` yourself too.
 
 | Path | What |
 |---|---|
-| `index.html`, `404.html`, `app-ads.txt`, `squishy-bop/`, `plush-hour/` | the site |
+| `index.html`, `404.html`, `app-ads.txt`, `squishy-bop/`, `plush-hour/`, `giggle-bomb/` | the site |
 | `_headers` | response headers for every page (security headers, noindex off the public address) |
 | `wrangler.jsonc`, `.assetsignore` | the two Workers (production, staging) and what they serve |
 | `ops/` | the health check, the never-break list, the allow-list, the local-server helpers |
