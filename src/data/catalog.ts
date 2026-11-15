@@ -35,7 +35,7 @@ export const stores = {
   etsy: 'https://www.etsy.com/shop/PennyPawsPrintables',
   instagram: 'https://www.instagram.com/pennypaws.games/',
   facebook: 'https://www.facebook.com/pennypawsprintables',
-  email: 'quietops89@gmail.com',
+  email: 'pennypawsgames@gmail.com',
   play: 'https://play.google.com/store/apps',
 };
 
