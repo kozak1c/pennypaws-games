@@ -14,3 +14,6 @@ dist/
 .astro/
 .claude/
 .local-shots/
+
+# Product pictures fetched from the media bucket at build time (ops/feed-images.mjs)
+src/assets/feed/

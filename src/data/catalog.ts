@@ -1,6 +1,17 @@
-// Everything the pages lay out. Typed here for the look build; the launch build moves these
-// into content collections with the same field names (docs/site-plan.md, section 6).
+// What the pages lay out: each product's facts joined with the site's own words about it.
+//
+// FACTS ARE NOT TYPED HERE. Names, prices, store addresses, statuses, page counts, pairings
+// and listing pictures come from the feed (src/data/feed.json, read through the content
+// collections in src/content.config.ts). A product appears on the site because the feed
+// names it, and leaves when the feed drops it.
+//
+// What is typed here is the site's own: how it words a product on a card, which art it shows,
+// and the order of the shelves. Those words may quote a number only if the product's facts
+// in the feed hold the same number; the build fails otherwise (checkNumbers below). A game's
+// counts are never typed: write {fact_name} and the feed's value is filled in.
 import type { ImageMetadata } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import covers from './covers.json';
 
 const art = import.meta.glob<{ default: ImageMetadata }>('../assets/**/*.{webp,png}', { eager: true });
 const img = (path: string): ImageMetadata => {
@@ -9,17 +20,84 @@ const img = (path: string): ImageMetadata => {
   return hit.default;
 };
 
+// Listing pictures from the feed, fetched and hash-checked before the build (ops/feed-images.mjs).
+const fetched = import.meta.glob<{ default: ImageMetadata }>('../assets/feed/*.{jpg,jpeg,png,webp}', { eager: true });
+const feedImage = (image: { url: string; sha256: string }): ImageMetadata => {
+  const ext = image.url.slice(image.url.lastIndexOf('.')).toLowerCase();
+  const hit = fetched[`../assets/feed/${image.sha256.slice(0, 16)}${ext}`];
+  if (!hit) throw new Error(`Feed picture not fetched: ${image.url} (run node ops/feed-images.mjs)`);
+  return hit.default;
+};
+
+// The brand's own addresses. `play` stands in for a game's tester link until the feed carries one.
 export const stores = {
   etsy: 'https://www.etsy.com/shop/PennyPawsPrintables',
   instagram: 'https://www.instagram.com/pennypaws.games/',
   facebook: 'https://www.facebook.com/pennypawsprintables',
   email: 'quietops89@gmail.com',
+  play: 'https://play.google.com/store/apps',
 };
 
 export interface Pic {
   src: ImageMetadata;
   alt: string;
 }
+
+// ---- helpers shared with games.ts ------------------------------------------------------------
+
+/** Feed text is plain; the site sets apostrophes as the rest of its words do. */
+export const smart = (text: string) => text.replace(/(\p{L})'(\p{L})/gu, '$1’$2');
+const usd = (amount: string) => `$${amount}`;
+
+const strings = (value: unknown): string[] =>
+  typeof value === 'string'
+    ? [value]
+    : Array.isArray(value)
+      ? value.flatMap(strings)
+      : value && typeof value === 'object'
+        ? Object.values(value).flatMap(strings)
+        : typeof value === 'number'
+          ? [String(value)]
+          : [];
+const numbers = (text: string) => (text.match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((n) => n.replace(/,/g, ''));
+
+/** Fails the build when the site's words about a product state a number its facts do not hold. */
+export function checkNumbers(what: string, words: unknown, facts: unknown) {
+  const known = new Set(strings(facts).flatMap(numbers));
+  const loose = [...new Set(strings(words).flatMap(numbers))].filter((n) => !known.has(n));
+  if (loose.length) {
+    throw new Error(
+      `${what}: the site's words state ${loose.join(', ')}, which the product's facts in src/data/feed.json do not. ` +
+        'Fix the words here, or fix the fact where the product lives.',
+    );
+  }
+}
+
+/** Fills {fact_name} from a game's facts. An unknown name fails the build. */
+export function fill<T>(what: string, words: T, facts: Record<string, unknown>): T {
+  const one = (text: string) =>
+    text.replace(/\{(\w+)\}/g, (_, key: string) => {
+      if (!(key in facts)) throw new Error(`${what}: the feed has no fact "${key}"`);
+      return String(facts[key]);
+    });
+  const walk = (value: unknown): unknown =>
+    typeof value === 'string'
+      ? one(value)
+      : Array.isArray(value)
+        ? value.map(walk)
+        : value && typeof value === 'object' && !('src' in value && 'width' in value)
+          ? Object.fromEntries(Object.entries(value).map(([k, v]) => [k, walk(v)]))
+          : value;
+  return walk(words) as T;
+}
+
+/** The site's own order first, then anything new from the feed. */
+function inOrder<T extends { id: string }>(rows: T[], order: string[]): T[] {
+  const place = (id: string) => (order.includes(id) ? order.indexOf(id) : order.length);
+  return [...rows].sort((a, b) => place(a.id) - place(b.id) || a.id.localeCompare(b.id));
+}
+
+// ---- printables --------------------------------------------------------------------------------
 
 export interface Printable {
   id: string;
@@ -40,23 +118,33 @@ export interface Printable {
   get?: string[];
 }
 
+/** The site's words and art for a printable. Everything is optional: a printable with none still gets its page. */
+interface PrintableWords {
+  name?: string;
+  line?: string;
+  hook?: string;
+  coverAlt?: string;
+  facts?: string[];
+  sheets?: Pic[];
+  seasonal?: boolean;
+  pair?: Printable['pair'];
+  made?: Printable['made'];
+  inside?: Printable['inside'];
+  get?: string[];
+}
+
 const sheet = (folder: string, n: number, alt: string): Pic => ({
   src: img(`printables/${folder}/page-${n}.webp`),
   alt,
 });
 
-export const printables: Printable[] = [
-  {
-    id: 'squishy-coloring-pages',
-    etsy: 'https://www.etsy.com/listing/4604268235',
+// Keyed by the product's id in the feed, in shelf order.
+const printableWords: Record<string, PrintableWords> = {
+  'squishy-coloring': {
     name: 'Squishy coloring pages',
     line: '25 pages in three levels, each with a colored example.',
     hook: 'Glitter dumplings, butter blocks and boba buddies to color, each with a finished example to copy or beat.',
-    price: '$3.99',
-    cover: {
-      src: img('printables/squishy-coloring/02_listing.webp'),
-      alt: 'Squishy coloring pages: a colored glitter dumpling beside the page it came from',
-    },
+    coverAlt: 'Squishy coloring pages: a colored glitter dumpling beside the page it came from',
     facts: ['25 pages', 'Three levels, ages 4 and up', 'US Letter and A4', 'Instant download'],
     sheets: [
       sheet('squishy-coloring', 3, 'Easy: a butter block'),
@@ -67,7 +155,6 @@ export const printables: Printable[] = [
       sheet('squishy-coloring', 9, 'Detailed: a big pile of squishies'),
       sheet('squishy-coloring', 6, 'Easy: a jelly cube'),
     ],
-    book: 'squishy-coloring-book',
     pair: {
       blank: sheet('squishy-coloring', 2, 'The glitter dumpling page, ready to color'),
       colored: sheet('squishy-coloring', 1, 'The same glitter dumpling, colored in'),
@@ -93,17 +180,11 @@ export const printables: Printable[] = [
       'A short printing guide',
     ],
   },
-  {
-    id: 'paper-squishies',
-    etsy: 'https://www.etsy.com/listing/4610782218',
+  'paper-squishy': {
     name: 'Paper squishies',
     line: '20 to color, cut, tape, stuff and squish.',
     hook: 'A rainy afternoon sorted: color a squishy, cut it out, tape the edges, stuff it and squeeze.',
-    price: '$4.99',
-    cover: {
-      src: img('printables/paper-squishy/01_listing.webp'),
-      alt: 'Paper squishies: finished paper toys beside the printed pages',
-    },
+    coverAlt: 'Paper squishies: finished paper toys beside the printed pages',
     facts: ['20 designs', 'Color, cut, tape and stuff', 'US Letter and A4', 'Instant download'],
     get: [
       'All 20 paper squishies in full color, ready to cut out',
@@ -117,17 +198,11 @@ export const printables: Printable[] = [
       sheet('paper-squishy', 3, 'A third paper squishy page'),
     ],
   },
-  {
-    id: 'squishy-bundle',
-    etsy: 'https://www.etsy.com/listing/4611447262',
+  'squishy-bundle': {
     name: 'The squishy bundle',
     line: '50 coloring pages and 20 paper squishies in one download.',
     hook: 'Both squishy coloring sets and every paper squishy in one download, for less than buying them one by one.',
-    price: '$9.99',
-    cover: {
-      src: img('printables/squishy-bundle/01_listing.webp'),
-      alt: 'The squishy bundle: 70 pages of coloring and paper crafts',
-    },
+    coverAlt: 'The squishy bundle: 70 pages of coloring and paper crafts',
     facts: ['50 pages to color', '20 paper squishies to make', 'Instant download'],
     get: [
       'Squishy coloring pages: 25 pages',
@@ -135,19 +210,12 @@ export const printables: Printable[] = [
       'Paper squishies: 20 to color, cut, tape, stuff and squish',
       'A fully colored example of every coloring page',
     ],
-    sheets: [],
   },
-  {
-    id: 'squishy-christmas-coloring-pages',
-    etsy: 'https://www.etsy.com/listing/4610853433',
+  'squishy-christmas': {
     name: 'Squishy Christmas coloring pages',
     line: '25 festive pages to print tonight, each with a colored example.',
     hook: 'Squishy friends trim the tree, peek out of stockings, bake cookies and go sledding.',
-    price: '$3.99',
-    cover: {
-      src: img('printables/squishy-christmas/01_listing.webp'),
-      alt: 'Squishy Christmas coloring pages: festive squishies around an open coloring page',
-    },
+    coverAlt: 'Squishy Christmas coloring pages: festive squishies around an open coloring page',
     facts: ['25 pages', 'A colored example of each', 'Instant download'],
     get: [
       'All 25 pages as PDFs',
@@ -162,19 +230,11 @@ export const printables: Printable[] = [
       sheet('squishy-christmas', 1, 'A Christmas squishy, colored in'),
     ],
     seasonal: true,
-    book: 'squishy-christmas-coloring-book',
   },
-  {
-    id: 'who-took-santas-sleigh',
-    etsy: 'https://www.etsy.com/listing/4586959797',
-    name: 'Who Took Santa’s Sleigh?',
+  'north-pole-caper': {
     line: 'A printable mystery the whole family solves. 16 clues, one answer, about an hour.',
     hook: 'Santa’s sleigh is missing and 4,000 elves are suspects. Print the clues, pass them round the table and work out who did it.',
-    price: '$5.99',
-    cover: {
-      src: img('printables/north-pole-caper/01_listing.webp'),
-      alt: 'Who Took Santa’s Sleigh? A printable Christmas mystery game',
-    },
+    coverAlt: 'Who Took Santa’s Sleigh? A printable Christmas mystery game',
     facts: ['16 clues', 'One answer', 'About an hour', 'Instant download'],
     get: [
       'A warm-up case: 48 elves and 8 clues, about 10 minutes',
@@ -182,20 +242,13 @@ export const printables: Printable[] = [
       'Hints and the solution, each in its own PDF',
       'A short case briefing video',
     ],
-    sheets: [],
     seasonal: true,
   },
-  {
-    id: 'christmas-mystery-mosaics',
-    etsy: 'https://www.etsy.com/listing/4606027106',
+  'cozy-christmas-mosaics': {
     name: 'Christmas mystery mosaics',
     line: '30 large print color-by-number pictures for kids and grandparents.',
     hook: 'Color the squares by number and a cozy Christmas picture appears. The print is large, so kids and grandparents can share a page.',
-    price: '$4.99',
-    cover: {
-      src: img('printables/cozy-christmas-mosaics/01_cover_listing.webp'),
-      alt: 'Cozy Christmas mystery mosaics: a color-by-number page half colored in',
-    },
+    coverAlt: 'Cozy Christmas mystery mosaics: a color-by-number page half colored in',
     facts: ['30 pictures', 'Large print', 'Instant download'],
     get: [
       '30 large print pictures in one PDF',
@@ -203,10 +256,47 @@ export const printables: Printable[] = [
       'A riddle at the top of each page as a hint',
       'The finished pictures at the back, if you want to peek',
     ],
-    sheets: [],
     seasonal: true,
   },
-];
+};
+
+type FeedPrintable = CollectionEntry<'printables'>['data'];
+type FeedBook = CollectionEntry<'books'>['data'];
+type FeedGame = CollectionEntry<'games'>['data'];
+
+const feedPrintables = (await getCollection('printables')).map((entry) => entry.data);
+const feedBooks = (await getCollection('books')).map((entry) => entry.data);
+export const feedGames = (await getCollection('games')).map((entry) => entry.data);
+
+/** What a printable's listing says about it: the facts the site's words are checked against. */
+const said = (p: FeedPrintable) => [p.name, p.title, p.hook, p.description, p.features, p.faq, p.price];
+const saidOfBook = (b: FeedBook) => [b.title, b.subtitle, b.pages, b.trim, b.price];
+
+export const printables: Printable[] = inOrder(feedPrintables, Object.keys(printableWords)).map((p) => {
+  const words = printableWords[p.id] ?? {};
+  const { sheets, pair, made, coverAlt, ...text } = words;
+  checkNumbers(`Printable "${p.id}"`, [text, pair?.caption, made?.caption], said(p));
+  const picked = p.images[(covers as Record<string, number>)[p.id] ?? 0];
+  return {
+    id: p.id,
+    name: words.name ?? smart(p.name),
+    line: words.line ?? smart(p.title),
+    hook: words.hook ?? smart(p.hook),
+    price: usd(p.price),
+    etsy: p.etsy_url,
+    cover: { src: feedImage(picked), alt: coverAlt ?? picked.alt },
+    facts: words.facts ?? [],
+    sheets: sheets ?? [],
+    seasonal: words.seasonal,
+    book: p.book ?? undefined,
+    pair,
+    made,
+    inside: words.inside,
+    get: words.get ?? p.features.map(smart),
+  };
+});
+
+// ---- books -------------------------------------------------------------------------------------
 
 export interface Book {
   id: string;
@@ -218,45 +308,96 @@ export interface Book {
   amazon: string;
   facts: string[];
   peek: Pic[];
-  printable: string;
+  printable?: string;
   seasonal?: boolean;
 }
 
-export const books: Book[] = [
-  {
-    id: 'squishy-coloring-book',
-    name: 'Squishy Coloring Book',
+/** The site's words and art for a book. A book is on the shelf once its cover art is here. */
+interface BookWords {
+  cover: string;
+  line?: string;
+  blurb?: string;
+  facts?: string[];
+  peek?: Pic[];
+  seasonal?: boolean;
+}
+
+const bookWords: Record<string, BookWords> = {
+  'squishy-coloring': {
+    cover: 'books/squishy-coloring.webp',
     line: '25 designs, from easy pages for little hands to a big pile of squishies.',
     blurb: 'Glitter dumplings, butter blocks and boba buddies, from easy pages for little hands to a page with 42 squishies to find.',
-    price: '$9.99',
-    cover: { src: img('books/squishy-coloring.webp'), alt: 'Squishy Coloring Book, paperback cover' },
-    amazon: 'https://www.amazon.com/dp/B0HPY48PV8',
     facts: ['25 designs', 'Three levels', '8.5 × 11 in pages'],
     peek: [
       sheet('squishy-coloring', 2, 'A glitter dumpling page'),
       sheet('squishy-coloring', 7, 'A claw machine page'),
       sheet('squishy-coloring', 9, 'A big pile of squishies page'),
     ],
-    printable: 'squishy-coloring-pages',
   },
-  {
-    id: 'squishy-christmas-coloring-book',
-    name: 'Squishy Christmas Coloring Book',
+  'squishy-christmas': {
+    cover: 'books/squishy-christmas.webp',
     line: 'The paperback, ready to wrap. 25 designs, one per sheet.',
     blurb: 'Squishy friends trim the tree, peek out of stockings, bake cookies and go sledding. One design per sheet, so markers don’t bleed through.',
-    price: '$9.99',
-    cover: { src: img('books/squishy-christmas.webp'), alt: 'Squishy Christmas Coloring Book, paperback cover' },
-    amazon: 'https://www.amazon.com/dp/B0HR29ZBCB',
     facts: ['25 designs', 'One design per sheet', '8.5 × 11 in pages'],
     peek: [
       sheet('squishy-christmas', 4, 'A trim the tree page'),
       sheet('squishy-christmas', 2, 'A stocking surprise page'),
       sheet('squishy-christmas', 3, 'A gingerbread buddy page'),
     ],
-    printable: 'squishy-christmas-coloring-pages',
     seasonal: true,
   },
-];
+  'cozy-christmas-mosaics': {
+    cover: 'books/christmas-mosaics.webp',
+    seasonal: true,
+  },
+};
+
+/** Books the feed names that the site has no cover art for yet. They are left off the shelf. */
+export const booksWithoutArt = feedBooks.filter((b) => !bookWords[b.id]).map((b) => b.id);
+if (booksWithoutArt.length) {
+  console.warn(`[feed] no cover art yet, so not on the shelf: ${booksWithoutArt.map((id) => `book ${id}`).join(', ')}`);
+}
+
+export const books: Book[] = inOrder(
+  feedBooks.filter((b) => bookWords[b.id]),
+  Object.keys(bookWords),
+).map((b) => {
+  const { cover, peek, ...text } = bookWords[b.id];
+  const pages = feedPrintables.find((p) => p.id === b.printable);
+  checkNumbers(`Book "${b.id}"`, text, [saidOfBook(b), pages ? said(pages) : []]);
+  const subtitle = b.subtitle ? smart(b.subtitle) : '';
+  return {
+    id: b.id,
+    name: smart(b.title),
+    line: text.line ?? subtitle,
+    blurb: text.blurb ?? subtitle,
+    price: usd(b.price),
+    cover: { src: img(cover), alt: `${smart(b.title)}, paperback cover` },
+    amazon: b.amazon_url,
+    facts: text.facts ?? [b.pages ? `${b.pages} pages` : '', b.trim ? `${b.trim.replace(' x ', ' × ')} pages` : ''].filter(Boolean),
+    peek: peek ?? [],
+    printable: b.printable ?? undefined,
+    seasonal: text.seasonal,
+  };
+});
+
+// ---- Squishy Bop! ------------------------------------------------------------------------------
+
+/** How the site says where a game stands. */
+export const statusWords = {
+  'coming-soon': 'Coming soon',
+  testing: 'In testing on Android',
+  live: 'On Google Play',
+} as const;
+
+export const feedGame = (id: string): FeedGame => {
+  const hit = feedGames.find((g) => g.id === id);
+  if (!hit) throw new Error(`The site has a page for the game "${id}", but the feed does not name it`);
+  return hit;
+};
+
+/** A game's facts as its words may quote them: its counts, its ages and what it charges. */
+export const saidOfGame = (g: FeedGame) => [g.facts, g.ages, g.purchases, g.price_usd];
 
 const shot = (file: string, alt: string, caption: string) => ({
   src: img(`games/squishy-bop/${file}.webp`),
@@ -264,24 +405,14 @@ const shot = (file: string, alt: string, caption: string) => ({
   caption,
 });
 
-export const squishyBop = {
-  id: 'squishy-bop',
-  name: 'Squishy Bop!',
-  tagline: 'A block puzzle where every block is a plush friend that pops into a song.',
+const bop = feedGame('squishy-bop');
+const bopWords = {
   pitch: 'Every block is a squishy plush friend, and they can’t wait to pop.',
-  status: 'In testing on Android',
   promise: 'Free to play. No sign-in. Ads never interrupt a game.',
-  // Stand-in until the owner supplies the public opt-in address.
-  testerUrl: 'https://play.google.com/store/apps',
-  icon: { src: img('games/squishy-bop/icon.webp'), alt: '' },
-  feature: {
-    src: img('games/squishy-bop/feature.webp'),
-    alt: 'Squishy Bop! title art with plush block friends',
-  },
   shots: [
     shot('01_superpower', 'A rainbow wave clearing the board', 'Fill a row and it pops into a song'),
-    shot('03_collection', 'The collection of rare squishies', 'Find all 60 rare squishies'),
-    shot('04_adventure', 'An Adventure mode puzzle', 'Solve 48 Adventure puzzles'),
+    shot('03_collection', 'The collection of rare squishies', 'Find all {rare_collection_size} rare squishies'),
+    shot('04_adventure', 'An Adventure mode puzzle', 'Solve {adventure_level_count} Adventure puzzles'),
     shot('07_playground', 'The Squishy Playground', 'Or just squeeze them in the Playground'),
     shot('06_scenes', 'Cozy places to play', 'Pick a cozy place to play'),
   ],
@@ -315,6 +446,21 @@ export const squishyBop = {
       text: 'Squishy Bop! is in testing on Android. The button takes you to Google Play to opt in with your Google account.',
     },
   ],
+};
+checkNumbers('Game "squishy-bop"', [bopWords.pitch, bopWords.promise, bopWords.parts, bopWords.grownUps], saidOfGame(bop));
+
+export const squishyBop = {
+  id: bop.id,
+  name: smart(bop.name),
+  tagline: smart(bop.tagline),
+  status: statusWords[bop.status],
+  testerUrl: bop.tester_url ?? bop.play_url ?? stores.play,
+  icon: { src: img('games/squishy-bop/icon.webp'), alt: '' },
+  feature: {
+    src: img('games/squishy-bop/feature.webp'),
+    alt: 'Squishy Bop! title art with plush block friends',
+  },
+  ...fill('Game "squishy-bop"', bopWords, bop.facts),
 };
 
 export const printable = (id: string) => {
