@@ -12,6 +12,7 @@
 import type { ImageMetadata } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import covers from './covers.json';
+import shelf from './shelf.json';
 
 const art = import.meta.glob<{ default: ImageMetadata }>('../assets/**/*.{webp,png}', { eager: true });
 const img = (path: string): ImageMetadata => {
@@ -109,7 +110,8 @@ export interface Printable {
   etsy: string;
   cover: Pic;
   facts: string[];
-  sheets: Pic[];
+  /** "A look inside": the printable's Etsy listing pictures from the feed, all but its cover. */
+  gallery: Pic[];
   seasonal?: boolean;
   book?: string;
   pair?: { blank: Pic; colored: Pic; caption: string };
@@ -125,7 +127,6 @@ interface PrintableWords {
   hook?: string;
   coverAlt?: string;
   facts?: string[];
-  sheets?: Pic[];
   seasonal?: boolean;
   pair?: Printable['pair'];
   made?: Printable['made'];
@@ -138,6 +139,10 @@ const sheet = (folder: string, n: number, alt: string): Pic => ({
   alt,
 });
 
+/** A coloring page that peeks out of the home page's Printables door (decoration; the printable's own
+ *  page shows its listing pictures from the feed). */
+export const doorSheet = sheet('squishy-coloring', 8, '');
+
 // Keyed by the product's id in the feed, in shelf order.
 const printableWords: Record<string, PrintableWords> = {
   'squishy-coloring': {
@@ -146,15 +151,6 @@ const printableWords: Record<string, PrintableWords> = {
     hook: 'Glitter dumplings, butter blocks and boba buddies to color, each with a finished example to copy or beat.',
     coverAlt: 'Squishy coloring pages: a colored glitter dumpling beside the page it came from',
     facts: ['25 pages', 'Three levels, ages 4 and up', 'US Letter and A4', 'Instant download'],
-    sheets: [
-      sheet('squishy-coloring', 3, 'Easy: a butter block'),
-      sheet('squishy-coloring', 4, 'Easy: a boba buddy'),
-      sheet('squishy-coloring', 8, 'Fun scene: a bubble bath, colored in'),
-      sheet('squishy-coloring', 5, 'A paw squishy, colored in'),
-      sheet('squishy-coloring', 7, 'Detailed: a claw machine'),
-      sheet('squishy-coloring', 9, 'Detailed: a big pile of squishies'),
-      sheet('squishy-coloring', 6, 'Easy: a jelly cube'),
-    ],
     pair: {
       blank: sheet('squishy-coloring', 2, 'The glitter dumpling page, ready to color'),
       colored: sheet('squishy-coloring', 1, 'The same glitter dumpling, colored in'),
@@ -192,11 +188,6 @@ const printableWords: Record<string, PrintableWords> = {
       'Play pages to go with them',
       'US Letter and A4 PDFs',
     ],
-    sheets: [
-      sheet('paper-squishy', 1, 'A paper squishy page, front and back'),
-      sheet('paper-squishy', 2, 'A second paper squishy page'),
-      sheet('paper-squishy', 3, 'A third paper squishy page'),
-    ],
   },
   'squishy-bundle': {
     name: 'The squishy bundle',
@@ -222,12 +213,6 @@ const printableWords: Record<string, PrintableWords> = {
       '25 single PNG pages for tablets',
       'A colored example of every page',
       'A short start-here guide',
-    ],
-    sheets: [
-      sheet('squishy-christmas', 4, 'Squishies trimming the tree'),
-      sheet('squishy-christmas', 2, 'A stocking surprise'),
-      sheet('squishy-christmas', 3, 'A gingerbread buddy'),
-      sheet('squishy-christmas', 1, 'A Christmas squishy, colored in'),
     ],
     seasonal: true,
   },
@@ -293,9 +278,10 @@ const saidOfBook = (b: FeedBook) => [b.title, b.subtitle, b.pages, b.trim, b.pri
 
 export const printables: Printable[] = inOrder(feedPrintables, Object.keys(printableWords)).map((p) => {
   const words = printableWords[p.id] ?? {};
-  const { sheets, pair, made, coverAlt, ...text } = words;
+  const { pair, made, coverAlt, ...text } = words;
   checkNumbers(`Printable "${p.id}"`, [text, pair?.caption, made?.caption], said(p));
-  const picked = p.images[(covers as Record<string, number>)[p.id] ?? 0];
+  const coverAt = (covers as Record<string, number>)[p.id] ?? 0;
+  const picked = p.images[coverAt];
   return {
     id: p.id,
     name: words.name ?? smart(p.name),
@@ -305,7 +291,7 @@ export const printables: Printable[] = inOrder(feedPrintables, Object.keys(print
     etsy: p.etsy_url,
     cover: { src: feedImage(picked), alt: coverAlt ?? picked.alt },
     facts: words.facts ?? [],
-    sheets: sheets ?? [],
+    gallery: p.images.filter((_, i) => i !== coverAt).map((image) => ({ src: feedImage(image), alt: smart(image.alt) })),
     seasonal: words.seasonal,
     book: p.book ?? undefined,
     pair,
@@ -331,9 +317,10 @@ export interface Book {
   seasonal?: boolean;
 }
 
-/** The site's words and art for a book. A book is on the shelf once its cover art is here. */
+/** The site's words for a book on the shelf (src/data/shelf.json names the shelf, in order; a book
+ *  there without words here shows the feed's subtitle). Its cover is not typed here: it is the
+ *  front of the cover uploaded to Amazon, from the feed. */
 interface BookWords {
-  cover: string;
   line?: string;
   blurb?: string;
   facts?: string[];
@@ -343,7 +330,6 @@ interface BookWords {
 
 const bookWords: Record<string, BookWords> = {
   'squishy-coloring': {
-    cover: 'books/squishy-coloring.webp',
     line: '25 designs, from easy pages for little hands to a big pile of squishies.',
     blurb: 'Glitter dumplings, butter blocks and boba buddies, from easy pages for little hands to a page with 42 squishies to find.',
     facts: ['25 designs', 'Three levels', '8.5 × 11 in pages'],
@@ -354,7 +340,6 @@ const bookWords: Record<string, BookWords> = {
     ],
   },
   'squishy-christmas': {
-    cover: 'books/squishy-christmas.webp',
     line: 'The paperback, ready to wrap. 25 designs, one per sheet.',
     blurb: 'Squishy friends trim the tree, peek out of stockings, bake cookies and go sledding. One design per sheet, so markers don’t bleed through.',
     facts: ['25 designs', 'One design per sheet', '8.5 × 11 in pages'],
@@ -366,7 +351,6 @@ const bookWords: Record<string, BookWords> = {
     seasonal: true,
   },
   'cozy-christmas-mosaics': {
-    cover: 'books/christmas-mosaics.webp',
     line: 'Large print color by number: 30 cozy Christmas pictures, a page at a time.',
     blurb: 'Color the squares by number and a cozy Christmas picture appears, from Santa to a mug of hot cocoa. Big squares and large print, so kids and grandparents can share a page.',
     facts: ['30 pictures', 'Large print', '8.5 × 11 in pages'],
@@ -374,17 +358,20 @@ const bookWords: Record<string, BookWords> = {
   },
 };
 
-/** Books the feed names that the site has no cover art for yet. They are left off the shelf. */
-export const booksWithoutArt = feedBooks.filter((b) => !bookWords[b.id]).map((b) => b.id);
-if (booksWithoutArt.length) {
-  console.warn(`[feed] no cover art yet, so not on the shelf: ${booksWithoutArt.map((id) => `book ${id}`).join(', ')}`);
+/** Books the feed names that are not on the shelf (src/data/shelf.json). */
+export const booksOffShelf = feedBooks.filter((b) => !shelf.books.includes(b.id)).map((b) => b.id);
+if (booksOffShelf.length) {
+  console.warn(`[feed] not on the shelf (src/data/shelf.json): ${booksOffShelf.map((id) => `book ${id}`).join(', ')}`);
+}
+for (const id of Object.keys(bookWords)) {
+  if (!shelf.books.includes(id)) throw new Error(`Book "${id}" has words in catalog.ts but is not in src/data/shelf.json`);
 }
 
 export const books: Book[] = inOrder(
-  feedBooks.filter((b) => bookWords[b.id]),
-  Object.keys(bookWords),
+  feedBooks.filter((b) => shelf.books.includes(b.id)),
+  shelf.books,
 ).map((b) => {
-  const { cover, peek, ...text } = bookWords[b.id];
+  const { peek, ...text } = bookWords[b.id] ?? {};
   const pages = feedPrintables.find((p) => p.id === b.printable);
   checkNumbers(`Book "${b.id}"`, text, [saidOfBook(b), pages ? said(pages) : []]);
   const subtitle = b.subtitle ? smart(b.subtitle) : '';
@@ -394,7 +381,7 @@ export const books: Book[] = inOrder(
     line: text.line ?? subtitle,
     blurb: text.blurb ?? subtitle,
     price: usd(b.price),
-    cover: { src: img(cover), alt: `${smart(b.title)}, paperback cover` },
+    cover: { src: feedImage(b.cover), alt: smart(b.cover.alt) },
     amazon: b.amazon_url,
     facts: text.facts ?? [b.pages ? `${b.pages} pages` : '', b.trim ? `${b.trim.replace(' x ', ' × ')} pages` : ''].filter(Boolean),
     peek: peek ?? [],

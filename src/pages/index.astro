@@ -9,7 +9,7 @@ import GameCard from '../components/GameCard.astro';
 import Shape from '../components/Shape.astro';
 import Penny from '../components/Penny.tsx';
 import Door, { type Art } from '../components/Door.tsx';
-import { brand, books, printable, printables, squishyBop as game, stores } from '../data/catalog';
+import { brand, books, printable, printables, squishyBop as game, stores, doorSheet } from '../data/catalog';
 import { bopPlayed, soonGames } from '../data/games';
 import pennySheet from '../assets/brand/penny-highfive.webp?url';
 
@@ -32,7 +32,7 @@ const gamesArt: Art[] = [
   { kind: 'phone', src: await url(game.shots[0].src, 360), className: 'bottom-[-22%] right-[4%] w-[30%] max-w-[10rem] rotate-[6deg]', lift: 16 },
 ];
 const printArt: Art[] = [
-  { kind: 'sheet', src: await url(coloring.sheets[2].src, 320), className: 'bottom-[-24%] right-[44%] w-[42%] max-w-[7rem] -rotate-[14deg]', lift: 10 },
+  { kind: 'sheet', src: await url(doorSheet.src, 320), className: 'bottom-[-24%] right-[44%] w-[42%] max-w-[7rem] -rotate-[14deg]', lift: 10 },
   { kind: 'sheet', src: await url(coloring.pair!.blank.src, 320), className: 'bottom-[-20%] right-[22%] w-[42%] max-w-[7rem] -rotate-[3deg]', lift: 16 },
   { kind: 'sheet', src: await url(coloring.pair!.colored.src, 320), className: 'bottom-[-15%] right-[-4%] w-[44%] max-w-[7.5rem] rotate-[9deg]', lift: 22 },
 ];

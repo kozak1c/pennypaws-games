@@ -1,5 +1,6 @@
-// Brings the product pictures the pages use from the media bucket into src/assets/feed/, so
-// they go through the same image pipeline as local art and are served from our own origin.
+// Brings the product pictures the pages use (printable and book covers) from the media bucket
+// into src/assets/feed/, so they go through the same image pipeline as local art and are served
+// from our own origin.
 //
 // Each picture's address and SHA-256 come from the feed (src/data/feed.json). A file that
 // does not match its hash is refused. Files already fetched are reused, so a build with a
@@ -20,15 +21,44 @@ export const feedImageName = (image) => `${image.sha256.slice(0, 16)}${extname(n
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
-/** Which pictures the pages use: each printable's cover (src/data/covers.json picks it; the first by default). */
+/** Which pictures the pages use: every listing picture of each printable (its cover, which
+ *  src/data/covers.json picks, and the rest for its "A look inside" gallery) and the cover of each
+ *  book on the shelf (src/data/shelf.json; the front of the cover uploaded to Amazon). A picture no
+ *  page uses is not fetched, or the build would ship it. */
 export async function wanted(base = root) {
   const feed = JSON.parse(await readFile(join(base, 'src/data/feed.json'), 'utf8'));
   const covers = JSON.parse(await readFile(join(base, 'src/data/covers.json'), 'utf8'));
-  return feed.printables.map((p) => {
-    const image = p.images[covers[p.id] ?? 0];
-    if (!image) throw new Error(`src/data/covers.json picks picture ${covers[p.id]} of ${p.id}, which has ${p.images.length}`);
-    return image;
+  const printables = (feed.printables ?? []).flatMap((p) => {
+    if (!p.images[covers[p.id] ?? 0]) throw new Error(`src/data/covers.json picks picture ${covers[p.id]} of ${p.id}, which has ${p.images.length}`);
+    return p.images;
   });
+  const shelf = JSON.parse(await readFile(join(base, 'src/data/shelf.json'), 'utf8')).books;
+  const books = (feed.books ?? []).filter((b) => shelf.includes(b.id)).map((b) => {
+    if (!b.cover) throw new Error(`The feed gives book ${b.id} no cover`);
+    return b.cover;
+  });
+  return [...printables, ...books];
+}
+
+/** One picture's bytes, retried with a pause when the connection drops or the bucket answers 5xx or
+ *  429 (a workflow fetching about ninety pictures meets the odd dropped connection). A 4xx other
+ *  than 429 is not retried: the picture is not there. The error names the address and the cause. */
+export async function download(url, get = fetch, { tries = 4, pause = (n) => new Promise((r) => setTimeout(r, 1000 * 3 ** n)) } = {}) {
+  let last;
+  for (let n = 0; n < tries; n += 1) {
+    if (n > 0) await pause(n - 1);
+    try {
+      const response = await get(url);
+      if (response.ok) return Buffer.from(await response.arrayBuffer());
+      last = new Error(`${url} answered ${response.status}`);
+      if (response.status < 500 && response.status !== 429) throw last;
+    } catch (error) {
+      if (error === last) throw error;
+      const cause = error?.cause?.code || error?.cause?.message || error?.message || String(error);
+      last = new Error(`${url} could not be fetched (${cause})`);
+    }
+  }
+  throw last;
 }
 
 export async function fetchFeedImages({ base = root, log = console.log, get = fetch } = {}) {
@@ -43,9 +73,7 @@ export async function fetchFeedImages({ base = root, log = console.log, get = fe
     const file = join(folder, feedImageName(image));
     const have = await readFile(file).catch(() => null);
     if (have && sha256(have) === image.sha256) continue;
-    const response = await get(image.url);
-    if (!response.ok) throw new Error(`${image.url} answered ${response.status}`);
-    const bytes = Buffer.from(await response.arrayBuffer());
+    const bytes = await download(image.url, get);
     if (sha256(bytes) !== image.sha256) throw new Error(`${image.url} does not match the SHA-256 in the feed; refusing it`);
     await writeFile(file, bytes);
     fetched += 1;

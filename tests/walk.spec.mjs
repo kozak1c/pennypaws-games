@@ -49,11 +49,13 @@ function watch(page, baseURL, leaving = () => false) {
   });
   page.on("pageerror", (e) => problems.push(`page error: ${e.message}`));
   page.on("requestfailed", (r) => {
-    // A video element cancels its own first request for a clip and asks again for byte ranges;
-    // the browser reports the cancelled one as ERR_ABORTED. A clip that is really missing still
-    // shows as an HTTP error in the response check below, and any other failure is reported.
+    // A video element cancels its own first request for a clip and asks again for byte ranges, and
+    // the browser cancels a lazy picture's load it no longer needs (a gallery's pictures off to the
+    // side, when the page is resized for its full-page screenshot); it reports both as ERR_ABORTED.
+    // A clip or picture that is really missing still shows as an HTTP error in the response check
+    // below, and any other failure is reported.
     const aborted = r.failure()?.errorText === "net::ERR_ABORTED";
-    if (aborted && (r.resourceType() === "media" || leaving())) return;
+    if (aborted && (r.resourceType() === "media" || r.resourceType() === "image" || leaving())) return;
     problems.push(`request failed: ${r.url()} (${r.failure()?.errorText})`);
   });
   page.on("request", (r) => {

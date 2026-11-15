@@ -478,6 +478,10 @@
     background: #fff;
   }
 
+  .gallery__thumb--wide {
+    flex-basis: 3.5rem;
+  }
+
   .gallery__thumb[aria-current='true'] {
     opacity: 1;
     transform: translateY(-0.25rem);

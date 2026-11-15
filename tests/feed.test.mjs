@@ -8,12 +8,12 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmdirSync, statSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmdirSync, statSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-import { feedImageName, fetchFeedImages, wanted } from "../ops/feed-images.mjs";
+import { download, feedImageName, fetchFeedImages, wanted } from "../ops/feed-images.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const feed = JSON.parse(readFileSync(path.join(root, "src/data/feed.json"), "utf8"));
@@ -25,11 +25,11 @@ const allowed = {
   printables: ["id", "name", "title", "hook", "description", "collection", "price", "currency", "etsy_url",
     "images", "features", "formats", "faq", "related", "book"],
   books: ["id", "title", "subtitle", "asin", "isbn", "price", "currency", "amazon_url", "pages", "trim",
-    "live_date", "printable"],
+    "live_date", "printable", "cover"],
 };
 
 test("the feed is a version this build reads, with the three collections", () => {
-  assert.equal(feed.schema_version, 1);
+  assert.equal(feed.schema_version, 2);
   assert.deepEqual(Object.keys(feed).sort(), ["books", "games", "printables", "schema_version"]);
 });
 
@@ -79,8 +79,38 @@ test("no page or data file types a price, a game's ages or a product's store add
   }
 });
 
-test("each printable's cover is a picture the feed names", async () => {
-  assert.equal((await wanted()).length, feed.printables.length);
+test("every printable's listing pictures and each shelf book's cover are pictures the feed names", async () => {
+  const pictures = (await wanted()).map((p) => p.sha256);
+  const shelf = JSON.parse(readFileSync(path.join(root, "src/data/shelf.json"), "utf8")).books;
+  const onShelf = feed.books.filter((b) => shelf.includes(b.id));
+  const listing = feed.printables.flatMap((p) => p.images);
+  assert.equal(pictures.length, listing.length + onShelf.length, "every printable's listing pictures and each shelf book's cover, nothing else");
+  for (const image of listing) assert.ok(pictures.includes(image.sha256), `listing picture ${image.url} is not fetched`);
+  for (const book of onShelf) assert.ok(pictures.includes(book.cover.sha256), `book ${book.id} has no cover fetched`);
+});
+
+// A book's cover is the front of the cover file uploaded to Amazon, which the feed carries with
+// its SHA-256. Hand-copied art went wrong once (a draft poster and a background painting were
+// shown as covers), so no other source is allowed: no folder of book art, no cover typed in the
+// site's words, and the shelf takes each cover from the feed's picture.
+test("a book's cover comes from the feed and from nowhere else", () => {
+  assert.ok(!existsSync(path.join(root, "src/assets/books")), "src/assets/books/ is back; book covers come from the feed");
+  const catalog = readFileSync(path.join(root, "src/data/catalog.ts"), "utf8");
+  const words = catalog.slice(catalog.indexOf("const bookWords"), catalog.indexOf("export const booksOffShelf"));
+  assert.ok(words.length > 0, "src/data/catalog.ts no longer has bookWords where this test looks");
+  assert.doesNotMatch(words, /\bcover\s*:/, "bookWords types a cover; book covers come from the feed");
+  assert.doesNotMatch(words, /\.(webp|png|jpe?g|avif)\b/, "bookWords names an image file");
+  const shelf = catalog.slice(catalog.indexOf("export const books: Book[]"));
+  assert.match(shelf, /cover:\s*\{\s*src:\s*feedImage\(b\.cover\)/, "a book's cover is not the feed's picture");
+  for (const file of sources(path.join(root, "src"))) {
+    const text = readFileSync(file, "utf8");
+    assert.ok(!/assets\/books\//.test(text) && !/['"`]books\/[^'"`]*\.(webp|png|jpe?g)/.test(text),
+      `${path.relative(root, file)} points at book art outside the feed`);
+  }
+  for (const book of feed.books) {
+    assert.match(book.cover.url, /^https:\/\/media\.pennypawsgames\.com\//, `book ${book.id}'s cover is not on the media bucket`);
+    assert.match(book.cover.sha256, /^[0-9a-f]{64}$/, `book ${book.id}'s cover has no SHA-256`);
+  }
 });
 
 test("a picture that does not match the feed's SHA-256 is refused, and a matching one is kept", async () => {
@@ -93,6 +123,7 @@ test("a picture that does not match the feed's SHA-256 is refused, and a matchin
   };
   writeFileSync(path.join(base, "src/data/feed.json"), JSON.stringify({ printables: [{ id: "toy", images: [image] }] }));
   writeFileSync(path.join(base, "src/data/covers.json"), "{}");
+  writeFileSync(path.join(base, "src/data/shelf.json"), JSON.stringify({ books: [] }));
   const answer = (bytes) => async () => ({ ok: true, status: 200, arrayBuffer: async () => bytes });
   const quiet = { base, log: () => {} };
 
@@ -112,6 +143,7 @@ test("a picture address off the media bucket is refused", async () => {
   const image = { url: "https://example.org/p/toy/abc-01_listing.jpg", sha256: "0".repeat(64) };
   writeFileSync(path.join(base, "src/data/feed.json"), JSON.stringify({ printables: [{ id: "toy", images: [image] }] }));
   writeFileSync(path.join(base, "src/data/covers.json"), "{}");
+  writeFileSync(path.join(base, "src/data/shelf.json"), JSON.stringify({ books: [] }));
   await assert.rejects(fetchFeedImages({ base, log: () => {}, get: async () => assert.fail("fetched") }), /Not a media bucket address/);
 });
 
@@ -133,4 +165,21 @@ test("node ops/feed-images.mjs really runs, also through a directory link", () =
     unlinkSync(link);
     rmdirSync(path.dirname(link));
   }
+});
+
+test("a dropped connection or a 5xx is retried; a 404 is not, and the error names the address", async () => {
+  const quick = { pause: async () => {} };
+  let calls = 0;
+  const flaky = async () => {
+    calls += 1;
+    if (calls === 1) throw new TypeError("fetch failed", { cause: { code: "ECONNRESET" } });
+    if (calls === 2) return { ok: false, status: 503 };
+    return { ok: true, status: 200, arrayBuffer: async () => Buffer.from("picture") };
+  };
+  assert.equal((await download("https://media.pennypawsgames.com/x.jpg", flaky, quick)).toString(), "picture");
+  assert.equal(calls, 3);
+  let asked = 0;
+  await assert.rejects(download("https://media.pennypawsgames.com/gone.jpg", async () => { asked += 1; return { ok: false, status: 404 }; }, quick), /gone\.jpg answered 404/);
+  assert.equal(asked, 1, "a 404 is not retried");
+  await assert.rejects(download("https://media.pennypawsgames.com/down.jpg", async () => { throw new TypeError("fetch failed", { cause: { code: "ETIMEDOUT" } }); }, quick), /down\.jpg could not be fetched \(ETIMEDOUT\)/);
 });
