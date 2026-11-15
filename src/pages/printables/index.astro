@@ -5,6 +5,8 @@ import { printables, stores } from '../../data/catalog';
 
 const everyday = printables.filter((p) => !p.seasonal);
 const season = printables.filter((p) => p.seasonal);
+// Three across, or four when three would leave one card alone on the last row.
+const rail = (n: number) => (n % 3 === 1 ? 'rail' : 'rail rail--three');
 ---
 
 <Base
@@ -18,7 +20,7 @@ const season = printables.filter((p) => p.seasonal);
         <h1 class="tray__title" id="h-printables">Printables</h1>
         <p class="tray__line">Coloring pages, paper crafts and mystery games. Buy once, print at home as often as you like.</p>
       </div>
-      <div class="rail rail--three">
+      <div class={rail(everyday.length)}>
         {everyday.map((p) => (
           <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}
@@ -30,7 +32,7 @@ const season = printables.filter((p) => p.seasonal);
         <h2 class="tray__title" id="h-christmas">Ready for Christmas</h2>
         <p class="tray__line">Print them tonight and they are ready for the morning.</p>
       </div>
-      <div class="rail rail--three">
+      <div class={rail(season.length)}>
         {season.map((p) => (
           <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}
