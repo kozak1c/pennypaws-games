@@ -11,12 +11,28 @@
     "walk": "playwright test",
     "check:all": "node ops/check.mjs && playwright test",
     "dev": "wrangler dev --env staging --ip 127.0.0.1 --port 8787",
-    "health": "node ops/with-site.mjs -- python ops/health.py {site} --expect staging"
+    "health": "node ops/with-site.mjs -- python ops/health.py {site} --expect staging",
+    "site:dev": "astro dev --port 4391",
+    "site:build": "astro build",
+    "site:preview": "astro preview --port 4392"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
     "@playwright/test": "1.65.1",
     "html-validate": "11.21.1",
     "wrangler": "4.162.0"
+  },
+  "dependencies": {
+    "@astrojs/react": "7.1.9",
+    "@fontsource-variable/nunito": "5.3.0",
+    "@tailwindcss/vite": "4.3.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "astro": "7.4.12",
+    "motion": "14.14.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sharp": "0.35.5",
+    "tailwindcss": "4.3.5"
   }
 }

@@ -1,0 +1,303 @@
+---
+import { getImage, Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Base from '../layouts/Base.astro';
+import Card from '../components/Card.astro';
+import Shape from '../components/Shape.astro';
+import Penny from '../components/Penny.tsx';
+import Door, { type Art } from '../components/Door.tsx';
+import { brand, books, printable, squishyBop as game, stores } from '../data/catalog';
+import pennySheet from '../assets/brand/penny-highfive.webp?url';
+import playClip from '../assets/games/squishy-bop/play.mp4?url';
+import playPoster from '../assets/games/squishy-bop/play-poster.png';
+
+const url = async (src: ImageMetadata, width: number) => (await getImage({ src, width })).src;
+
+// Penny's high five: 16 frames of 707 x 704 on one 4 x 4 sheet. The last frame is the rest pose.
+const pennyRest = await getImage({ src: brand.pennyRest, width: 707 });
+const clay = {
+  heart: await url(brand.clay('heart'), 160),
+  circle: await url(brand.clay('circle'), 160),
+  triangle: await url(brand.clay('triangle'), 160),
+  square: await url(brand.clay('square'), 160),
+  star: await url(brand.clay('star'), 160),
+};
+
+const coloring = printable('squishy-coloring-pages');
+const gamesArt: Art[] = [
+  { kind: 'appicon', src: await url(game.icon.src, 192), className: 'bottom-[1.25rem] left-[clamp(1.125rem,2.2vw,1.75rem)] w-[4.25rem]', lift: 0 },
+  { kind: 'phone', src: await url(game.shots[1].src, 360), className: 'bottom-[-34%] right-[27%] w-[27%] -rotate-[7deg]', lift: 12 },
+  { kind: 'phone', src: await url(game.shots[0].src, 360), className: 'bottom-[-22%] right-[4%] w-[30%] rotate-[6deg]', lift: 16 },
+];
+const printArt: Art[] = [
+  { kind: 'sheet', src: await url(coloring.sheets[2].src, 320), className: 'bottom-[-24%] right-[44%] w-[42%] -rotate-[14deg]', lift: 10 },
+  { kind: 'sheet', src: await url(coloring.pair!.blank.src, 320), className: 'bottom-[-20%] right-[22%] w-[42%] -rotate-[3deg]', lift: 16 },
+  { kind: 'sheet', src: await url(coloring.pair!.colored.src, 320), className: 'bottom-[-15%] right-[-4%] w-[44%] rotate-[9deg]', lift: 22 },
+];
+const bookArt: Art[] = [
+  { kind: 'cover', src: await url(books[1].cover.src, 360), className: 'bottom-[-22%] right-[36%] w-[44%] -rotate-[8deg]', lift: 10 },
+  { kind: 'cover', src: await url(books[0].cover.src, 360), className: 'bottom-[-14%] right-[2%] w-[46%] rotate-[6deg]', lift: 18 },
+];
+
+const season = [printable('squishy-christmas-coloring-pages'), printable('who-took-santas-sleigh')];
+const seasonBook = books.find((b) => b.seasonal)!;
+// Real gameplay for the first phone, at the game's own speed: one piece dropped to fill two rows, and the pop.
+// Recorded from the game's staged demo board (--demo --drop=75), silent and looping.
+const clipPoster = await getImage({ src: playPoster, width: 360 });
+
+const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-mosaics', 'squishy-bundle'].map(printable);
+---
+
+<Base
+  title="Penny Paws Games"
+  description="Games, printables and books for families who like to play, from a small family studio named after our dog, Penny."
+  section="home"
+>
+  <div id="top" class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.875rem,2vw,1.5rem)] desk:grid-cols-[minmax(0,1.28fr)_minmax(0,1fr)]">
+    <section class="relative grid content-start justify-items-start gap-4 rounded-[clamp(1.75rem,3.4vw,2.75rem)] bg-[linear-gradient(170deg,#fff_0%,#f3f9ff_50%,#cfe7fd_100%)] p-[clamp(1.25rem,3.4vw,3rem)] shadow-tile desk:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)] desk:grid-rows-[auto_auto_1fr] desk:gap-x-0">
+      <h1 class="max-w-[13ch] text-[clamp(2.125rem,1.1rem+3.5vw,3.875rem)] desk:col-span-2 desk:max-w-[17ch] desk:text-[clamp(2.5rem,3.7vw,3.25rem)]">
+        Games, printables and books for families who like to play
+      </h1>
+      <p class="max-w-[25ch] text-[clamp(1.0625rem,0.95rem+0.5vw,1.25rem)] font-bold desk:col-start-1 desk:mt-3 desk:max-w-[20ch]">
+        Meet Penny. She’s our dog, and she never turns down a high five.
+      </p>
+      <div class="cta flex gap-2.5 desk:col-start-1 desk:mt-2 desk:flex-col desk:items-start desk:gap-4 desk:self-start">
+        <a class="candy" href="#games">See our games</a>
+        <a class="candy candy--red" href="#printables">Shop printables</a>
+      </div>
+      <div class="order-first w-[min(78%,19rem)] justify-self-center desk:order-none desk:col-start-2 desk:row-span-2 desk:row-start-2 desk:-mt-[15%] desk:-mr-[10%] desk:-mb-8 desk:w-[112%] desk:max-w-[30rem] desk:self-end desk:justify-self-end">
+        <Penny
+          client:load
+          rest={pennyRest.src}
+          sheet={pennySheet}
+          cols={4}
+          timing={[50, 70, 70, 80, 95, 45, 45, 110, 125, 70, 60, 60, 70, 80, 90, 60]}
+          impact={7}
+          width={707}
+          height={704}
+          alt="Penny, a plush golden retriever, holding up a paw for a high five. Her paw pads are a red heart, a yellow circle, a green triangle, a blue square and a purple star."
+          clay={clay}
+          bubbleClass="top-[14%] left-[-12%] desk:top-[21%] desk:left-[-4%] desk:text-[1.0625rem]"
+          loose={[
+            { shape: 'star', className: 'top-[4%] right-[-10%] w-[18%] rotate-12 desk:top-[-2%] desk:right-[10%] desk:w-[14%]' },
+            { shape: 'square', className: 'top-[52%] right-[-13%] w-[13%] -rotate-[14deg] desk:hidden' },
+            { shape: 'triangle', className: 'hidden desk:block top-[34%] right-[0%] w-[11%] rotate-[14deg]' },
+          ]}
+        />
+      </div>
+    </section>
+
+    <div class="grid gap-[inherit] desk:grid-rows-[minmax(0,1.05fr)_minmax(0,1fr)]">
+      <Door
+        client:load
+        href="#games"
+        tone="sky"
+        label="Games"
+        sub="Meet Squishy Bop!, our plush block puzzle."
+        subClass="max-w-[min(54%,15rem)]"
+        art={gamesArt}
+        className="min-h-[15rem]"
+      />
+      <div class="grid grid-cols-2 gap-[inherit]">
+        <Door
+          client:load
+          href="#printables"
+          tone="heart"
+          label="Printables"
+          sub="Coloring pages, paper crafts and mystery games to print tonight."
+          subClass="text-[0.9375rem]"
+          art={printArt}
+          className="min-h-[15.5rem]"
+        />
+        <Door
+          client:load
+          href="#books"
+          tone="sun"
+          label="Books"
+          sub="Our coloring books in paperback, delivered by Amazon."
+          subClass="text-[0.9375rem]"
+          art={bookArt}
+          className="min-h-[15.5rem]"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.75rem,1.5vw,1.125rem)] pb-14">
+    <section class="tray tray--leaf" id="christmas" aria-labelledby="h-christmas">
+      <div class="tray__head">
+        <h2 class="tray__title" id="h-christmas">Ready for Christmas</h2>
+        <p class="tray__line">Print the pages tonight, or have the paperback at the door in time to wrap.</p>
+      </div>
+      <div class="rail rail--three">
+        {season.map((p) => (
+          <Card href={stores.etsy} name={p.name} line={p.line} price={p.price} cover={p.cover} button="Get it on Etsy" />
+        ))}
+        <Card
+          href={seasonBook.amazon}
+          name={seasonBook.name}
+          line={seasonBook.line}
+          price={seasonBook.price}
+          cover={seasonBook.cover}
+          button="Buy on Amazon"
+          tone="yellow"
+        />
+      </div>
+    </section>
+
+    <section class="tray" id="games" aria-labelledby="h-games">
+      <div class="tray__head">
+        <h2 class="tray__title" id="h-games"><img src={clay.square} alt="" />Games</h2>
+      </div>
+      <div class="grid items-center gap-[clamp(1.25rem,3vw,2.5rem)] desk:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <Image
+          class="w-full rounded-[clamp(1rem,2vw,1.5rem)] shadow-[0_1rem_2rem_rgb(15_20_51/0.4)]"
+          src={game.feature.src}
+          alt={game.feature.alt}
+          widths={[640, 1024]}
+          sizes="(min-width: 60rem) 38rem, 92vw"
+        />
+        <div class="grid justify-items-start gap-3.5">
+          <div class="flex items-center gap-4">
+            <Image class="w-[4.75rem] rounded-[22%] shadow-[0_0.5rem_1rem_rgb(15_20_51/0.35)]" src={game.icon.src} alt="" width={192} />
+            <div class="grid justify-items-start gap-1.5">
+              <h3 class="text-[clamp(1.75rem,1.3rem+1.8vw,2.5rem)]">{game.name}</h3>
+              <span class="chip chip--navy">{game.status}</span>
+            </div>
+          </div>
+          <p class="tray__line">{game.tagline}</p>
+          <ul class="flex flex-wrap gap-2">
+            <li class="chip">Free to play</li>
+            <li class="chip">No sign-in</li>
+            <li class="chip">Ads never interrupt a game</li>
+          </ul>
+        </div>
+      </div>
+      <div class="shots" role="region" aria-label="Screenshots of Squishy Bop!" tabindex="0">
+        <figure>
+          <span class="phone block">
+            <video
+              data-autoplay
+              muted
+              loop
+              playsinline
+              preload="none"
+              poster={clipPoster.src}
+              width="360"
+              height="640"
+              aria-label="Squishy Bop! being played: a piece drops into place, two rows of squishies fill and pop, and a sticker is won"
+            >
+              <source src={playClip} type="video/mp4" />
+            </video>
+          </span>
+          <figcaption>{game.shots[0].caption}</figcaption>
+        </figure>
+        {game.shots.slice(1).map((shot) => (
+          <figure>
+            <span class="phone block"><Image src={shot.src} alt={shot.alt} width={360} /></span>
+            <figcaption>{shot.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="tray tray--heart" id="printables" aria-labelledby="h-printables">
+      <div class="tray__head">
+        <h2 class="tray__title" id="h-printables"><img src={clay.heart} alt="" />Printables</h2>
+        <p class="tray__line">Coloring pages, paper crafts and mystery games. Buy once, print at home as often as you like.</p>
+      </div>
+      <div class="rail">
+        {shelf.map((p) => (
+          <Card href={stores.etsy} name={p.name} line={p.line} price={p.price} cover={p.cover} button="Get it on Etsy" />
+        ))}
+      </div>
+      <a class="candy candy--white justify-self-start" href={stores.etsy}>See the whole shop on Etsy</a>
+    </section>
+
+    <section class="tray tray--sun" id="books" aria-labelledby="h-books">
+      <div class="tray__head">
+        <h2 class="tray__title" id="h-books"><img src={clay.circle} alt="" />Books</h2>
+        <p class="tray__line">Our coloring books in paperback: big pages, bold lines, printed and delivered by Amazon.</p>
+      </div>
+      <div class="grid gap-[clamp(0.75rem,1.6vw,1.25rem)] desk:grid-cols-2">
+        {books.map((b) => (
+          <article class="card bookcard grid-rows-none content-start gap-3 p-[clamp(1rem,2.4vw,1.75rem)]">
+            <div class="bookshow mb-2">
+              <span class="cover"><Image src={b.cover.src} alt={b.cover.alt} width={400} /></span>
+              {b.peek.map((s, i) => (
+                <span class:list={['sheet', i > 0 && `sheet--${i + 1}`]}><Image src={s.src} alt={s.alt} width={300} /></span>
+              ))}
+            </div>
+            <h3 class="text-[clamp(1.375rem,1.1rem+1vw,1.75rem)]">{b.name}</h3>
+            <p class="text-[1rem] font-bold text-navy-soft">{b.blurb}</p>
+            <ul class="flex flex-wrap gap-2">
+              {b.facts.map((fact) => <li class="chip">{fact}</li>)}
+            </ul>
+            <div class="mt-1 flex flex-wrap items-center gap-x-4 gap-y-3">
+              <span class="sticker sticker--plain">{b.price} paperback</span>
+              <a class="candy candy--small candy--yellow" href={b.amazon}>Buy on Amazon<span class="sr-only">: {b.name}</span></a>
+            </div>
+            <a class="justify-self-start text-[1rem] font-extrabold underline decoration-2 underline-offset-4" href={stores.etsy}>Or print it at home today</a>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="tray tray--paper" id="grown-ups" aria-labelledby="h-grown-ups">
+      <div class="tray__head">
+        <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-grown-ups"><img src={clay.star} alt="" />For grown-ups</h2>
+      </div>
+      <p class="max-w-[29ch] text-[clamp(1.5rem,1rem+2.3vw,2.75rem)] leading-[1.15] font-black tracking-[-0.02em]">
+        Penny Paws is a small family studio. We make the games and printables we want in our own house: kind, colorful and easy to put down when dinner is ready.
+      </p>
+      <ul class="grid gap-x-10 gap-y-3 text-[1.0625rem] leading-snug font-extrabold desk:grid-cols-3">
+        <li class="flex gap-3"><Shape name="check" /><span>No accounts, ads or tracking on this site</span></li>
+        <li class="flex gap-3"><Shape name="check" /><span>Printables download the minute you buy</span></li>
+        <li class="flex gap-3"><Shape name="check" /><span>Every game page says what it shows, sells and collects</span></li>
+      </ul>
+      <p class="font-bold">A real person answers at <span class="font-black select-all">{stores.email}</span>.</p>
+    </section>
+  </div>
+
+  <footer slot="after" class="wrap grid gap-6 pb-12 text-[1rem] desk:grid-cols-[minmax(0,1.4fr)_auto_auto] desk:gap-16">
+    <div class="grid justify-items-start gap-2">
+      <span class="flex items-center self-start rounded-full bg-paper px-7 py-5 shadow-float"><Image class="block h-auto w-[11.5rem]" src={brand.logoTight} alt="Penny Paws Games" width={420} /></span>
+      <p class="max-w-[26ch] font-bold">Games, printables and books for families who like to play.</p>
+    </div>
+    <ul class="grid content-start gap-1 font-extrabold">
+      <li><a class="inline-flex min-h-11 items-center gap-2 no-underline hover:underline" href="#games"><Shape name="square" />Games</a></li>
+      <li><a class="inline-flex min-h-11 items-center gap-2 no-underline hover:underline" href="#printables"><Shape name="heart" />Printables</a></li>
+      <li><a class="inline-flex min-h-11 items-center gap-2 no-underline hover:underline" href="#books"><Shape name="circle" />Books</a></li>
+      <li><a class="inline-flex min-h-11 items-center gap-2 no-underline hover:underline" href="#grown-ups"><Shape name="star" />Grown-ups</a></li>
+    </ul>
+    <ul class="grid content-start gap-1 font-extrabold">
+      <li><a class="inline-flex min-h-11 items-center no-underline hover:underline" href={stores.etsy}>Our shop on Etsy</a></li>
+      <li><a class="inline-flex min-h-11 items-center no-underline hover:underline" href={stores.instagram}>Instagram</a></li>
+      <li><a class="inline-flex min-h-11 items-center no-underline hover:underline" href={stores.facebook}>Facebook</a></li>
+      <li><a class="inline-flex min-h-11 items-center no-underline hover:underline" href="/squishy-bop/privacy/">Squishy Bop! privacy policy</a></li>
+    </ul>
+    <p class="text-[0.9375rem] text-navy-soft desk:col-span-3">
+      © 2026 Penny Paws. Google Play and the Google Play logo are trademarks of Google LLC. Etsy and Amazon are trademarks of their owners.
+    </p>
+  </footer>
+</Base>
+
+<script>
+  // Gameplay clips play only while they are on screen, and never by themselves for people who ask for less motion.
+  const clips = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    clips.forEach((clip) => (clip.controls = true));
+  } else if (clips.length) {
+    const watch = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const clip = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) void clip.play().catch(() => {});
+          else clip.pause();
+        }
+      },
+      { threshold: 0.4 },
+    );
+    clips.forEach((clip) => watch.observe(clip));
+  }
+</script>

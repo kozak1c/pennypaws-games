@@ -1,0 +1,51 @@
+---
+import '@fontsource-variable/nunito';
+import '../styles/global.css';
+import { Image } from 'astro:assets';
+import Shape from '../components/Shape.astro';
+import { brand } from '../data/catalog';
+interface Props {
+  title: string;
+  description: string;
+  section?: 'home' | 'games' | 'printables' | 'books' | 'grown-ups';
+}
+const { title, description, section } = Astro.props;
+const tabs = [
+  { id: 'games', label: 'Games', href: '#games', shape: 'square' },
+  { id: 'printables', label: 'Printables', href: '#printables', shape: 'heart' },
+  { id: 'books', label: 'Books', href: '#books', shape: 'circle' },
+  { id: 'grown-ups', label: 'Grown-ups', href: '#grown-ups', shape: 'star' },
+] as const;
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth motion-reduce:scroll-auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#e1f0fd" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <a class="candy candy--small fixed top-[-6rem] left-4 z-50 focus:top-4" href="#main">Skip to the page</a>
+    <header class="top">
+      <a class="top__logo" href="#top" aria-current={section === 'home' ? 'page' : undefined}>
+        <Image src={brand.logoTight} alt="Penny Paws Games, home" width={380} loading="eager" />
+      </a>
+      <nav class="tabs" aria-label="Sections">
+        {tabs.map((tab) => (
+          <a class="tab" href={tab.href} aria-current={section === tab.id ? 'page' : undefined}>
+            <Shape name={tab.shape} />
+            <span>{tab.label}</span>
+          </a>
+        ))}
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <slot name="after" />
+  </body>
+</html>
