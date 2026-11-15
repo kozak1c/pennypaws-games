@@ -19,9 +19,9 @@ const publicFiles = readPublicFiles().files;
 // with the reviewed change. Last changed 2026-11-15 (PAWS-034): a way back to the site above and
 // below each policy; the policy words, below, did not change.
 const PRIVACY_PAGES = {
-  "squishy-bop/privacy/index.html": "844e3f318168843f651caf0f7740fa6e2d890699537883916e1bfd9bef5bc2c5",
-  "plush-hour/privacy/index.html": "b7dd9ab6f54a7e8974c71990fa8afe7fe6db443279b6a1bf2309cc768bb62118",
-  "giggle-bomb/privacy/index.html": "09632e29e402427839ac37407c7af8a01c7e30e4349769feaf93dcb83c08e3da",
+  "squishy-bop/privacy/index.html": "9fbd0aa65244ba122226fbd166af305eee79b0b9380662e8e9dd9f2fa7421f26",
+  "plush-hour/privacy/index.html": "36e402a66c83ed26beb4affa2000e7d8e084e1c458ee39e0c088b6c991788957",
+  "giggle-bomb/privacy/index.html": "fd102230f05f0486b3cb7e1e30dea0654ccb2148ff79179294767fca330c1996",
 };
 
 for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
