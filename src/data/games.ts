@@ -112,7 +112,7 @@ const gameWords: Record<string, GameWords> = {
         { src: img('plush-hour/shot-room_front.webp'), alt: 'The Storefront, partly restored, with three plush neighbors outside', caption: 'Bring the shop back room by room' },
         { src: img('plush-hour/shot-pick_look.webp'), alt: 'Choosing one of three looks for a yarn basket in the Workshop', caption: 'Choose a look for each piece' },
         { src: img('plush-hour/shot-room_alive.webp'), alt: 'The Tea Room, restored, with plush friends having tea', caption: 'Watch each room fill up' },
-        { src: img('plush-hour/shot-chapter.webp'), alt: 'A story card: Chapter 2 complete, The Workshop', caption: 'Follow a story in six chapters' },
+        { src: img('plush-hour/shot-story.webp'), alt: 'A story scene in the Tea Room. Pom, about her old self: "Then I’m overruling her. She’s had her turn at being me."', caption: 'Get to know Grandma Pom again, in six chapters' },
       ],
     },
   },
