@@ -25,14 +25,14 @@ import { stores } from '../../data/catalog';
       <ul class="ticks text-[1.0625rem]">
         <li><Shape name="check" /><span><b>This site keeps to itself.</b> No accounts, ads or tracking on this site.</span></li>
         <li><Shape name="check" /><span><b>Printables are yours straight away.</b> They download the minute you buy, and you can print them as often as you like.</span></li>
-        <li><Shape name="check" /><span><b>Games say what they do.</b> Every game page says what it shows, sells and collects.</span></li>
+        <li><Shape name="check" /><span><b>Games say what they do.</b> Every game page has a plain note for grown-ups on ads and purchases.</span></li>
       </ul>
     </section>
 
     <section class="tray tray--paper" aria-labelledby="h-reach">
       <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-reach">Reach a real person</h2>
       <p class="max-w-[38rem] text-[1.0625rem] font-bold text-navy-soft">
-        Write to <span class="font-black text-navy select-all">{stores.email}</span> about anything here. For an order, the shop that sold it (Etsy or Amazon) handles payment, delivery and refunds.
+        Write to <a class="font-black text-navy underline decoration-2 underline-offset-4" href={`mailto:${stores.email}`}>{stores.email}</a> about anything here. For an order, the shop that sold it (Etsy or Amazon) handles payment, delivery and refunds.
       </p>
       <div class="flex flex-wrap gap-4">
         <a class="candy candy--small" href="/squishy-bop/privacy/">Squishy Bop! privacy policy</a>

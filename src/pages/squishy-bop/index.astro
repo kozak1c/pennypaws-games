@@ -45,7 +45,8 @@ const paperback = book('squishy-coloring-book');
             <li class="chip">No sign-in</li>
             <li class="chip">Ads never interrupt a game</li>
           </ul>
-          <p class="max-w-[30rem] text-[1rem] font-bold">
+          <p class="tray__line">Made for kids and the grown-ups who play with them.</p>
+          <p class="tray__line">
             It is in testing on Android now. This page gets its Google Play button when the game is out.
           </p>
         </div>
@@ -85,8 +86,8 @@ const paperback = book('squishy-coloring-book');
     <section class="tray tray--heart" aria-labelledby="h-more">
       <h2 class="tray__title" id="h-more">More squishy fun</h2>
       <div class="rail rail--two">
-        <Card href={`/printables/${pages.id}/`} name={pages.name} line={pages.line} price={pages.price} cover={pages.cover} button="See what’s inside" />
-        <Card href="/books/" name={paperback.name} line={paperback.line} price={paperback.price} cover={paperback.cover} button="See the paperback" tone="yellow" />
+        <Card href={`/printables/${pages.id}/`} name={pages.name} line={pages.line} price={pages.price} cover={pages.cover} kind="Print at home" button="See what’s inside" />
+        <Card href="/books/" name={paperback.name} line={paperback.line} price={paperback.price} cover={paperback.cover} kind="Paperback" button="See the paperback" tone="yellow" />
       </div>
     </section>
 

@@ -33,6 +33,8 @@ export interface GameCard {
   name: string;
   tagline: string;
   status: string;
+  /** Who it is for, in a few words, where that is not young children. Shown on the game's card. */
+  forWhom?: string;
   icon: Pic;
   feature: Pic;
 }
@@ -62,6 +64,7 @@ export const soonGames: SoonGame[] = [
     name: 'Plush Hour',
     tagline: 'Merge cozy plush toys, reopen Grandma’s shop and find the memories she lost.',
     status: 'Coming soon',
+    forWhom: 'For teens and adults',
     tone: 'rose',
     icon: { src: img('plush-hour/icon.png'), alt: '' },
     feature: {
@@ -134,7 +137,12 @@ export const soonGames: SoonGame[] = [
         text: 'Every few turns two players go head to head: Tap War, Quick Draw, Thumb War, Staring Contest, Rock Paper Scissors. The loser takes the bomb.',
       },
     ],
-    grownUps: [],
+    grownUps: [
+      { term: 'Ads', text: 'Ads never play during a round. In the free game there can be a short ad break while someone is off doing their dare, and watching a video to double your gems is always your choice.' },
+      { term: 'Purchases', text: 'The Giggle Pass is one payment, with no subscription, and it removes every ad for everyone who plays on that phone. Buying sits behind a grown-up check.' },
+      { term: 'Accounts', text: 'No accounts and no sign-in. Names, recordings and progress are saved on your phone and are never sent to us.' },
+      { term: 'Offline', text: 'One phone and no internet needed.' },
+    ],
     played: {
       clip: clip('giggle-bomb'),
       poster: img('giggle-bomb/play-poster.png'),

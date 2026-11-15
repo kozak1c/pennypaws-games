@@ -113,7 +113,7 @@
 
   .pages .sheet {
     flex: none;
-    width: min(52%, 13rem);
+    width: min(41%, 13rem);
     scroll-snap-align: start;
     transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4);
   }

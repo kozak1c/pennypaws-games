@@ -27,6 +27,8 @@ export interface Printable {
   line: string;
   hook: string;
   price: string;
+  /** This printable's own listing in the Etsy shop. */
+  etsy: string;
   cover: Pic;
   facts: string[];
   sheets: Pic[];
@@ -46,6 +48,7 @@ const sheet = (folder: string, n: number, alt: string): Pic => ({
 export const printables: Printable[] = [
   {
     id: 'squishy-coloring-pages',
+    etsy: 'https://www.etsy.com/listing/4604268235',
     name: 'Squishy coloring pages',
     line: '25 pages in three levels, each with a colored example.',
     hook: 'Glitter dumplings, butter blocks and boba buddies to color, each with a finished example to copy or beat.',
@@ -92,6 +95,7 @@ export const printables: Printable[] = [
   },
   {
     id: 'paper-squishies',
+    etsy: 'https://www.etsy.com/listing/4610782218',
     name: 'Paper squishies',
     line: '20 to color, cut, tape, stuff and squish.',
     hook: 'A rainy afternoon sorted: color a squishy, cut it out, tape the edges, stuff it and squeeze.',
@@ -100,7 +104,13 @@ export const printables: Printable[] = [
       src: img('printables/paper-squishy/01_listing.webp'),
       alt: 'Paper squishies: finished paper toys beside the printed pages',
     },
-    facts: ['20 designs', 'Color, cut, tape and stuff', 'Instant download'],
+    facts: ['20 designs', 'Color, cut, tape and stuff', 'US Letter and A4', 'Instant download'],
+    get: [
+      'All 20 paper squishies in full color, ready to cut out',
+      'The same 20 to color yourself',
+      'Play pages to go with them',
+      'US Letter and A4 PDFs',
+    ],
     sheets: [
       sheet('paper-squishy', 1, 'A paper squishy page, front and back'),
       sheet('paper-squishy', 2, 'A second paper squishy page'),
@@ -109,6 +119,7 @@ export const printables: Printable[] = [
   },
   {
     id: 'squishy-bundle',
+    etsy: 'https://www.etsy.com/listing/4611447262',
     name: 'The squishy bundle',
     line: '50 coloring pages and 20 paper squishies in one download.',
     hook: 'Both squishy coloring sets and every paper squishy in one download, for less than buying them one by one.',
@@ -118,10 +129,17 @@ export const printables: Printable[] = [
       alt: 'The squishy bundle: 70 pages of coloring and paper crafts',
     },
     facts: ['70 pages', 'Three sets in one', 'Instant download'],
+    get: [
+      'Squishy coloring pages: 25 pages, plus 3 paper squishies to make',
+      'Squishy Christmas coloring pages: 25 pages',
+      'Paper squishies: 20 to color, cut, tape, stuff and squish',
+      'A fully colored example of every coloring page',
+    ],
     sheets: [],
   },
   {
     id: 'squishy-christmas-coloring-pages',
+    etsy: 'https://www.etsy.com/listing/4610853433',
     name: 'Squishy Christmas coloring pages',
     line: '25 festive pages to print tonight, each with a colored example.',
     hook: 'Squishy friends trim the tree, peek out of stockings, bake cookies and go sledding.',
@@ -131,6 +149,12 @@ export const printables: Printable[] = [
       alt: 'Squishy Christmas coloring pages: festive squishies around an open coloring page',
     },
     facts: ['25 pages', 'A colored example of each', 'Instant download'],
+    get: [
+      'All 25 pages as PDFs',
+      '25 single PNG pages for tablets',
+      'A colored example of every page',
+      'A short start-here guide',
+    ],
     sheets: [
       sheet('squishy-christmas', 4, 'Squishies trimming the tree'),
       sheet('squishy-christmas', 2, 'A stocking surprise'),
@@ -142,6 +166,7 @@ export const printables: Printable[] = [
   },
   {
     id: 'who-took-santas-sleigh',
+    etsy: 'https://www.etsy.com/listing/4586959797',
     name: 'Who Took Santa’s Sleigh?',
     line: 'A printable mystery the whole family solves. 16 clues, one answer, about an hour.',
     hook: 'Santa’s sleigh is missing and 4,000 elves are suspects. Print the clues, pass them round the table and work out who did it.',
@@ -151,11 +176,18 @@ export const printables: Printable[] = [
       alt: 'Who Took Santa’s Sleigh? A printable Christmas mystery game',
     },
     facts: ['16 clues', 'One answer', 'About an hour', 'Instant download'],
+    get: [
+      'A warm-up case: 48 elves and 8 clues, about 10 minutes',
+      'The main case: a roster of 4,000 elves and 16 clues in three chapters',
+      'Hints and the solution, each in its own file',
+      'A short case briefing video',
+    ],
     sheets: [],
     seasonal: true,
   },
   {
     id: 'christmas-mystery-mosaics',
+    etsy: 'https://www.etsy.com/listing/4606027106',
     name: 'Christmas mystery mosaics',
     line: '30 large print color-by-number pictures for kids and grandparents.',
     hook: 'Color the squares by number and a cozy Christmas picture appears. The print is large, so kids and grandparents can share a page.',
@@ -165,6 +197,12 @@ export const printables: Printable[] = [
       alt: 'Cozy Christmas mystery mosaics: a color-by-number page half colored in',
     },
     facts: ['30 pictures', 'Large print', 'Instant download'],
+    get: [
+      '30 large print pictures in one PDF',
+      '5 to 9 colors a page, all found in an ordinary box of colored pencils',
+      'A riddle at the top of each page as a hint',
+      'The finished pictures at the back, if you want to peek',
+    ],
     sheets: [],
     seasonal: true,
   },

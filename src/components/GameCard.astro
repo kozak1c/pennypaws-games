@@ -17,7 +17,10 @@ const { game, button = 'Take a look' } = Astro.props;
     <Image class="w-12 rounded-[22%] shadow-[0_0.25rem_0.5rem_rgb(15_20_51/0.25)]" src={game.icon.src} alt="" width={96} />
     <span class="grid justify-items-start gap-1">
       <span class="card__name px-0">{game.name}</span>
-      <span class="chip chip--navy text-[0.8125rem]">{game.status}</span>
+      <span class="flex flex-wrap gap-1.5">
+        <span class="chip chip--navy text-[0.8125rem]">{game.status}</span>
+        {game.forWhom && <span class="chip text-[0.8125rem]">{game.forWhom}</span>}
+      </span>
     </span>
   </span>
   <span class="card__line">{game.tagline}</span>

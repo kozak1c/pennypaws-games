@@ -9,7 +9,7 @@ interface Props {
 const { book, heading: Heading = 'h3' } = Astro.props;
 ---
 
-<article class="card bookcard grid-rows-none content-start gap-3 p-[clamp(1rem,2.4vw,1.75rem)]">
+<article class="card bookcard grid-rows-[auto_auto_1fr_auto_auto_auto] gap-3 p-[clamp(1rem,2.4vw,1.75rem)]">
   <div class="bookshow mb-2">
     <span class="cover"><Image src={book.cover.src} alt={book.cover.alt} width={400} /></span>
     {book.peek.map((s, i) => (

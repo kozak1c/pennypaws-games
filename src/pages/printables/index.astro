@@ -20,7 +20,7 @@ const season = printables.filter((p) => p.seasonal);
       </div>
       <div class="rail rail--three">
         {everyday.map((p) => (
-          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} button="See what’s inside" />
+          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}
       </div>
     </section>
@@ -32,7 +32,7 @@ const season = printables.filter((p) => p.seasonal);
       </div>
       <div class="rail rail--three">
         {season.map((p) => (
-          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} button="See what’s inside" />
+          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}
       </div>
     </section>

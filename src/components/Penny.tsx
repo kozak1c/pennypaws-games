@@ -52,6 +52,7 @@ export default function Penny({ rest, sheet, cols, timing, impact, width, height
   const playing = useRef(false);
   const nextId = useRef(0);
   const [fives, setFives] = useState(0);
+  const [canDrag, setCanDrag] = useState(false);
   const [sparks, setSparks] = useState<Spark[]>([]);
 
   // Fetch and decode the frames once: shortly after the page settles, or at the first touch.
@@ -64,6 +65,10 @@ export default function Penny({ rest, sheet, cols, timing, impact, width, height
     })();
     return loading.current;
   };
+
+  useEffect(() => {
+    setCanDrag(!calm && window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+  }, [calm]);
 
   useEffect(() => {
     if (calm) return;
@@ -217,14 +222,15 @@ export default function Penny({ rest, sheet, cols, timing, impact, width, height
           alt=""
           aria-hidden="true"
           draggable={false}
-          className={`pointer-events-auto absolute z-[2] cursor-grab touch-none active:cursor-grabbing ${piece.className}`}
-          drag={!calm}
+          tabIndex={-1}
+          className={`absolute z-[2] ${canDrag ? 'pointer-events-auto cursor-grab active:cursor-grabbing' : ''} ${piece.className}`}
+          drag={canDrag}
           dragSnapToOrigin
           dragElastic={0.7}
           dragTransition={{ bounceStiffness: 260, bounceDamping: 12 }}
-          whileHover={calm ? undefined : { scale: 1.15, rotate: 10 }}
+          whileHover={canDrag ? { scale: 1.15, rotate: 10 } : undefined}
           whileDrag={{ scale: 1.25, zIndex: 5 }}
-          whileTap={calm ? undefined : { scale: 0.92 }}
+          whileTap={canDrag ? { scale: 0.92 } : undefined}
           transition={BOUNCE}
         />
       ))}

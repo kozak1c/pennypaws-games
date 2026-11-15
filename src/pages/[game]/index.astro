@@ -38,7 +38,10 @@ const others = allGames.filter((g) => g.id !== game.id);
             <Image class="w-[5.25rem] rounded-[22%] shadow-[0_0.5rem_1rem_rgb(15_20_51/0.35)]" src={game.icon.src} alt="" width={192} loading="eager" />
             <div class="grid justify-items-start gap-1.5">
               <h1 class="text-[clamp(2.25rem,1.5rem+3vw,3.5rem)]" id="h-game">{game.name}</h1>
-              <span class="chip chip--navy">{game.status}</span>
+              <span class="flex flex-wrap gap-2">
+                <span class="chip chip--navy">{game.status}</span>
+                {game.forWhom && <span class="chip">{game.forWhom}</span>}
+              </span>
             </div>
           </div>
           <p class="tray__line">{game.tagline}</p>
@@ -54,7 +57,6 @@ const others = allGames.filter((g) => g.id !== game.id);
     <section class="tray tray--paper" aria-labelledby="h-about">
       <h2 class="tray__title" id="h-about">What it is</h2>
       <p class="max-w-[44rem] text-[clamp(1.125rem,1rem+0.5vw,1.3125rem)] font-bold">{game.pitch}</p>
-      {game.audience && <p class="max-w-[44rem] text-[1.0625rem] font-bold text-navy-soft">{game.audience}</p>}
       <div class:list={['grid gap-x-10 gap-y-6', game.parts.length === 4 ? 'desk:grid-cols-2' : 'desk:grid-cols-3']}>
         {game.parts.map((part) => (
           <div class="grid content-start gap-2">

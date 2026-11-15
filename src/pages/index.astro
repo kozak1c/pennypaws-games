@@ -9,7 +9,7 @@ import GameCard from '../components/GameCard.astro';
 import Shape from '../components/Shape.astro';
 import Penny from '../components/Penny.tsx';
 import Door, { type Art } from '../components/Door.tsx';
-import { brand, books, printable, squishyBop as game, stores } from '../data/catalog';
+import { brand, books, printable, printables, squishyBop as game, stores } from '../data/catalog';
 import { bopPlayed, soonGames } from '../data/games';
 import pennySheet from '../assets/brand/penny-highfive.webp?url';
 
@@ -32,18 +32,18 @@ const gamesArt: Art[] = [
   { kind: 'phone', src: await url(game.shots[0].src, 360), className: 'bottom-[-22%] right-[4%] w-[30%] rotate-[6deg]', lift: 16 },
 ];
 const printArt: Art[] = [
-  { kind: 'sheet', src: await url(coloring.sheets[2].src, 320), className: 'bottom-[-24%] right-[44%] w-[42%] -rotate-[14deg]', lift: 10 },
-  { kind: 'sheet', src: await url(coloring.pair!.blank.src, 320), className: 'bottom-[-20%] right-[22%] w-[42%] -rotate-[3deg]', lift: 16 },
-  { kind: 'sheet', src: await url(coloring.pair!.colored.src, 320), className: 'bottom-[-15%] right-[-4%] w-[44%] rotate-[9deg]', lift: 22 },
+  { kind: 'sheet', src: await url(coloring.sheets[2].src, 320), className: 'bottom-[-24%] right-[44%] w-[42%] max-w-[7rem] -rotate-[14deg]', lift: 10 },
+  { kind: 'sheet', src: await url(coloring.pair!.blank.src, 320), className: 'bottom-[-20%] right-[22%] w-[42%] max-w-[7rem] -rotate-[3deg]', lift: 16 },
+  { kind: 'sheet', src: await url(coloring.pair!.colored.src, 320), className: 'bottom-[-15%] right-[-4%] w-[44%] max-w-[7.5rem] rotate-[9deg]', lift: 22 },
 ];
 const bookArt: Art[] = [
-  { kind: 'cover', src: await url(books[1].cover.src, 360), className: 'bottom-[-22%] right-[36%] w-[44%] -rotate-[8deg]', lift: 10 },
-  { kind: 'cover', src: await url(books[0].cover.src, 360), className: 'bottom-[-14%] right-[2%] w-[46%] rotate-[6deg]', lift: 18 },
+  { kind: 'cover', src: await url(books[1].cover.src, 360), className: 'bottom-[-22%] right-[36%] w-[44%] max-w-[7.5rem] -rotate-[8deg]', lift: 10 },
+  { kind: 'cover', src: await url(books[0].cover.src, 360), className: 'bottom-[-14%] right-[2%] w-[46%] max-w-[8rem] rotate-[6deg]', lift: 18 },
 ];
 
-const season = [printable('squishy-christmas-coloring-pages'), printable('who-took-santas-sleigh')];
 const seasonBook = books.find((b) => b.seasonal)!;
-const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-mosaics', 'squishy-bundle'].map(printable);
+const season = printables.filter((p) => p.seasonal);
+const shelf = printables.filter((p) => !p.seasonal);
 ---
 
 <Base
@@ -91,8 +91,8 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
         href="/games/"
         tone="sky"
         label="Games"
-        sub="Squishy Bop! is here. Plush Hour and Giggle Bomb are on the way."
-        subClass="max-w-[min(54%,15rem)]"
+        sub="One in testing now, two on the way."
+        subClass="max-w-[min(50%,15rem)]"
         art={gamesArt}
         className="min-h-[15rem]"
       />
@@ -102,8 +102,7 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
           href="/printables/"
           tone="heart"
           label="Printables"
-          sub="Coloring pages, paper crafts and mystery games to print tonight."
-          subClass="text-[0.9375rem]"
+          sub="Print them at home tonight."
           art={printArt}
           className="min-h-[15.5rem]"
         />
@@ -112,8 +111,7 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
           href="/books/"
           tone="sun"
           label="Books"
-          sub="Our coloring books in paperback, delivered by Amazon."
-          subClass="text-[0.9375rem]"
+          sub="Paperbacks, delivered by Amazon."
           art={bookArt}
           className="min-h-[15.5rem]"
         />
@@ -127,12 +125,13 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
         <h2 class="tray__title" id="h-christmas">Ready for Christmas</h2>
         <p class="tray__line">Print the pages tonight, or have the paperback at the door in time to wrap.</p>
       </div>
-      <div class="rail rail--three">
+      <div class="rail">
         {season.map((p) => (
-          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} button="See what’s inside" />
+          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}
         <Card
           href={seasonBook.amazon}
+          kind="Paperback"
           name={seasonBook.name}
           line={seasonBook.line}
           price={seasonBook.price}
@@ -184,9 +183,9 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
         <h2 class="tray__title" id="h-printables"><img src={clay.heart} alt="" />Printables</h2>
         <p class="tray__line">Coloring pages, paper crafts and mystery games. Buy once, print at home as often as you like.</p>
       </div>
-      <div class="rail">
+      <div class="rail rail--three">
         {shelf.map((p) => (
-          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} button="See what’s inside" />
+          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}
       </div>
       <a class="candy candy--white justify-self-start" href="/printables/">See every printable</a>
@@ -212,9 +211,9 @@ const shelf = ['squishy-coloring-pages', 'paper-squishies', 'christmas-mystery-m
       <ul class="grid gap-x-10 gap-y-3 text-[1.0625rem] leading-snug font-extrabold desk:grid-cols-3">
         <li class="flex gap-3"><Shape name="check" /><span>No accounts, ads or tracking on this site</span></li>
         <li class="flex gap-3"><Shape name="check" /><span>Printables download the minute you buy</span></li>
-        <li class="flex gap-3"><Shape name="check" /><span>Every game page says what it shows, sells and collects</span></li>
+        <li class="flex gap-3"><Shape name="check" /><span>Every game page has a plain note for grown-ups on ads and purchases</span></li>
       </ul>
-      <p class="font-bold">A real person answers at <span class="font-black select-all">{stores.email}</span>.</p>
+      <p class="font-bold">A real person answers at <a class="font-black underline decoration-2 underline-offset-4" href={`mailto:${stores.email}`}>{stores.email}</a>.</p>
       <a class="candy candy--small justify-self-start" href="/grown-ups/">More about us</a>
     </section>
   </div>

@@ -73,6 +73,27 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
     <script>
       // Gameplay clips play only while they are on screen, and never by themselves for people who ask for less motion.
       const clips = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
+      const stopped = new WeakSet<HTMLVideoElement>();
+      clips.forEach((clip) => {
+        const toggle = () => {
+          if (clip.paused) {
+            stopped.delete(clip);
+            void clip.play().catch(() => {});
+          } else {
+            stopped.add(clip);
+            clip.pause();
+          }
+        };
+        clip.tabIndex = 0;
+        clip.title = 'Tap to pause or play';
+        clip.addEventListener('click', toggle);
+        clip.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            toggle();
+          }
+        });
+      });
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         clips.forEach((clip) => (clip.controls = true));
       } else if (clips.length) {
@@ -80,7 +101,7 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
           (entries) => {
             for (const entry of entries) {
               const clip = entry.target as HTMLVideoElement;
-              if (entry.isIntersecting) void clip.play().catch(() => {});
+              if (entry.isIntersecting && !stopped.has(clip)) void clip.play().catch(() => {});
               else clip.pause();
             }
           },

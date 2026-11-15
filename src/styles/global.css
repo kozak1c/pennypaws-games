@@ -142,22 +142,23 @@
   .candy--small {
     min-height: 3rem;
     padding: 0 1.25rem;
-    font-size: 1.0625rem;
+    font-size: 1.1875rem;
   }
 
   @media (max-width: 30rem) {
     .cta .candy {
       min-height: 3.25rem;
-      padding: 0 0.875rem;
-      font-size: 1rem;
+      padding: 0 0.75rem;
+      font-size: 1.0625rem;
     }
   }
 
   /* A door: a glossy block of one clay colour with the real thing inside. */
   .door {
-    --c1: #3d9bfa;
+    --c1: #3894f4;
     --c2: #1669d2;
     --glow: rgb(22 105 210 / 0.35);
+    container-type: inline-size;
     --ink: #fff;
     position: relative;
     display: grid;
@@ -181,7 +182,7 @@
   }
 
   .door--heart {
-    --c1: #f9656c;
+    --c1: #f55f67;
     --c2: #d92f44;
     --glow: rgb(217 47 68 / 0.32);
   }
@@ -194,14 +195,14 @@
   }
 
   .door--leaf {
-    --c1: #35c47a;
+    --c1: #26a665;
     --c2: #14804a;
     --glow: rgb(20 128 74 / 0.32);
   }
 
   .door__label {
     position: relative;
-    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+    font-size: clamp(1.5rem, 15cqw, 2.25rem);
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -209,9 +210,9 @@
 
   .door__sub {
     position: relative;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.35;
+    font-size: 1.1875rem;
+    font-weight: 800;
+    line-height: 1.25;
   }
 
   .door__glare {
