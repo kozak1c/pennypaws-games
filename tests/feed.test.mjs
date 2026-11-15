@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-import { feedImageName, fetchFeedImages, wanted } from "../ops/feed-images.mjs";
+import { download, feedImageName, fetchFeedImages, wanted } from "../ops/feed-images.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const feed = JSON.parse(readFileSync(path.join(root, "src/data/feed.json"), "utf8"));
@@ -165,4 +165,21 @@ test("node ops/feed-images.mjs really runs, also through a directory link", () =
     unlinkSync(link);
     rmdirSync(path.dirname(link));
   }
+});
+
+test("a dropped connection or a 5xx is retried; a 404 is not, and the error names the address", async () => {
+  const quick = { pause: async () => {} };
+  let calls = 0;
+  const flaky = async () => {
+    calls += 1;
+    if (calls === 1) throw new TypeError("fetch failed", { cause: { code: "ECONNRESET" } });
+    if (calls === 2) return { ok: false, status: 503 };
+    return { ok: true, status: 200, arrayBuffer: async () => Buffer.from("picture") };
+  };
+  assert.equal((await download("https://media.pennypawsgames.com/x.jpg", flaky, quick)).toString(), "picture");
+  assert.equal(calls, 3);
+  let asked = 0;
+  await assert.rejects(download("https://media.pennypawsgames.com/gone.jpg", async () => { asked += 1; return { ok: false, status: 404 }; }, quick), /gone\.jpg answered 404/);
+  assert.equal(asked, 1, "a 404 is not retried");
+  await assert.rejects(download("https://media.pennypawsgames.com/down.jpg", async () => { throw new TypeError("fetch failed", { cause: { code: "ETIMEDOUT" } }); }, quick), /down\.jpg could not be fetched \(ETIMEDOUT\)/);
 });

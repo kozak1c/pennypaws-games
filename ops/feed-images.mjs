@@ -40,6 +40,27 @@ export async function wanted(base = root) {
   return [...printables, ...books];
 }
 
+/** One picture's bytes, retried with a pause when the connection drops or the bucket answers 5xx or
+ *  429 (a workflow fetching about ninety pictures meets the odd dropped connection). A 4xx other
+ *  than 429 is not retried: the picture is not there. The error names the address and the cause. */
+export async function download(url, get = fetch, { tries = 4, pause = (n) => new Promise((r) => setTimeout(r, 1000 * 3 ** n)) } = {}) {
+  let last;
+  for (let n = 0; n < tries; n += 1) {
+    if (n > 0) await pause(n - 1);
+    try {
+      const response = await get(url);
+      if (response.ok) return Buffer.from(await response.arrayBuffer());
+      last = new Error(`${url} answered ${response.status}`);
+      if (response.status < 500 && response.status !== 429) throw last;
+    } catch (error) {
+      if (error === last) throw error;
+      const cause = error?.cause?.code || error?.cause?.message || error?.message || String(error);
+      last = new Error(`${url} could not be fetched (${cause})`);
+    }
+  }
+  throw last;
+}
+
 export async function fetchFeedImages({ base = root, log = console.log, get = fetch } = {}) {
   const folder = join(base, 'src/assets/feed');
   await mkdir(folder, { recursive: true });
@@ -52,9 +73,7 @@ export async function fetchFeedImages({ base = root, log = console.log, get = fe
     const file = join(folder, feedImageName(image));
     const have = await readFile(file).catch(() => null);
     if (have && sha256(have) === image.sha256) continue;
-    const response = await get(image.url);
-    if (!response.ok) throw new Error(`${image.url} answered ${response.status}`);
-    const bytes = Buffer.from(await response.arrayBuffer());
+    const bytes = await download(image.url, get);
     if (sha256(bytes) !== image.sha256) throw new Error(`${image.url} does not match the SHA-256 in the feed; refusing it`);
     await writeFile(file, bytes);
     fetched += 1;
