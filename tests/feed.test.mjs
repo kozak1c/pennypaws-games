@@ -61,12 +61,13 @@ function sources(dir) {
   });
 }
 
-test("no page or data file types a price or a product's store address", () => {
+test("no page or data file types a price, a game's ages or a product's store address", () => {
   const typed = [
     [/\$\s?\d+\.\d\d\b/, "a price"],
     [/etsy\.com\/listing\//, "an Etsy listing address"],
     [/amazon\.com\/dp\//, "an Amazon product address"],
     [/play\.google\.com\/(store\/apps\/details|apps\/testing)/, "a Google Play product address"],
+    [/Ages \d+ and up/, "a game's ages"],
   ];
   for (const file of sources(path.join(root, "src"))) {
     const text = readFileSync(file, "utf8");

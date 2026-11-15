@@ -103,7 +103,7 @@ lives, and the next feed carries it.
 - Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
   allows exactly those through its `feed:printables` line.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
-- `tests/feed.test.mjs` fails if a page or data file types a price or a product's store address.
+- `tests/feed.test.mjs` fails if a page or data file types a price, a game's ages or a product's store address.
 
 ## Privacy pages
 
