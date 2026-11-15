@@ -15,7 +15,7 @@ interface Props {
 const { item } = Astro.props;
 const paperback = books.find((b) => b.id === item.book);
 const squishy = item.id.includes('squish');
-const sheetThumbs = await Promise.all(item.sheets.map((s) => getImage({ src: s.src, width: 88 })));
+const galleryThumbs = await Promise.all(item.gallery.map((pic) => getImage({ src: pic.src, width: 112 })));
 ---
 
 <Base title={`${item.name} | Penny Paws Games`} description={item.hook} section="printables">
@@ -64,19 +64,19 @@ const sheetThumbs = await Promise.all(item.sheets.map((s) => getImage({ src: s.s
       </section>
     )}
 
-    {item.sheets.length > 0 && (
-      <section class="tray tray--paper" aria-labelledby="h-pages">
-        <h2 class="tray__title text-[clamp(1.625rem,1.2rem+1.8vw,2.5rem)]" id="h-pages">A look at the pages</h2>
+    {item.gallery.length > 0 && (
+      <section class="tray tray--paper" aria-labelledby="h-inside-look">
+        <h2 class="tray__title text-[clamp(1.625rem,1.2rem+1.8vw,2.5rem)]" id="h-inside-look">A look inside</h2>
         <div class="gallery" data-gallery>
-          <section class="pages" aria-label="Sample pages" tabindex="0" data-gallery-stage>
-            {item.sheets.map((s) => (
-              <span class="sheet"><Image src={s.src} alt={s.alt} width={420} /></span>
+          <section class="pages pages--listing" aria-label={`Pictures of ${item.name}`} tabindex="0" data-gallery-stage>
+            {item.gallery.map((pic) => (
+              <span class="listing-pic"><Image src={pic.src} alt={pic.alt} width={800} widths={[480, 800]} sizes="(min-width: 60rem) 22rem, 92vw" /></span>
             ))}
           </section>
           <div class="gallery__thumbs" data-gallery-thumbs hidden>
-            {sheetThumbs.map((thumb, i) => (
-              <button type="button" class="gallery__thumb gallery__thumb--sheet" aria-label={`Show page ${i + 1}: ${item.sheets[i].alt}`}>
-                <img src={thumb.src} alt="" width="44" height="57" />
+            {galleryThumbs.map((thumb, i) => (
+              <button type="button" class="gallery__thumb gallery__thumb--wide" aria-label={`Show picture ${i + 1}: ${item.gallery[i].alt}`}>
+                <img src={thumb.src} alt="" width="56" height="42" />
               </button>
             ))}
           </div>

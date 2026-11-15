@@ -79,11 +79,13 @@ test("no page or data file types a price, a game's ages or a product's store add
   }
 });
 
-test("each printable's cover and each book's cover is a picture the feed names", async () => {
+test("every printable's listing pictures and each shelf book's cover are pictures the feed names", async () => {
   const pictures = (await wanted()).map((p) => p.sha256);
   const shelf = JSON.parse(readFileSync(path.join(root, "src/data/shelf.json"), "utf8")).books;
   const onShelf = feed.books.filter((b) => shelf.includes(b.id));
-  assert.equal(pictures.length, feed.printables.length + onShelf.length, "a cover only for each printable and each book on the shelf");
+  const listing = feed.printables.flatMap((p) => p.images);
+  assert.equal(pictures.length, listing.length + onShelf.length, "every printable's listing pictures and each shelf book's cover, nothing else");
+  for (const image of listing) assert.ok(pictures.includes(image.sha256), `listing picture ${image.url} is not fetched`);
   for (const book of onShelf) assert.ok(pictures.includes(book.cover.sha256), `book ${book.id} has no cover fetched`);
 });
 

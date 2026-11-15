@@ -104,8 +104,9 @@ lives, and the next feed carries it.
   fallback. `tests/images.test.mjs` fails on a missing `width` or a built picture over 1440 px.
 - Listing pictures are fetched from `media.pennypawsgames.com` before the build, checked against
   the SHA-256 in the feed, and served from our own origin (`ops/feed-images.mjs`). So a build
-  needs the network the first time: it downloads each printable's and each book's cover (fourteen
-  today, about 22 MB) into `src/assets/feed/` (not tracked) and reuses them afterwards. A picture that cannot be
+  needs the network the first time: it downloads every printable's listing pictures (the cover and
+  the "A look inside" gallery) and the cover of each book on the shelf (91 today, about 80 MB) into
+  `src/assets/feed/` (not tracked) and reuses them afterwards. A picture that cannot be
   fetched, or does not match its hash, fails the build; nothing is published without it. The
   workflows keep the folder in the Actions cache (`.github/actions/setup`), keyed on the feed;
   a restored file is checked against its hash like any other.
@@ -114,6 +115,9 @@ lives, and the next feed carries it.
   fetched and hash-checked like a listing picture. There is no folder of book art here and
   `bookWords` in `src/data/catalog.ts` types no cover; `tests/feed.test.mjs` fails otherwise. A
   wrong cover is fixed where the book lives, and the next feed carries it.
+- A printable's "A look inside" gallery is its Etsy listing pictures from the feed, all but the
+  cover: approved pictures that are live in the store. No sample page is copied into this repository
+  for it.
 - Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
   allows exactly those through its `feed:printables` line.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.

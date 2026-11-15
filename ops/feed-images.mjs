@@ -21,16 +21,16 @@ export const feedImageName = (image) => `${image.sha256.slice(0, 16)}${extname(n
 
 const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
-/** Which pictures the pages use: each printable's cover (src/data/covers.json picks it; the first by
- *  default) and the cover of each book on the shelf (src/data/shelf.json; the front of the cover
- *  uploaded to Amazon). A picture no page uses is not fetched, or the build would ship it. */
+/** Which pictures the pages use: every listing picture of each printable (its cover, which
+ *  src/data/covers.json picks, and the rest for its "A look inside" gallery) and the cover of each
+ *  book on the shelf (src/data/shelf.json; the front of the cover uploaded to Amazon). A picture no
+ *  page uses is not fetched, or the build would ship it. */
 export async function wanted(base = root) {
   const feed = JSON.parse(await readFile(join(base, 'src/data/feed.json'), 'utf8'));
   const covers = JSON.parse(await readFile(join(base, 'src/data/covers.json'), 'utf8'));
-  const printables = (feed.printables ?? []).map((p) => {
-    const image = p.images[covers[p.id] ?? 0];
-    if (!image) throw new Error(`src/data/covers.json picks picture ${covers[p.id]} of ${p.id}, which has ${p.images.length}`);
-    return image;
+  const printables = (feed.printables ?? []).flatMap((p) => {
+    if (!p.images[covers[p.id] ?? 0]) throw new Error(`src/data/covers.json picks picture ${covers[p.id]} of ${p.id}, which has ${p.images.length}`);
+    return p.images;
   });
   const shelf = JSON.parse(await readFile(join(base, 'src/data/shelf.json'), 'utf8')).books;
   const books = (feed.books ?? []).filter((b) => shelf.includes(b.id)).map((b) => {
