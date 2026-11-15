@@ -19,9 +19,9 @@ const publicFiles = readPublicFiles().files;
 // with the reviewed change. Last changed 2026-11-15 (PAWS-034): a way back to the site above and
 // below each policy; the policy words, below, did not change.
 const PRIVACY_PAGES = {
-  "squishy-bop/privacy/index.html": "9fbd0aa65244ba122226fbd166af305eee79b0b9380662e8e9dd9f2fa7421f26",
-  "plush-hour/privacy/index.html": "36e402a66c83ed26beb4affa2000e7d8e084e1c458ee39e0c088b6c991788957",
-  "giggle-bomb/privacy/index.html": "fd102230f05f0486b3cb7e1e30dea0654ccb2148ff79179294767fca330c1996",
+  "squishy-bop/privacy/index.html": "3eac73c802fa0db16bc371c6e9563f9563b7300679eef3c9a0dab28c9ee9c200",
+  "plush-hour/privacy/index.html": "e19cabb547d40d34900f279531979db1a16fd2dd751132386b94a0ed5d35f404",
+  "giggle-bomb/privacy/index.html": "e28e825591161f7e8106ab23cdcb54ba3277e525728610d7d5d8482187597a79",
 };
 
 for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
@@ -40,9 +40,9 @@ for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
 // the site links or styling around a policy moves the page pin above but not this one; a change
 // to these needs the privacy review of the words themselves.
 const POLICY_WORDS = {
-  "squishy-bop/privacy/index.html": "c7b46d8579af55b4eef598180bbdcc3202740f39c05cc6e99501901c2b10e5bc",
-  "plush-hour/privacy/index.html": "136a6461d1e41c3f76761a0426a5c8ad2d76f92a352c94d651e46209ae1b33f6",
-  "giggle-bomb/privacy/index.html": "a936e1ecae8af79c3c0f082ad49cb12dcac70a6bb361baf9b64f27d39f1a580a",
+  "squishy-bop/privacy/index.html": "b1a655175355329e2ae15cfbbf1ba6d0b943509d9d5abd308cd777bb3c25c82e",
+  "plush-hour/privacy/index.html": "15f3d37b90171025e1050105a9c32828b09785d0e9a821e1145c8909ab3dba9f",
+  "giggle-bomb/privacy/index.html": "e2ccd952578780e7ac69a8f86c21052d474731d5c7f60c2cf0a42eb38bd2ecc4",
 };
 
 for (const [file, pin] of Object.entries(POLICY_WORDS)) {
