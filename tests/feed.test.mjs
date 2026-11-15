@@ -13,7 +13,7 @@ import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-import { feedImageName, fetchFeedImages, wanted } from "../ops/feed-images.mjs";
+import { download, feedImageName, fetchFeedImages, wanted } from "../ops/feed-images.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const feed = JSON.parse(readFileSync(path.join(root, "src/data/feed.json"), "utf8"));
@@ -79,11 +79,13 @@ test("no page or data file types a price, a game's ages or a product's store add
   }
 });
 
-test("each printable's cover and each book's cover is a picture the feed names", async () => {
+test("every printable's listing pictures and each shelf book's cover are pictures the feed names", async () => {
   const pictures = (await wanted()).map((p) => p.sha256);
   const shelf = JSON.parse(readFileSync(path.join(root, "src/data/shelf.json"), "utf8")).books;
   const onShelf = feed.books.filter((b) => shelf.includes(b.id));
-  assert.equal(pictures.length, feed.printables.length + onShelf.length, "a cover only for each printable and each book on the shelf");
+  const listing = feed.printables.flatMap((p) => p.images);
+  assert.equal(pictures.length, listing.length + onShelf.length, "every printable's listing pictures and each shelf book's cover, nothing else");
+  for (const image of listing) assert.ok(pictures.includes(image.sha256), `listing picture ${image.url} is not fetched`);
   for (const book of onShelf) assert.ok(pictures.includes(book.cover.sha256), `book ${book.id} has no cover fetched`);
 });
 
@@ -163,4 +165,21 @@ test("node ops/feed-images.mjs really runs, also through a directory link", () =
     unlinkSync(link);
     rmdirSync(path.dirname(link));
   }
+});
+
+test("a dropped connection or a 5xx is retried; a 404 is not, and the error names the address", async () => {
+  const quick = { pause: async () => {} };
+  let calls = 0;
+  const flaky = async () => {
+    calls += 1;
+    if (calls === 1) throw new TypeError("fetch failed", { cause: { code: "ECONNRESET" } });
+    if (calls === 2) return { ok: false, status: 503 };
+    return { ok: true, status: 200, arrayBuffer: async () => Buffer.from("picture") };
+  };
+  assert.equal((await download("https://media.pennypawsgames.com/x.jpg", flaky, quick)).toString(), "picture");
+  assert.equal(calls, 3);
+  let asked = 0;
+  await assert.rejects(download("https://media.pennypawsgames.com/gone.jpg", async () => { asked += 1; return { ok: false, status: 404 }; }, quick), /gone\.jpg answered 404/);
+  assert.equal(asked, 1, "a 404 is not retried");
+  await assert.rejects(download("https://media.pennypawsgames.com/down.jpg", async () => { throw new TypeError("fetch failed", { cause: { code: "ETIMEDOUT" } }); }, quick), /down\.jpg could not be fetched \(ETIMEDOUT\)/);
 });

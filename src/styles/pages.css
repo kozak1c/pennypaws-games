@@ -157,6 +157,43 @@
     }
   }
 
+  /* A printable's listing pictures (4:3, from the feed). On phones and tablets one at a time in the
+     gallery stage, whole; on desktop a grid of three. */
+  .pages--listing .listing-pic {
+    display: block;
+    justify-self: center;
+    width: min(100%, 40rem);
+    scroll-snap-align: center;
+  }
+
+  .pages--listing .listing-pic img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.875rem;
+    box-shadow: 0 0.625rem 1.25rem rgb(30 37 80 / 0.25);
+  }
+
+  @media (min-width: 40rem) and (max-width: 59.99rem) {
+    .pages--listing {
+      grid-auto-columns: 100%;
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .pages.pages--listing {
+      display: grid;
+      grid-auto-flow: row;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      overflow: visible;
+      gap: clamp(0.75rem, 1.6vw, 1.25rem);
+    }
+
+    .pages--listing .listing-pic {
+      width: auto;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .pages .sheet {
       transition: none;
