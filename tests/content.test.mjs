@@ -18,6 +18,7 @@ const publicFiles = readFileSync(path.join(root, "ops", "public-files.txt"), "ut
 // file -> SHA-256 of its bytes. Update a pin only together with the reviewed change.
 const PRIVACY_PAGES = {
   "squishy-bop/privacy/index.html": "b5481fe23b4fda095a80186d0cdc43912cb39b104d786b1578dee83fd4e82dbc",
+  "giggle-bomb/privacy/index.html": "42b0e716156fbe42cece8083b3a26044a281d624354647d3e6747fddde3c9eb6",
 };
 
 for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
