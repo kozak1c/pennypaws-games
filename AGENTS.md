@@ -94,12 +94,16 @@ lives, and the next feed carries it.
   game's counts are written as `{fact_name}`; the build fails otherwise.
 - A product is on the site because the feed names it. A printable needs nothing else; a book or
   a game also needs its art here, and the build says which ones are waiting for it.
+- A page shows a listing picture at most 1024 px wide, so every `<Image>` that sets `widths` also
+  sets `width` (the largest of them); without it Astro builds the 3000 px original as the
+  fallback. `tests/images.test.mjs` fails on a missing `width` or a built picture over 1440 px.
 - Listing pictures are fetched from `media.pennypawsgames.com` before the build, checked against
   the SHA-256 in the feed, and served from our own origin (`ops/feed-images.mjs`). So a build
   needs the network the first time: it downloads each printable's cover (ten today, about 18 MB)
   into `src/assets/feed/` (not tracked) and reuses them afterwards. A picture that cannot be
   fetched, or does not match its hash, fails the build; nothing is published without it. The
-  workflows start from a fresh checkout, so every workflow build fetches them.
+  workflows keep the folder in the Actions cache (`.github/actions/setup`), keyed on the feed;
+  a restored file is checked against its hash like any other.
 - Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
   allows exactly those through its `feed:printables` line.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.

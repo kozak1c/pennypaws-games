@@ -25,7 +25,7 @@ const squishy = item.id.includes('squish');
       <div class="grid items-center gap-[clamp(1.25rem,3vw,2.5rem)] desk:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
         <span class="card__art rounded-[clamp(1rem,2vw,1.5rem)] shadow-[0_0.75rem_1.5rem_rgb(30_37_80/0.2)]">
           <Image class="card__blur" src={item.cover.src} alt="" width={120} aria-hidden="true" loading="eager" />
-          <Image src={item.cover.src} alt={item.cover.alt} widths={[640, 900]} sizes="(min-width: 60rem) 36rem, 92vw" loading="eager" />
+          <Image src={item.cover.src} alt={item.cover.alt} width={900} widths={[640, 900]} sizes="(min-width: 60rem) 36rem, 92vw" loading="eager" />
         </span>
         <div class="grid justify-items-start gap-4">
           <h1 class="text-[clamp(2rem,1.4rem+2.6vw,3.25rem)]" id="h-item">{item.name}</h1>
@@ -111,7 +111,7 @@ const squishy = item.id.includes('squish');
             <a class="card" href="/squishy-bop/">
               <span class="card__art">
                 <Image class="card__blur" src={game.feature.src} alt="" width={120} aria-hidden="true" />
-                <Image src={game.feature.src} alt={game.feature.alt} widths={[360, 640]} sizes="(min-width: 60rem) 18rem, 72vw" />
+                <Image src={game.feature.src} alt={game.feature.alt} width={640} widths={[360, 640]} sizes="(min-width: 60rem) 18rem, 72vw" />
               </span>
               <span class="card__name">{game.name}</span>
               <span class="card__line">The same squishy friends in a game for your phone.</span>

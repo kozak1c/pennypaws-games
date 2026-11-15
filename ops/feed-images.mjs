@@ -7,6 +7,7 @@
 //
 //   node ops/feed-images.mjs        fetch what is missing
 import { createHash } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -66,4 +67,7 @@ export default function feedImages() {
   };
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) await fetchFeedImages();
+// Run from the command line. Both paths are resolved first: through a directory junction one
+// side is the junction and the other the real path, and a plain comparison is silently false.
+const real = (p) => { try { return realpathSync(p); } catch { return p; } };
+if (process.argv[1] && real(fileURLToPath(import.meta.url)) === real(process.argv[1])) await fetchFeedImages();
