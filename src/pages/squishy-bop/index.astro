@@ -27,6 +27,7 @@ const paperback = book('squishy-coloring');
           class="w-full rounded-[clamp(1rem,2vw,1.5rem)] shadow-[0_1rem_2rem_rgb(15_20_51/0.45)]"
           src={game.feature.src}
           alt={game.feature.alt}
+          width={1024}
           widths={[640, 1024]}
           sizes="(min-width: 60rem) 38rem, 92vw"
           loading="eager"
@@ -41,7 +42,7 @@ const paperback = book('squishy-coloring');
           </div>
           <p class="tray__line">{game.pitch}</p>
           <ul class="flex flex-wrap gap-2">
-            <li class="chip">Ages 4 and up</li>
+            {game.forWhom && <li class="chip">{game.forWhom}</li>}
             <li class="chip">Free to play</li>
             <li class="chip">No sign-in</li>
             <li class="chip">Ads never interrupt a game</li>

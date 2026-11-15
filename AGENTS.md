@@ -9,18 +9,27 @@ Read it before changing hosting, branches or deploys. Operating steps are in
 
 ## What is served
 
-The site is plain files at the repository root, served by Cloudflare as a static-assets
-Worker with no code in front of them (`wrangler.jsonc`). Nothing is public unless it is in
-both places:
+The site is an Astro project (`astro.config.mjs`, `src/`, `public/`) built into `dist/` by
+`npm run build`. Cloudflare serves `dist/` as a static-assets Worker with no code in front of
+it (`wrangler.jsonc`). `dist/` is never committed; every check and every deploy builds it
+fresh from the commit it runs on.
 
-- `.assetsignore` lets it through (it denies everything by default), and
-- `ops/public-files.txt` lists it.
+`npm run build` is `astro build` (which first fetches the feed's product pictures; see "Product
+facts come from the feed") plus the post-build step `ops/postbuild-cli.mjs` (the work is in
+`ops/postbuild.mjs`), which:
 
-To add a page or file: add it, add its line to both, and run `npm run check`. A test fails
-until the two agree with what wrangler would upload. Pages use paths for their own links
+- moves every inline script into a hashed file under `dist/_astro/`, because `_headers` sends
+  `script-src 'self'` and Astro writes its island bootstrap inline. Never loosen the header
+  (no hashes, nonces or `'unsafe-inline'`) to get a script through; and
+- fails the build unless `dist/` holds exactly what `ops/public-files.txt` allows: the listed
+  pages and fixed files, plus hashed files under `_astro/` that its pattern allows. So nothing
+  becomes public by accident, and a deploy cannot upload a file nobody listed.
+
+To add a page or file: add it (a page in `src/pages/`, a fixed file in `public/`), add its
+line to `ops/public-files.txt`, and run `npm run check`. Pages use paths for their own links
 (`/squishy-bop/privacy/`, not the full address) so they work on staging and previews, and
-load nothing from another origin: no outside script, style, font, image or frame.
-Children open these pages.
+load nothing from another origin: no outside script, style, font, image, clip or frame
+(`tests/policy.test.mjs`). Children open these pages.
 
 ## How a change goes live
 
@@ -45,17 +54,27 @@ workflow); report it. Going forward again is the owner's call.
 | Command | What it does |
 |---|---|
 | `npm ci` | install the pinned tools |
-| `npm run check` | everything `ci` runs except the browser (`ops/check.mjs` lists the steps) |
-| `npm run walk` | the browser walk: every page, phone and desktop, light and dark, with an accessibility scan. `PLAYWRIGHT_CHANNEL=msedge` uses an installed Edge |
-| `npm run dev` | the site at http://127.0.0.1:8787, served the way Cloudflare serves it |
+| `npm run build` | build the site into `dist/` (Astro, then `ops/postbuild.mjs`) |
+| `npm run check` | build, then everything `ci` runs except the browser (`ops/check.mjs` lists the steps) |
+| `npm run walk` | build, then the browser walk: every page, phone and desktop, with an accessibility scan, and a dark pass for the pages that have a dark style. `PLAYWRIGHT_CHANNEL=msedge` uses an installed Edge |
+| `npm run dev` | build, then the site at http://127.0.0.1:8787, served the way Cloudflare serves it |
+| `npm run site:dev` | Astro's own development server at http://127.0.0.1:4391, which reloads as you edit (not how Cloudflare serves it: no `_headers`) |
+| `npm run site:preview` | Astro's preview of the last build in `dist/`, at http://127.0.0.1:4392 |
 | `python ops/health.py <address>` | the health check against any address |
 
-Python 3.11 or later and Node 22 or later. The Python scripts use the standard library only.
+Python 3.11 or later and Node 22.23.4 or later (Astro's minimum). The Python scripts use the
+standard library only. Build from the repository's real path, not through a directory
+junction: through a junction the build finishes but leaves the stylesheet link out of every
+page.
+
+A worktree inside this checkout (such as `.local/wt-<name>`) also needs `npm ci` in the
+checkout that holds it: Vite finds the outer checkout's `tsconfig.json` too, and without that
+checkout's `node_modules` the build stops at "Tsconfig not found astro/tsconfigs/strict".
 
 ## The never-break list
 
 `ops/never-break.toml` lists what must keep answering: `/app-ads.txt` byte for byte (AdMob),
-each privacy page with its title, the home page, the security headers, no script from
+each privacy page with its title, the home page, the section and game pages, the security headers, no script from
 another origin, that only the public address may be indexed, and that `www` redirects to it. `ops/health.py` checks it
 against a local copy in `ci`, against staging after each deploy and against the live site
 after each release.
@@ -79,19 +98,34 @@ lives, and the next feed carries it.
   game's counts are written as `{fact_name}`; the build fails otherwise.
 - A product is on the site because the feed names it. A printable needs nothing else; a book or
   a game also needs its art here, and the build says which ones are waiting for it.
+- A page shows a listing picture at most 1024 px wide, so every `<Image>` that sets `widths` also
+  sets `width` (the largest of them); without it Astro builds the 3000 px original as the
+  fallback. `tests/images.test.mjs` fails on a missing `width` or a built picture over 1440 px.
 - Listing pictures are fetched from `media.pennypawsgames.com` before the build, checked against
-  the SHA-256 in the feed, and served from our own origin (`ops/feed-images.mjs`).
+  the SHA-256 in the feed, and served from our own origin (`ops/feed-images.mjs`). So a build
+  needs the network the first time: it downloads each printable's cover (ten today, about 18 MB)
+  into `src/assets/feed/` (not tracked) and reuses them afterwards. A picture that cannot be
+  fetched, or does not match its hash, fails the build; nothing is published without it. The
+  workflows keep the folder in the Actions cache (`.github/actions/setup`), keyed on the feed;
+  a restored file is checked against its hash like any other.
+- A book's cover in `src/assets/books/` is the front panel of the cover file uploaded to Amazon,
+  cut from that PDF at the trim (bleed and spine removed), never a draft, a reference or a poster
+  from the product's working folders.
+- Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
+  allows exactly those through its `feed:printables` line.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
-- `tests/feed.test.mjs` fails if a page or data file types a price or a product's store address.
+- `tests/feed.test.mjs` fails if a page or data file types a price, a game's ages or a product's store address.
 
 ## Privacy pages
 
 The words of a privacy page change only after an independent privacy review: a second
 reviewer who did not write the change checks it against the law, against what it commits the
 business to, and against what the game really does. Record the review in the pull request.
-`tests/content.test.mjs` pins each privacy page by hash; update the hash in the same pull
-request, after the review. Moving or restyling a page without changing its words still
-changes the hash: say so in the pull request.
+The pages are hand-written HTML in `public/<game>/privacy/index.html`, which the build copies
+into `dist/` unchanged. `tests/content.test.mjs` pins each one by hash, and checks that the
+built copy is the same bytes; update the hash in the same pull request, after the review.
+Moving or restyling a page without changing its words still changes the hash: say so in the
+pull request.
 
 ## Looking at a visible change
 
@@ -116,10 +150,14 @@ screenshots in `test-results/walk/` yourself too.
 
 | Path | What |
 |---|---|
-| `index.html`, `404.html`, `app-ads.txt`, `squishy-bop/`, `plush-hour/`, `giggle-bomb/` | the site |
-| `_headers` | response headers for every page (security headers, noindex off the public address) |
-| `wrangler.jsonc`, `.assetsignore` | the two Workers (production, staging) and what they serve |
-| `ops/` | the health check, the never-break list, the allow-list, the local-server helpers |
-| `tests/` | unit tests, configuration rules, the browser walk |
+| `src/pages/` | the pages (`index.astro`, `404.astro`, `games/`, `squishy-bop/`, `[game]/` for the games not out yet, `printables/`, `books/`, `grown-ups/`) |
+| `src/components/`, `src/layouts/`, `src/styles/`, `src/data/`, `src/assets/` | the shared pieces, the styles, the product data (`src/data/catalog.ts`) and the art |
+| `public/` | copied into the build unchanged: `app-ads.txt`, `favicon.svg`, the three privacy policies, `_headers` |
+| `public/_headers` | response headers for every page (security headers, noindex off the public address); wrangler reads it from `dist/` as configuration |
+| `astro.config.mjs`, `tsconfig.json` | the Astro build (static output, React islands, Tailwind) |
+| `dist/` | the build, never committed; what the Worker serves |
+| `wrangler.jsonc` | the two Workers (production, staging), serving `dist/` |
+| `ops/` | the post-build step, the allow-list, the health check, the never-break list, the local-server helpers |
+| `tests/` | unit tests, configuration rules, the security policy of the built pages, the browser walk |
 | `.github/workflows/` | `ci`, `preview`, `staging`, `release-pr`, `release-guard`, `release`, `rollback`, `watchdog` (the live check from GitHub, twice an hour) |
 | `docs/runbook.md` | deploy, roll back, a red check, turning deploys on, the domain |

@@ -1,10 +1,11 @@
-"""Check the site's files before anything serves them: structure, links, outside resources, size.
+"""Check the built site before anything serves it: structure, links, outside resources, size.
 
-    python ops/check_site.py              # every file in ops/public-files.txt
+    python ops/check_site.py              # dist/, as ops/public-files.txt describes it
     python ops/check_site.py --external   # also fetch outside links (warnings only)
 
-Standard library only. It reads the allow-list of public files (ops/public-files.txt) and
-checks each HTML page:
+Standard library only. Run it after npm run build (npm run check does). It reads the
+allow-list of public files (ops/public-files.txt): the listed files, plus the hashed build
+output under _astro/ that its "re:" pattern allows, and checks each HTML page in dist/:
 
   * it starts with <!doctype html>, has <html lang>, a charset, a viewport and one <title>
   * no two elements share an id
@@ -14,11 +15,12 @@ checks each HTML page:
   * nothing is loaded from another origin: no outside script, style, image, font, frame or
     media. Children open these pages; an outside resource is a request to a third party.
   * outside links (<a href>) use https, mailto or tel
-  * the file is within the size budget
+  * the file is within the size budget for its kind (BUDGETS below), and the whole build
+    within TOTAL_BUDGET
 
 It also checks that every allow-listed file exists and that the budget holds for the rest.
-html-validate (npm run lint:html) checks the markup itself; this script checks what the
-pages point at.
+html-validate (the "html" step of npm run check) checks the markup itself; this script checks
+what the pages point at. tests/policy.test.mjs also reads the stylesheets.
 
 Exit code 0 when nothing failed, else 1. Outside links that do not answer are warnings: a
 third party's outage must not block a release.
@@ -27,6 +29,8 @@ third party's outage must not block a release.
 from __future__ import annotations
 
 import argparse
+import json
+import re
 import sys
 import urllib.error
 import urllib.request
@@ -36,10 +40,35 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
+DIST = ROOT / "dist"
 PUBLIC_FILES = ROOT / "ops" / "public-files.txt"
 SITE = "https://pennypawsgames.com"  # only used to resolve relative links; nothing is fetched from it
-MAX_HTML_BYTES = 150 * 1024
-MAX_FILE_BYTES = 2 * 1024 * 1024
+
+# Size budgets, in bytes, for one file of each kind. Measured on the build of 2026-11-14 (with
+# the product feed) and set with modest headroom (the largest file then is in the comment);
+# raise one only on purpose.
+KB = 1024
+MAX_HTML_BYTES = 48 * KB          # a page; largest 41,313 (the home page)
+BUDGETS = {
+    ".html": MAX_HTML_BYTES,
+    ".css": 44 * KB,              # the one stylesheet, 35,901
+    ".js": 256 * KB,              # one script; largest 212,853 (React's client)
+    ".woff2": 48 * KB,            # one font file; largest 39,128
+    ".webp": 200 * KB,            # one picture of the site's own art; largest 168,902 (a book cover)
+    ".mp4": 720 * KB,             # one gameplay clip; largest 604,640
+}
+MAX_FILE_BYTES = 64 * KB          # anything else (app-ads.txt, favicon.svg)
+# Exceptions, by a pattern on the path, checked before the budgets above.
+BUDGET_EXCEPTIONS = {
+    # Penny's high five is 16 drawn frames in one sheet; 1,072,292.
+    r"^_astro/penny-highfive\.": 1280 * KB,
+    # Product pictures from the feed (ops/feed-images.mjs names them by the first 16 hex digits
+    # of their SHA-256). The originals are 3000 px wide and each page's <img src> fallback is
+    # built at that full size (largest 890,808); the srcset sizes are at most 223,142.
+    r"^_astro/[0-9a-f]{16}\.": 1024 * KB,
+}
+KIND_TOTALS = {".js": 448 * KB}   # every script together; 376,456
+TOTAL_BUDGET = 17408 * KB         # the whole build; 15,013,247 (7,886,284 before the feed)
 
 # attribute -> tags whose value is a resource the browser loads by itself
 RESOURCE_ATTRS = {
@@ -52,13 +81,55 @@ LOADING_RELS = {"stylesheet", "icon", "apple-touch-icon", "manifest", "preload",
                 "prefetch", "preconnect", "dns-prefetch"}
 
 
-def read_public_files(path: Path = PUBLIC_FILES) -> list[str]:
+def _lines(path: Path) -> list[str]:
     out = []
     for line in path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line and not line.startswith("#"):
             out.append(line)
     return out
+
+
+FEED = ROOT / "src" / "data" / "feed.json"
+FEED_ID = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+
+
+def feed_paths(line: str, feed: Path = FEED) -> list[str]:
+    """A "feed:<collection> <path with {id}>" line: one path per product in the feed."""
+    m = re.match(r"^feed:(\w+)\s+(\S*\{id\}\S*)$", line)
+    if not m:
+        raise ValueError(f"ops/public-files.txt: cannot read {line!r}")
+    rows = json.loads(feed.read_text(encoding="utf-8")).get(m.group(1))
+    if not isinstance(rows, list):
+        raise ValueError(f"ops/public-files.txt: the feed has no collection {m.group(1)!r}")
+    out = []
+    for row in rows:
+        if not FEED_ID.match(str(row.get("id"))):
+            raise ValueError(f"ops/public-files.txt: feed id {row.get('id')!r} is not a plain id")
+        out.append(m.group(2).replace("{id}", row["id"]))
+    return out
+
+
+def read_public_files(path: Path = PUBLIC_FILES) -> list[str]:
+    """The listed files (paths inside dist/, feed: lines expanded), without the patterns."""
+    out: list[str] = []
+    for line in _lines(path):
+        if line.startswith("re:"):
+            continue
+        out.extend(feed_paths(line) if line.startswith("feed:") else [line])
+    return out
+
+
+def read_public_patterns(path: Path = PUBLIC_FILES) -> list[re.Pattern[str]]:
+    """The "re:" lines: families of hashed build files allowed without being listed."""
+    return [re.compile(line[3:].strip()) for line in _lines(path) if line.startswith("re:")]
+
+
+def budget_for(file: str) -> int:
+    for pattern, limit in BUDGET_EXCEPTIONS.items():
+        if re.search(pattern, file):
+            return limit
+    return BUDGETS.get(PurePosixPath(file).suffix, MAX_FILE_BYTES)
 
 
 class _Doc(HTMLParser):
@@ -102,6 +173,10 @@ class _Doc(HTMLParser):
             self.ids.append(a["id"])
         if tag in ("a", "area") and "href" in a:
             self.links.append(a["href"])
+        if tag == "astro-island":  # the scripts an interactive piece loads when it starts
+            for attr in ("component-url", "renderer-url", "before-hydration-url"):
+                if a.get(attr):
+                    self.resources.append((f"astro-island {attr}", a[attr]))
         if tag == "link" and "href" in a:
             rels = set(a.get("rel", "").lower().split())
             if rels & LOADING_RELS:
@@ -185,8 +260,11 @@ def check_page(file: str, html: str, docs: dict[str, _Doc], public: set[str], re
         rep.error(file, "<base href> is not allowed: it silently changes every relative link")
 
     if file == "404.html":
-        # Served for any missing address, at any depth, so a relative link would break.
+        # Served for any missing address, at any depth, so a relative link would break. A link to
+        # a "#fragment" alone stays on the page it is in, so it works at any depth.
         for _, raw in [("", r) for r in d.links] + d.resources:
+            if raw.strip().startswith("#"):
+                continue
             if not raw.strip().startswith(("/", "https:", "mailto:", "tel:", "data:")) or raw.strip().startswith("//"):
                 rep.error(file, f"{raw!r} is relative; the 404 page is served at every depth, so start it with /")
 
@@ -245,19 +323,41 @@ def check_external(rep: Report, timeout: float = 15) -> None:
             rep.warnings.append(f"{file}: outside link {url} did not answer ({seen[url]})")
 
 
-def check(root: Path = ROOT, public_files: list[str] | None = None, external: bool = False) -> Report:
-    files = public_files if public_files is not None else read_public_files()
+def hashed_files(root: Path, patterns: list[re.Pattern[str]]) -> list[str]:
+    """The files under root that a pattern allows (the hashed build output)."""
+    if not patterns or not root.is_dir():
+        return []
+    out = []
+    for p in sorted(root.rglob("*")):
+        rel = p.relative_to(root).as_posix()
+        if p.is_file() and any(pat.search(rel) for pat in patterns):
+            out.append(rel)
+    return out
+
+
+def check(root: Path = DIST, public_files: list[str] | None = None, external: bool = False,
+          patterns: list[re.Pattern[str]] | None = None) -> Report:
+    """Check a site folder. With no file list, the build in dist/ as ops/public-files.txt describes it."""
+    listed = public_files if public_files is not None else read_public_files()
+    if patterns is None:
+        patterns = read_public_patterns() if public_files is None else []
+    files = list(listed) + [f for f in hashed_files(root, patterns) if f not in listed]
     public = set(files)
     rep = Report()
     docs: dict[str, _Doc] = {}
     texts: dict[str, str] = {}
+    totals: dict[str, int] = {}
+    total = 0
     for f in files:
         p = root / f
         if not p.is_file():
-            rep.error(f, "is in ops/public-files.txt but does not exist")
+            rep.error(f, "is in ops/public-files.txt but does not exist (run npm run build first)")
             continue
         size = p.stat().st_size
-        limit = MAX_HTML_BYTES if f.endswith(".html") else MAX_FILE_BYTES
+        total += size
+        kind = PurePosixPath(f).suffix
+        totals[kind] = totals.get(kind, 0) + size
+        limit = budget_for(f)
         if size > limit:
             rep.error(f, f"is {size} bytes, over the {limit} byte budget")
         if f.endswith(".html"):
@@ -267,6 +367,11 @@ def check(root: Path = ROOT, public_files: list[str] | None = None, external: bo
                 rep.error(f, "is not valid UTF-8")
                 continue
             docs[f] = parse(texts[f])
+    for kind, limit in KIND_TOTALS.items():
+        if totals.get(kind, 0) > limit:
+            rep.error(f"all {kind} files", f"are {totals[kind]} bytes together, over the {limit} byte budget")
+    if total > TOTAL_BUDGET:
+        rep.error("the build", f"is {total} bytes, over the {TOTAL_BUDGET} byte budget")
     for f in docs:
         check_page(f, texts[f], docs, public, rep)
     if external:
@@ -284,7 +389,7 @@ def main(argv: list[str] | None = None) -> int:
     for e in rep.errors:
         print(f"FAIL  {e}")
     pages = sum(1 for f in read_public_files() if f.endswith(".html"))
-    print(f"{pages} page(s), {len(rep.external)} outside link(s), "
+    print(f"{pages} page(s) in dist/, {len(rep.external)} outside link(s), "
           f"{len(rep.errors)} error(s), {len(rep.warnings)} warning(s)")
     return 1 if rep.errors else 0
 

@@ -399,6 +399,14 @@ export const feedGame = (id: string): FeedGame => {
 /** A game's facts as its words may quote them: its counts, its ages and what it charges. */
 export const saidOfGame = (g: FeedGame) => [g.facts, g.ages, g.purchases, g.price_usd];
 
+/** A game's ages as the site says them: the feed writes "6+" and the site says it in words. Nothing while undecided. */
+export const agesWords = (g: FeedGame): string | undefined => {
+  if (!g.ages) return undefined;
+  const from = /^(\d+)\+$/.exec(g.ages);
+  if (!from) throw new Error(`Game "${g.id}": ages "${g.ages}" in the feed is not written like "6+"`);
+  return `Ages ${from[1]} and up`;
+};
+
 const shot = (file: string, alt: string, caption: string) => ({
   src: img(`games/squishy-bop/${file}.webp`),
   alt,
@@ -454,6 +462,8 @@ export const squishyBop = {
   name: smart(bop.name),
   tagline: smart(bop.tagline),
   status: statusWords[bop.status],
+  /** Who it is for: the game's own ages, from the feed. */
+  forWhom: agesWords(bop),
   testerUrl: bop.tester_url ?? bop.play_url ?? stores.play,
   icon: { src: img('games/squishy-bop/icon.webp'), alt: '' },
   feature: {

@@ -109,13 +109,19 @@ which the Games tab opens. A game that is not out yet uses one shared page layou
 
 ### Where the build stands
 
-The home page, the Squishy Bop! page, the printables list with a page per printable, Books and the
-Grown-ups page exist in the toy box look on a working branch. They are not wired into the release
-pipeline: the live site is still the files at the repository root (phase 1, the engine swap, is still
-to do, and now carries the build as well as the swap). Product data is one typed file,
-`src/data/catalog.ts`, to become the content collections in section 6. Build from the repository's
-real path, not through a directory junction: through a junction the build finishes but leaves the
-stylesheet link out of every page.
+The home page, the games list with a page for each of the three games, the printables list with a
+page per printable, Books, the Grown-ups page and the not-found page exist in the toy box look, and
+the release pipeline now serves the build (phase 1, the engine swap): `wrangler.jsonc` points at
+`./dist`, the hand-written pages at the repository root are gone, `app-ads.txt`, `_headers` and the
+three privacy policies are in `public/` with their bytes unchanged, and every check and deploy runs
+`npm ci` and `npm run build` first. The security header did not get looser: a post-build step
+(`ops/postbuild.mjs`) moves Astro's two inline island scripts into hashed files, so `script-src
+'self'` holds with no hashes or nonces; `style-src` keeps `'unsafe-inline'` for Motion's style
+attributes. The privacy pins stay on the policies' bytes (in `public/`, and the same bytes in
+`dist/`), not on extracted words as section 10 first planned. The live site changes with the
+release that carries this. Product data is one typed file, `src/data/catalog.ts`, to become the
+content collections in section 6. Build from the repository's real path, not through a directory
+junction: through a junction the build finishes but leaves the stylesheet link out of every page.
 
 ## 3. Art direction
 

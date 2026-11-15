@@ -44,6 +44,8 @@ const bookArt: Art[] = [
 const seasonBook = books.find((b) => b.seasonal)!;
 const season = printables.filter((p) => p.seasonal);
 const shelf = printables.filter((p) => !p.seasonal);
+// Three across, or four when three would leave one card alone on the last row.
+const shelfRail = shelf.length % 3 === 1 ? 'rail' : 'rail rail--three';
 ---
 
 <Base
@@ -151,6 +153,7 @@ const shelf = printables.filter((p) => !p.seasonal);
           class="w-full rounded-[clamp(1rem,2vw,1.5rem)] shadow-[0_1rem_2rem_rgb(15_20_51/0.4)]"
           src={game.feature.src}
           alt={game.feature.alt}
+          width={1024}
           widths={[640, 1024]}
           sizes="(min-width: 60rem) 38rem, 92vw"
         />
@@ -164,7 +167,7 @@ const shelf = printables.filter((p) => !p.seasonal);
           </div>
           <p class="tray__line">{game.tagline}</p>
           <ul class="flex flex-wrap gap-2">
-            <li class="chip">Ages 4 and up</li>
+            {game.forWhom && <li class="chip">{game.forWhom}</li>}
             <li class="chip">Free to play</li>
             <li class="chip">No sign-in</li>
             <li class="chip">Ads never interrupt a game</li>
@@ -184,7 +187,7 @@ const shelf = printables.filter((p) => !p.seasonal);
         <h2 class="tray__title" id="h-printables"><img src={clay.heart} alt="" />Printables</h2>
         <p class="tray__line">Coloring pages, paper crafts and mystery games. Buy once, print at home as often as you like.</p>
       </div>
-      <div class="rail rail--three">
+      <div class={shelfRail}>
         {shelf.map((p) => (
           <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
         ))}

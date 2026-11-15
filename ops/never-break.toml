@@ -40,6 +40,43 @@ path = "/giggle-bomb/privacy/"
 title = "Giggle Bomb Privacy Policy"
 why = "The privacy policy address given to Google Play for Giggle Bomb, and linked from inside the game."
 
+# The site's sections and product pages, added with the Astro build (2026-11-14). Every page
+# links to them from its header or from the home page, so a broken one is broken everywhere.
+[[page]]
+path = "/games/"
+title = "Games | Penny Paws Games"
+why = "The Games tab in every page's header opens it; it lists all three games."
+
+[[page]]
+path = "/squishy-bop/"
+title = "Squishy Bop! | Penny Paws Games"
+why = "Squishy Bop!'s own page. The home page and the Games page link to it."
+
+[[page]]
+path = "/plush-hour/"
+title = "Plush Hour | Penny Paws Games"
+why = "Plush Hour's page (coming soon). The home page and the Games page link to it."
+
+[[page]]
+path = "/giggle-bomb/"
+title = "Giggle Bomb | Penny Paws Games"
+why = "Giggle Bomb's page (coming soon). The home page and the Games page link to it."
+
+[[page]]
+path = "/printables/"
+title = "Printables | Penny Paws Games"
+why = "The Printables tab in every page's header opens it; it links to each printable's page."
+
+[[page]]
+path = "/books/"
+title = "Books | Penny Paws Games"
+why = "The Books tab in every page's header opens it."
+
+[[page]]
+path = "/grown-ups/"
+title = "For grown-ups | Penny Paws Games"
+why = "The Grown-ups tab in every page's header opens it: the page for parents, which links to the Squishy Bop! privacy policy."
+
 # Other addresses that must answer with a permanent redirect to exactly this address. Checked
 # only against the public address, because they are not part of the site under test.
 [[redirect]]
@@ -57,7 +94,8 @@ referrer-policy = ""
 cache-control = "no-transform"
 
 # Paths that must never be served: repository files that are not part of the site.
-# .assetsignore keeps them out; this proves it on the deployed copy.
+# The Worker serves only the build (dist/), which holds only what ops/public-files.txt allows;
+# this proves it on the deployed copy.
 [absent]
 paths = [
   "/README.md",
@@ -73,4 +111,8 @@ paths = [
   "/docs/runbook.md",
   "/.github/workflows/ci.yml",
   "/.git/config",
+  "/astro.config.mjs",
+  "/src/pages/index.astro",
+  "/public/app-ads.txt",
+  "/ops/public-files.txt",
 ]

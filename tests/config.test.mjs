@@ -2,7 +2,10 @@
 //
 //   wrangler.jsonc   the site Worker is static files only; staging and production are what
 //                    docs/runbook.md says they are
-//   _headers         within Cloudflare's limits; the indexing rule is in the right order
+//   wrangler.jsonc   (cont.) it serves the build output, dist/
+//   public/_headers  within Cloudflare's limits; the indexing rule is in the right order
+//   the build        npm run build runs the post-build step; checks, the walk and every
+//                    workflow that deploys build first; Node meets Astro's minimum
 //   .github/         workflows run only on GitHub's own runners, pin every action to a commit,
 //                    default to a read-only token, and never deploy without naming an environment
 import { test } from "node:test";
@@ -22,7 +25,7 @@ for (const env of [undefined, "production", "staging"]) {
   test(`wrangler ${env ?? "top level"}: static files only, no code in front of them`, () => {
     const c = config(env);
     assert.equal(c.main, undefined, "the site Worker has no script");
-    assert.equal(c.assets.directory, ".");
+    assert.equal(c.assets.directory, "./dist", "the Worker serves the build output");
     assert.equal(c.assets.binding, undefined, "no assets binding: nothing reads assets from code");
     assert.equal(c.assets.run_worker_first, undefined, "run_worker_first would put code in front of every page");
     assert.equal(c.assets.not_found_handling, "404-page");
@@ -72,7 +75,7 @@ test("wrangler staging: its own Worker on staging.pennypawsgames.com, with pull 
 
 function headerBlocks() {
   const blocks = [];
-  for (const raw of read("_headers").split("\n")) {
+  for (const raw of read("public/_headers").split("\n")) {
     const line = raw.replace(/\r$/, "");
     if (!line.trim() || line.trim().startsWith("#")) continue;
     if (/^\s/.test(line)) blocks.at(-1).lines.push(line.trim());
@@ -83,7 +86,7 @@ function headerBlocks() {
 
 test("_headers: within Cloudflare's limits (100 rules, 2,000 characters a line)", () => {
   assert.ok(headerBlocks().length <= 100);
-  for (const line of read("_headers").split("\n")) assert.ok(line.length <= 2000, line.slice(0, 60));
+  for (const line of read("public/_headers").split("\n")) assert.ok(line.length <= 2000, line.slice(0, 60));
 });
 
 test("_headers: every address gets the security headers and noindex; only the public address drops noindex", () => {
@@ -218,6 +221,52 @@ test("package.json: wrangler is pinned to a version with Worker Previews (4.135.
   const [major, minor] = v.split(".").map(Number);
   assert.ok(major > 4 || (major === 4 && minor >= 135), `wrangler ${v} is older than 4.135.0`);
   for (const [name, ver] of Object.entries(pkg.devDependencies)) assert.match(ver, /^\d+\.\d+\.\d+$/, `${name} is not pinned exactly`);
+});
+
+// ---------------------------------------------------------------- the build
+
+test("package.json: build is the Astro build plus the post-build step; the checks and the walk build first", () => {
+  const { scripts } = JSON.parse(read("package.json"));
+  assert.equal(scripts.build, "astro build && node ops/postbuild-cli.mjs");
+  assert.match(scripts.walk, /^npm run build && /);
+  assert.match(scripts.dev, /^npm run build && wrangler dev /);
+  assert.equal(scripts["site:build"], undefined, "a bare astro build skips the post-build step; use npm run build");
+  const check = read("ops/check.mjs");
+  const first = check.match(/const steps = \[\s*\["([^"]+)"/);
+  assert.equal(first?.[1], "build", "ops/check.mjs builds before it checks anything");
+  assert.match(check, /\["build", \[node, bin\("astro", "bin\/astro\.mjs"\), "build"\], \[node, "ops\/postbuild-cli\.mjs"\]\]/,
+    "ops/check.mjs builds the way npm run build does");
+});
+
+// Astro states the Node version it needs; package.json and the workflows must meet it.
+test("Node: package.json engines and the workflows meet Astro's minimum", () => {
+  const astroMin = JSON.parse(read("node_modules/astro/package.json")).engines.node.match(/>=\s*(\d+)\.(\d+)\.(\d+)/).slice(1).map(Number);
+  const ours = JSON.parse(read("package.json")).engines.node.match(/^>=\s*(\d+)\.(\d+)\.(\d+)$/);
+  assert.ok(ours, "engines.node is a plain >=x.y.z");
+  const cmp = (a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2];
+  assert.ok(cmp(ours.slice(1).map(Number), astroMin) >= 0, `engines.node ${ours[0]} is below Astro's ${astroMin.join(".")}`);
+  const setup = read(".github/actions/setup/action.yml");
+  const major = Number(setup.match(/node-version:\s*(\d+)\s*$/m)?.[1]);
+  assert.ok(major > astroMin[0], `the workflows' node-version ${major} must be a major above ${astroMin[0]}, so every release of it is new enough`);
+});
+
+test("workflows: the setup step installs and builds, so every check and deploy uses a fresh dist", () => {
+  const setup = read(".github/actions/setup/action.yml");
+  const ci = setup.indexOf("run: npm ci");
+  const build = setup.indexOf("run: npm run build");
+  assert.ok(ci > 0 && build > ci, "setup runs npm ci, then npm run build");
+  assert.match(read(".github/actions/checks/action.yml"), /uses: \.\/\.github\/actions\/setup/);
+  // Any job that deploys, previews or walks the site must run setup (and so the build) first.
+  for (const file of workflows) {
+    const text = read(`.github/workflows/${file}`);
+    const jobs = text.slice(text.search(/^jobs:/m)).split(/^  (?=[\w-]+:\s*$)/m).slice(1);
+    for (const job of jobs) {
+      const needsBuild = job.search(/wrangler (deploy|preview(?! delete))\b|playwright test|npm run (check|walk)/);
+      if (needsBuild < 0) continue;
+      const setupAt = job.search(/uses: \.\/\.github\/actions\/(setup|checks)/);
+      assert.ok(setupAt >= 0 && setupAt < needsBuild, `${file} job ${job.split(":")[0]}: run ./.github/actions/setup before it deploys or walks the site`);
+    }
+  }
 });
 
 test("CLAUDE.md points at AGENTS.md", () => {
