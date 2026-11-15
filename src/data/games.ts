@@ -183,7 +183,7 @@ export const allGames: GameCard[] = [
     name: squishyBop.name,
     tagline: squishyBop.tagline,
     status: squishyBop.status,
-    forWhom: 'Ages 4 and up',
+    forWhom: squishyBop.forWhom,
     icon: squishyBop.icon,
     feature: squishyBop.feature,
   },
