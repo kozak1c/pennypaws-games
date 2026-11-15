@@ -51,6 +51,7 @@ class Site:
             "/squishy-bop/privacy/": (200, {}, page("Squishy Bop! Privacy Policy",
                                                     '<a href="https://policies.google.com/privacy">Google</a>')),
             "/squishy-bop/privacy": (307, {"location": "/squishy-bop/privacy/"}, b""),
+            "/plush-hour/privacy/": (200, {}, page("Plush Hour Privacy Policy")),
             "/giggle-bomb/privacy/": (200, {}, page("Giggle Bomb Privacy Policy")),
             "/app-ads.txt": (200, {"content-type": "text/plain; charset=utf-8"}, APP_ADS),
         }

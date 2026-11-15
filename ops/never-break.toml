@@ -31,6 +31,11 @@ title = "Squishy Bop! Privacy Policy"
 why = "The privacy policy address given to Google Play and linked from inside Squishy Bop!."
 
 [[page]]
+path = "/plush-hour/privacy/"
+title = "Plush Hour Privacy Policy"
+why = "The privacy policy address given to Google Play for Plush Hour."
+
+[[page]]
 path = "/giggle-bomb/privacy/"
 title = "Giggle Bomb Privacy Policy"
 why = "The privacy policy address given to Google Play for Giggle Bomb, and linked from inside the game."
