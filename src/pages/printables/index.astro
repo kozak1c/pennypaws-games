@@ -15,6 +15,21 @@ const rail = (n: number) => (n % 3 === 1 ? 'rail' : 'rail rail--three');
   section="printables"
 >
   <div class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.875rem,2vw,1.5rem)] pb-14">
+    {/* In season, the seasonal printables come first, as on the home page. */}
+    {season.length > 0 && (
+    <section class="tray tray--leaf" aria-labelledby="h-christmas">
+      <div class="tray__head">
+        <h2 class="tray__title" id="h-christmas">Ready for Christmas</h2>
+        <p class="tray__line">Print them tonight and they are ready for the morning.</p>
+      </div>
+      <div class={rail(season.length)}>
+        {season.map((p) => (
+          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
+        ))}
+      </div>
+    </section>
+    )}
+
     <section class="tray tray--heart" aria-labelledby="h-printables">
       <div class="tray__head">
         <h1 class="tray__title" id="h-printables">Printables</h1>
@@ -27,17 +42,6 @@ const rail = (n: number) => (n % 3 === 1 ? 'rail' : 'rail rail--three');
       </div>
     </section>
 
-    <section class="tray tray--leaf" aria-labelledby="h-christmas">
-      <div class="tray__head">
-        <h2 class="tray__title" id="h-christmas">Ready for Christmas</h2>
-        <p class="tray__line">Print them tonight and they are ready for the morning.</p>
-      </div>
-      <div class={rail(season.length)}>
-        {season.map((p) => (
-          <Card href={`/printables/${p.id}/`} name={p.name} line={p.line} price={p.price} cover={p.cover} kind="Print at home" button="See what’s inside" />
-        ))}
-      </div>
-    </section>
 
     <section class="tray tray--paper" aria-labelledby="h-how">
       <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-how">How printables work</h2>

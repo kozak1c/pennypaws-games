@@ -8,7 +8,7 @@
       "status": "coming-soon",
       "page": "/giggle-bomb/",
       "privacy": "/giggle-bomb/privacy/",
-      "ages": null,
+      "ages": "5+",
       "rating": null,
       "child_directed": true,
       "price": "free",
@@ -35,6 +35,7 @@
         "dare_count_pass": 30,
         "dare_count_timed": 11,
         "dare_pack_count": 4,
+        "dare_pack_count_pass": 3,
         "free_minigame_count": 24,
         "fuse_setting_count": 3,
         "fuse_settings": [

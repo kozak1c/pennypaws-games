@@ -244,6 +244,25 @@ const printableWords: Record<string, PrintableWords> = {
     ],
     seasonal: true,
   },
+  'cozy-cats-mosaics': {
+    name: 'Cat mystery mosaics',
+    line: '30 large print cats to color by number, from a tabby in a teacup to a tuxedo in a bow tie.',
+    facts: ['30 pictures', 'Large print', 'Instant download'],
+  },
+  'cozy-winter-mosaics': {
+    name: 'Winter mystery mosaics',
+    line: '30 large print winter pictures to color by number, and not one of them is Christmas.',
+    facts: ['30 pictures', 'Large print', 'Instant download'],
+  },
+  'mosaics-bundle': {
+    name: 'The mosaics bundle',
+    line: 'All three mystery mosaic books, Christmas, Winter and Cats: 90 pictures for less than buying them one by one.',
+    facts: ['90 pictures', 'Three books', 'Instant download'],
+  },
+  'pink-haunted-house': {
+    line: 'A printable Halloween mystery the whole family solves. 16 clues, no murder, exactly one answer.',
+    facts: ['16 clues', 'One answer', 'Instant download'],
+  },
   'cozy-christmas-mosaics': {
     name: 'Christmas mystery mosaics',
     line: '30 large print color-by-number pictures for kids and grandparents.',
@@ -348,6 +367,9 @@ const bookWords: Record<string, BookWords> = {
   },
   'cozy-christmas-mosaics': {
     cover: 'books/christmas-mosaics.webp',
+    line: 'Large print color by number: 30 cozy Christmas pictures, a page at a time.',
+    blurb: 'Color the squares by number and a cozy Christmas picture appears, from Santa to a mug of hot cocoa. Big squares and large print, so kids and grandparents can share a page.',
+    facts: ['30 pictures', 'Large print', '8.5 × 11 in pages'],
     seasonal: true,
   },
 };

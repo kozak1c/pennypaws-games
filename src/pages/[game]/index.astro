@@ -68,17 +68,20 @@ const others = allGames.filter((g) => g.id !== game.id);
       </div>
     </section>
 
-    {game.grownUps.length > 0 && (
+    {(game.grownUps.length > 0 || game.privacy) && (
       <section class="tray tray--paper" aria-labelledby="h-grown">
         <h2 class="tray__title" id="h-grown"><Shape name="star" />For grown-ups</h2>
-        <dl class="facts">
-          {game.grownUps.map((fact) => (
-            <div>
-              <dt>{fact.term}</dt>
-              <dd>{fact.text}</dd>
-            </div>
-          ))}
-        </dl>
+        {game.grownUps.length > 0 && (
+          <dl class="facts">
+            {game.grownUps.map((fact) => (
+              <div>
+                <dt>{fact.term}</dt>
+                <dd>{fact.text}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+        {game.privacy && <a class="candy candy--small justify-self-start" href={game.privacy}>Read the privacy policy</a>}
       </section>
     )}
 

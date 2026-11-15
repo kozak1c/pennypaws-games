@@ -32,10 +32,10 @@ import { stores } from '../../data/catalog';
     <section class="tray tray--paper" aria-labelledby="h-reach">
       <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-reach">Reach a real person</h2>
       <p class="max-w-[38rem] text-[1.0625rem] font-bold text-navy-soft">
-        Write to <a class="font-black text-navy underline decoration-2 underline-offset-4" href={`mailto:${stores.email}`}>{stores.email}</a> about anything here. For an order, the shop that sold it (Etsy or Amazon) handles payment, delivery and refunds.
+        Write to <a class="py-2.5 font-black text-navy underline decoration-2 underline-offset-4" href={`mailto:${stores.email}`}>{stores.email}</a> about anything here. For an order, the shop that sold it (Etsy or Amazon) handles payment, delivery and refunds.
       </p>
       <div class="flex flex-wrap gap-4">
-        <a class="candy candy--small" href="/squishy-bop/privacy/">Squishy Bop! privacy policy</a>
+        <a class="candy candy--small" href={`mailto:${stores.email}`}>Email us</a>
         <a class="candy candy--small candy--white" href={stores.etsy}>Our shop on Etsy</a>
       </div>
     </section>

@@ -16,11 +16,12 @@ const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest(
 const publicFiles = readPublicFiles().files;
 
 // page (its path inside public/ and dist/) -> SHA-256 of its bytes. Update a pin only together
-// with the reviewed change. The pins are the same as when the pages sat at the repository root.
+// with the reviewed change. Last changed 2026-11-15 (PAWS-034): a way back to the site above and
+// below each policy; the policy words, below, did not change.
 const PRIVACY_PAGES = {
-  "squishy-bop/privacy/index.html": "b5481fe23b4fda095a80186d0cdc43912cb39b104d786b1578dee83fd4e82dbc",
-  "plush-hour/privacy/index.html": "afa4d0e34f1a49a8028d1e64b3542084857208a0abdfe9e4b04176c8159c23d3",
-  "giggle-bomb/privacy/index.html": "aa516772e881ed082b747db7e32c248098eb0d25aa5c57edccd9b822cccb3506",
+  "squishy-bop/privacy/index.html": "9fbd0aa65244ba122226fbd166af305eee79b0b9380662e8e9dd9f2fa7421f26",
+  "plush-hour/privacy/index.html": "36e402a66c83ed26beb4affa2000e7d8e084e1c458ee39e0c088b6c991788957",
+  "giggle-bomb/privacy/index.html": "fd102230f05f0486b3cb7e1e30dea0654ccb2148ff79179294767fca330c1996",
 };
 
 for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
@@ -35,9 +36,28 @@ for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
   });
 }
 
+// The policy itself: SHA-256 of the page's <main> element, the words a reader agrees to. A change to
+// the site links or styling around a policy moves the page pin above but not this one; a change
+// to these needs the privacy review of the words themselves.
+const POLICY_WORDS = {
+  "squishy-bop/privacy/index.html": "c7b46d8579af55b4eef598180bbdcc3202740f39c05cc6e99501901c2b10e5bc",
+  "plush-hour/privacy/index.html": "136a6461d1e41c3f76761a0426a5c8ad2d76f92a352c94d651e46209ae1b33f6",
+  "giggle-bomb/privacy/index.html": "a936e1ecae8af79c3c0f082ad49cb12dcac70a6bb361baf9b64f27d39f1a580a",
+};
+
+for (const [file, pin] of Object.entries(POLICY_WORDS)) {
+  test(`the policy words in public/${file} are unchanged since their last review`, () => {
+    const main = readFileSync(path.join(root, "public", file), "utf8").match(/<main>[\s\S]*<\/main>/);
+    assert.ok(main, `public/${file} has no <main> element`);
+    assert.equal(createHash("sha256").update(main[0]).digest("hex"), pin,
+      `the words of public/${file} changed. That needs the independent privacy review of the policy itself (AGENTS.md).`);
+  });
+}
+
 test("every public privacy or policy page is pinned", () => {
   const policyPages = publicFiles.filter((f) => f.endsWith(".html") && /privacy|terms|policy|data-deletion/i.test(f));
   assert.ok(policyPages.length > 0);
   for (const f of policyPages) assert.ok(f in PRIVACY_PAGES, `${f} looks like a policy page: pin it in tests/content.test.mjs`);
   for (const f of Object.keys(PRIVACY_PAGES)) assert.ok(publicFiles.includes(f), `${f} is pinned but not a public file`);
+  assert.deepEqual(Object.keys(POLICY_WORDS).sort(), Object.keys(PRIVACY_PAGES).sort(), "every pinned page has its words pinned too");
 });
