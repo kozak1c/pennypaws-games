@@ -6,7 +6,7 @@
 // the site's own. They never type a count: write {fact_name} and the feed's value is filled in,
 // and any number they do state must be among the game's facts (see catalog.ts).
 import type { ImageMetadata } from 'astro';
-import { checkNumbers, feedGames, fill, saidOfGame, smart, squishyBop, statusWords, type Pic } from './catalog';
+import { agesWords, checkNumbers, feedGames, fill, saidOfGame, smart, squishyBop, statusWords, type Pic } from './catalog';
 
 const art = import.meta.glob<{ default: ImageMetadata }>('../assets/games/**/*.{webp,png}', { eager: true });
 const img = (path: string): ImageMetadata => {
@@ -173,6 +173,8 @@ export const soonGames: SoonGame[] = Object.entries(gameWords).flatMap(([id, wor
       tagline: smart(game.tagline),
       status: statusWords[game.status],
       ...fill(`Game "${id}"`, words, game.facts),
+      // Who it is for: the site's own words when it has them, else the game's ages from the feed.
+      forWhom: words.forWhom ?? agesWords(game),
     },
   ];
 });
