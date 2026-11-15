@@ -1,35 +1,23 @@
-// The public files: what wrangler would upload must equal ops/public-files.txt, exactly.
+// The public files: what wrangler would upload must be exactly what ops/public-files.txt allows.
 //
-// The Worker's assets directory is the repo root, so .assetsignore is the only thing between
-// a doc, a config file or node_modules and the public site. This test asks wrangler itself
-// (a dry-run deploy with debug logging names every path it ignores) and compares what is
-// left with the allow-list. It runs in a tree that holds node_modules, .git, tests and docs,
-// so the ignore rules are proven against real clutter.
+// The Worker's assets directory is the build output, dist/ (wrangler.jsonc). The build checks
+// itself against the allow-list (ops/postbuild.mjs); this test asks wrangler (a dry-run deploy
+// with debug logging names every path it ignores) and compares what it would upload with the
+// list: every listed file, files under _astro/ only where the hashed-name pattern allows them,
+// and nothing else. Run it after "npm run build" (npm run check builds first).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
+import { auditBuild, CONFIG_FILES, dist, filesUnder, isPublic, readPublicFiles, root } from "../ops/public-files.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const wrangler = path.join(root, "node_modules", "wrangler", "bin", "wrangler.js");
-
 const unix = (p) => p.split(path.sep).join("/").replaceAll("\\", "/");
+const list = readPublicFiles();
 
-function allowList() {
-  return readFileSync(path.join(root, "ops", "public-files.txt"), "utf8")
-    .split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#")).sort();
-}
-
-// Every file under the root, as wrangler lists them (recursive readdir, directories dropped).
-function allFiles() {
-  return readdirSync(root, { recursive: true })
-    .filter((rel) => statSync(path.join(root, rel), { throwIfNoEntry: false })?.isFile())
-    .map(unix);
-}
-
-// What a deploy of `env` would upload: every file minus what wrangler says it ignores.
+// What a deploy of `env` would upload: every file in dist/ minus what wrangler says it ignores.
 function wouldUpload(env) {
   const run = spawnSync(process.execPath, [wrangler, "deploy", "--dry-run", "--env", env], {
     cwd: root,
@@ -40,41 +28,84 @@ function wouldUpload(env) {
   const out = `${run.stdout}\n${run.stderr}`;
   assert.equal(run.status, 0, `wrangler deploy --dry-run --env ${env} failed:\n${out.slice(-2000)}`);
   assert.match(out, /--dry-run: exiting now/, "the dry run did not finish");
+  const from = out.match(/Read \d+ files from the assets directory (.+?)\r?$/m);
+  assert.ok(from, "wrangler did not say which assets directory it read: has its output changed?");
+  assert.equal(path.resolve(from[1].trim()), dist, "wrangler must read the build output, dist/");
   const ignored = new Set();
   for (const line of out.split("\n")) {
     const m = line.match(/Ignoring asset: (.+?)\r?$/);
     if (m) ignored.add(unix(m[1].trim()));
   }
-  assert.ok(ignored.size > 0, "wrangler logged no ignored paths: has its debug output changed?");
-  // _headers and .assetsignore are in the ignored set (wrangler reads them as configuration).
-  return allFiles().filter((f) => !ignored.has(f)).sort();
+  // _headers is read as configuration: wrangler names it here, so a change in its output shows.
+  assert.deepEqual([...ignored].sort(), [...CONFIG_FILES].sort(), "wrangler should ignore only its configuration files");
+  return filesUnder(dist).filter((f) => !ignored.has(f));
 }
+
+test("there is a build to check (npm run build)", () => {
+  assert.ok(existsSync(path.join(dist, "index.html")), "dist/index.html is missing: run npm run build first");
+});
 
 for (const env of ["staging", "production"]) {
   test(`${env}: wrangler would upload exactly the allow-listed files`, () => {
-    assert.deepEqual(wouldUpload(env), allowList());
+    const upload = wouldUpload(env);
+    const hashed = upload.filter((f) => !list.files.includes(f));
+    assert.deepEqual(upload.filter((f) => list.files.includes(f)), [...list.files].sort(), "every listed file is uploaded");
+    for (const f of hashed) assert.ok(list.patterns.some((re) => re.test(f)), `${f} would be uploaded but is not allowed by ops/public-files.txt`);
+    for (const ext of ["css", "js", "woff2", "webp", "mp4"]) {
+      assert.ok(hashed.some((f) => f.endsWith(`.${ext}`)), `expected hashed .${ext} files under _astro/`);
+    }
   });
 }
 
-test("the tree this ran in holds the clutter the ignore list must keep out", () => {
-  const files = new Set(allFiles());
-  for (const f of ["README.md", "wrangler.jsonc", "package.json", "_headers", ".assetsignore",
-    "ops/health.py", "node_modules/wrangler/package.json"]) {
-    assert.ok(files.has(f), `${f} should exist in the tree under test`);
-  }
-  // A page-shaped file somewhere it must not be served from: the rules are anchored to the root.
-  assert.ok([...files].some((f) => f.startsWith("node_modules/") && f.endsWith("/index.html")),
-    "expected an index.html somewhere under node_modules");
+test("the build's own check finds nothing wrong with dist/", () => {
+  const { unexpected, missing } = auditBuild();
+  assert.deepEqual({ unexpected, missing }, { unexpected: [], missing: [] });
 });
 
-test("every allow-listed file is tracked by git", () => {
-  const tracked = new Set(execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).split("\n").filter(Boolean));
-  for (const f of allowList()) assert.ok(tracked.has(f), `${f} is allow-listed but not committed`);
+// The build fails on a file nobody listed. Proven on a copy-shaped folder of stray files, the
+// kind a careless change could put in public/ or a plugin could emit.
+test("the build's check rejects files that are not on the list", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "pennypaws-dist-"));
+  try {
+    const stray = ["README.md", ".env", "notes.txt", "_astro/client.js", "_astro/client.OzTcoKK0.js.map",
+      "_astro/data.OzTcoKK0.json", "squishy-bop/privacy/draft.html", "_astro/sub/x.OzTcoKK0.js"];
+    for (const f of [...list.files, ...CONFIG_FILES, "_astro/client.OzTcoKK0.js", ...stray]) {
+      mkdirSync(path.dirname(path.join(dir, f)), { recursive: true });
+      writeFileSync(path.join(dir, f), "x");
+    }
+    rmSync(path.join(dir, "app-ads.txt"));
+    const { unexpected, missing } = auditBuild(dir);
+    assert.deepEqual(unexpected, [...stray].sort());
+    assert.deepEqual(missing, ["app-ads.txt"]);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+// Each listed file that the build does not make from src/pages is a committed file in public/.
+test("every listed file that is not a built page is committed in public/", () => {
+  const tracked = new Set(execFileSync("git", ["ls-files", "public"], { cwd: root, encoding: "utf8" }).split("\n").filter(Boolean));
+  for (const f of [...list.files, ...CONFIG_FILES]) {
+    if (tracked.has(`public/${f}`)) continue;
+    assert.ok(f.endsWith(".html"), `${f} is listed but is neither a page nor a committed file in public/`);
+  }
+  for (const f of tracked) {
+    const rel = f.slice("public/".length);
+    assert.ok(CONFIG_FILES.includes(rel) || isPublic(rel, list), `${f} is in public/ but not in ops/public-files.txt`);
+  }
 });
 
 test("the allow-list holds no file that could not be a public page or asset", () => {
-  for (const f of allowList()) {
-    assert.doesNotMatch(f, /(^|\/)\.|^(ops|tests|docs|node_modules)\/|\.(md|py|mjs|json|jsonc|toml|yml|yaml|lock)$/i, f);
+  for (const f of list.files) {
+    assert.doesNotMatch(f, /(^|\/)\.|^(ops|tests|docs|node_modules|src|public|dist)\/|\.(md|py|mjs|json|jsonc|toml|yml|yaml|lock|map)$/i, f);
     assert.ok(!f.startsWith("/") && !f.includes(".."), f);
+  }
+  assert.equal(list.patterns.length, 1, "one pattern, for the hashed build output");
+  for (const f of ["_astro/client.OzTcoKK0.js", "_astro/01_listing.P_EhUzSM_1f18Ta.webp", "_astro/play.CswBVPtv.mp4"]) {
+    assert.ok(isPublic(f, list), `${f} should be allowed`);
+  }
+  for (const f of ["client.OzTcoKK0.js", "_astro/client.js", "_astro/client.OzTcoKK0.js.map", "_astro/a.OzTcoKK0.html",
+    "_astro/.env", "_astro/x/../../README.OzTcoKK0.js", "_astro/notes.OzTcoKK0.md"]) {
+    assert.ok(!isPublic(f, list), `${f} must not be allowed`);
   }
 });

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 import tempfile
 import unittest
@@ -29,14 +30,23 @@ def run(files: dict[str, str]) -> check_site.Report:
 
 
 class RealSiteTest(unittest.TestCase):
+    """The build in dist/ (npm run build first; npm run check does)."""
+
     def test_the_site_passes(self):
         rep = check_site.check()
         self.assertEqual(rep.errors, [])
 
     def test_allow_list_names_the_pages_that_exist_today(self):
         files = check_site.read_public_files()
-        for f in ("index.html", "404.html", "app-ads.txt", "squishy-bop/privacy/index.html"):
+        for f in ("index.html", "404.html", "app-ads.txt", "squishy-bop/privacy/index.html",
+                  "plush-hour/privacy/index.html", "giggle-bomb/privacy/index.html", "games/index.html",
+                  "squishy-bop/index.html", "printables/index.html", "books/index.html", "grown-ups/index.html"):
             self.assertIn(f, files)
+
+    def test_the_hashed_build_output_is_checked_too(self):
+        hashed = check_site.hashed_files(check_site.DIST, check_site.read_public_patterns())
+        for ext in (".css", ".js", ".woff2", ".webp", ".mp4"):
+            self.assertTrue(any(f.startswith("_astro/") and f.endswith(ext) for f in hashed), ext)
 
 
 class StructureTest(unittest.TestCase):
@@ -64,6 +74,21 @@ class StructureTest(unittest.TestCase):
             self.assertIn("does not exist", rep.errors[0])
         big = html("x" * (check_site.MAX_HTML_BYTES + 1))
         self.assertIn("budget", run({"index.html": big}).errors[0])
+
+    def test_budgets_by_kind_and_named_exceptions(self):
+        self.assertEqual(check_site.budget_for("index.html"), check_site.MAX_HTML_BYTES)
+        self.assertEqual(check_site.budget_for("_astro/a.ABCDEFGH.js"), check_site.BUDGETS[".js"])
+        self.assertEqual(check_site.budget_for("app-ads.txt"), check_site.MAX_FILE_BYTES)
+        self.assertEqual(check_site.budget_for("_astro/penny-highfive.ABCDEFGH.webp"),
+                         check_site.BUDGET_EXCEPTIONS["_astro/penny-highfive."])
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "_astro").mkdir()
+            (Path(d) / "index.html").write_text(html('<img src="/_astro/a.ABCDEFGH.webp" alt="">'), encoding="utf-8")
+            (Path(d) / "_astro" / "a.ABCDEFGH.webp").write_bytes(b"x" * (check_site.BUDGETS[".webp"] + 1))
+            pattern = [re.compile(r"^_astro/[\w.-]+\.[\w-]{8,}\.webp$")]
+            rep = check_site.check(Path(d), ["index.html"], patterns=pattern)
+        self.assertEqual(len(rep.errors), 1, rep.errors)
+        self.assertIn("_astro/a.ABCDEFGH.webp: is", rep.errors[0])
 
 
 class LinkTest(unittest.TestCase):
@@ -107,7 +132,7 @@ class LinkTest(unittest.TestCase):
     def test_404_page_must_use_absolute_paths(self):
         site = {"index.html": html(), "404.html": html('<a href="index.html">home</a>')}
         self.assertIn("served at every depth", run(site).errors[0])
-        site["404.html"] = html('<a href="/">home</a>')
+        site["404.html"] = html('<a href="/">home</a><a href="#top">top</a><h1 id="top">x</h1>')
         self.assertEqual(run(site).errors, [])
 
 
@@ -132,6 +157,25 @@ class OutsideResourceTest(unittest.TestCase):
             rep = run({"index.html": html(head=HEAD + head)})
             self.assertEqual(len(rep.errors), 1, (head, rep.errors))
             self.assertIn("another origin", rep.errors[0])
+
+    def test_hashed_files_are_public_only_by_pattern(self):
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "_astro").mkdir()
+            (Path(d) / "index.html").write_text(html('<script src="/_astro/a.ABCDEFGH.js"></script>'
+                                                     '<img src="/_astro/b.png" alt="">'), encoding="utf-8")
+            (Path(d) / "_astro" / "a.ABCDEFGH.js").write_text("1", encoding="utf-8")
+            (Path(d) / "_astro" / "b.png").write_bytes(b"x")
+            pattern = [re.compile(r"^_astro/[\w.-]+\.[\w-]{8,}\.(?:js|png)$")]
+            rep = check_site.check(Path(d), ["index.html"], patterns=pattern)
+        self.assertEqual(len(rep.errors), 1, rep.errors)
+        self.assertIn("/_astro/b.png", rep.errors[0])
+        self.assertIn("not a public file", rep.errors[0])
+
+    def test_island_scripts_count_as_resources(self):
+        body = '<astro-island component-url="https://cdn.example.com/c.js" renderer-url="/r.js"></astro-island>'
+        rep = run({"index.html": html(body), "r.js": "1"})
+        self.assertEqual(len(rep.errors), 1, rep.errors)
+        self.assertIn("another origin", rep.errors[0])
 
     def test_own_resources_must_be_public_files(self):
         self.assertEqual(run({"index.html": html('<script src="/app.js"></script><img src="data:image/png;base64,AA" alt="">'),

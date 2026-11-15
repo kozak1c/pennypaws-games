@@ -12,10 +12,12 @@
   "name": "pennypaws-site",
   "compatibility_date": "2026-11-01",
 
-  // The public files are the repo root minus everything .assetsignore lists (deny by default).
-  // ops/public-files.txt is the allow-list; tests/assets.test.mjs proves the two agree.
+  // The public files are the build output, dist/ (npm run build). The build fails unless dist/
+  // holds exactly what the allow-list, ops/public-files.txt, allows (ops/postbuild.mjs), and
+  // tests/assets.test.mjs proves wrangler would upload exactly that. dist/_headers (copied from
+  // public/_headers) is read as configuration and never served.
   "assets": {
-    "directory": ".",
+    "directory": "./dist",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },

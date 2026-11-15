@@ -55,6 +55,9 @@ class Site:
             "/giggle-bomb/privacy/": (200, {}, page("Giggle Bomb Privacy Policy")),
             "/app-ads.txt": (200, {"content-type": "text/plain; charset=utf-8"}, APP_ADS),
         }
+        # Every other page on the never-break list answers with its title.
+        for e in SPEC["page"]:
+            self.routes.setdefault(e["path"], (200, {}, page(e["title"])))
         self.http_redirect = True
         self.requests: list[str] = []
         # Addresses outside the site that the never-break list expects to redirect here.
@@ -187,8 +190,8 @@ class BrokenTest(unittest.TestCase):
 
     def test_outside_script_on_a_page_only_reachable_by_a_link(self):
         s = Site()
-        s.routes["/"] = (200, {}, page("Penny Paws Games", '<a href="/games/">Games</a>'))
-        s.routes["/games/"] = (200, {}, page("Games", '<script src="//cdn.example.com/a.js"></script>'))
+        s.routes["/"] = (200, {}, page("Penny Paws Games", '<a href="/not-listed/">Games</a>'))
+        s.routes["/not-listed/"] = (200, {}, page("Not listed", '<script src="//cdn.example.com/a.js"></script>'))
         self.assertEqual(failed(s.run()), ["no script from another origin"])
 
     def test_own_scripts_are_fine(self):
@@ -312,16 +315,17 @@ class CertificateTest(unittest.TestCase):
 
 
 class NeverBreakListTest(unittest.TestCase):
-    """The list itself: its entries match the repository's files."""
+    """The list itself: its entries match the source files and the build in dist/."""
 
     def test_app_ads_file_is_the_listed_bytes(self):
         entry = next(e for e in SPEC["exact"] if e["path"] == "/app-ads.txt")
-        self.assertEqual((ROOT / "app-ads.txt").read_bytes(), entry["body"].encode())
+        self.assertEqual((ROOT / "public" / "app-ads.txt").read_bytes(), entry["body"].encode())
+        self.assertEqual((ROOT / "dist" / "app-ads.txt").read_bytes(), entry["body"].encode())
         self.assertEqual(entry["body"].encode(), APP_ADS)
 
     def test_listed_pages_exist_with_their_titles(self):
         for p in SPEC["page"]:
-            file = ROOT / p["path"].strip("/") / "index.html"
+            file = ROOT / "dist" / p["path"].strip("/") / "index.html"
             self.assertEqual(health.parse_page(file.read_text(encoding="utf-8")).title, p["title"], p["path"])
 
     def test_every_entry_says_why(self):
