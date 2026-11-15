@@ -120,7 +120,20 @@ test("a gallery's small pictures bring their picture into view", async ({ page }
   const count = await thumbs.count();
   expect(count).toBeGreaterThan(1);
   await expect(thumbs.first()).toHaveAttribute("aria-current", "true");
+  // While the stage glides to the tapped picture, no other small picture is marked on the way: the
+  // ring goes straight to the one tapped and stays there.
+  await page.evaluate(() => {
+    const bar = document.querySelector("[data-gallery-thumbs]");
+    const buttons = [...bar.querySelectorAll("button")];
+    window.__marked = [];
+    new MutationObserver(() => {
+      const i = buttons.findIndex((b) => b.getAttribute("aria-current") === "true");
+      if (window.__marked.at(-1) !== i) window.__marked.push(i);
+    }).observe(bar, { subtree: true, attributes: true, attributeFilter: ["aria-current"] });
+  });
   await thumbs.nth(count - 1).click();
+  await page.waitForTimeout(1200);
+  expect(await page.evaluate(() => window.__marked), "the ring hopped along the row").toEqual([count - 1]);
   await expect(thumbs.nth(count - 1)).toHaveAttribute("aria-current", "true");
   await expect(thumbs.first()).toHaveAttribute("aria-current", "false");
   // Once the smooth scroll settles, the last picture is the one in the middle of the stage.
@@ -129,6 +142,9 @@ test("a gallery's small pictures bring their picture into view", async ({ page }
     const box = el.getBoundingClientRect();
     return Math.abs(last.left + last.width / 2 - (box.left + box.width / 2));
   }), { message: "the picture is centred in the stage" }).toBeLessThan(4);
+  // Swiping back to the start moves the ring with the stage.
+  await stage.evaluate((el) => el.scrollTo({ left: 0 }));
+  await expect(thumbs.first()).toHaveAttribute("aria-current", "true");
 });
 
 test("the dark pass still covers the pages that have a dark style", async () => {
