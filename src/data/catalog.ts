@@ -331,9 +331,9 @@ export interface Book {
   seasonal?: boolean;
 }
 
-/** The site's words and art for a book. A book is on the shelf once its cover art is here. */
+/** The site's words for a book; the shelf holds the books named here, in this order. Its cover is
+ *  not typed here: it is the front of the cover uploaded to Amazon, from the feed. */
 interface BookWords {
-  cover: string;
   line?: string;
   blurb?: string;
   facts?: string[];
@@ -343,7 +343,6 @@ interface BookWords {
 
 const bookWords: Record<string, BookWords> = {
   'squishy-coloring': {
-    cover: 'books/squishy-coloring.webp',
     line: '25 designs, from easy pages for little hands to a big pile of squishies.',
     blurb: 'Glitter dumplings, butter blocks and boba buddies, from easy pages for little hands to a page with 42 squishies to find.',
     facts: ['25 designs', 'Three levels', '8.5 × 11 in pages'],
@@ -354,7 +353,6 @@ const bookWords: Record<string, BookWords> = {
     ],
   },
   'squishy-christmas': {
-    cover: 'books/squishy-christmas.webp',
     line: 'The paperback, ready to wrap. 25 designs, one per sheet.',
     blurb: 'Squishy friends trim the tree, peek out of stockings, bake cookies and go sledding. One design per sheet, so markers don’t bleed through.',
     facts: ['25 designs', 'One design per sheet', '8.5 × 11 in pages'],
@@ -366,7 +364,6 @@ const bookWords: Record<string, BookWords> = {
     seasonal: true,
   },
   'cozy-christmas-mosaics': {
-    cover: 'books/christmas-mosaics.webp',
     line: 'Large print color by number: 30 cozy Christmas pictures, a page at a time.',
     blurb: 'Color the squares by number and a cozy Christmas picture appears, from Santa to a mug of hot cocoa. Big squares and large print, so kids and grandparents can share a page.',
     facts: ['30 pictures', 'Large print', '8.5 × 11 in pages'],
@@ -374,17 +371,17 @@ const bookWords: Record<string, BookWords> = {
   },
 };
 
-/** Books the feed names that the site has no cover art for yet. They are left off the shelf. */
-export const booksWithoutArt = feedBooks.filter((b) => !bookWords[b.id]).map((b) => b.id);
-if (booksWithoutArt.length) {
-  console.warn(`[feed] no cover art yet, so not on the shelf: ${booksWithoutArt.map((id) => `book ${id}`).join(', ')}`);
+/** Books the feed names that the site has no words for yet. They are left off the shelf. */
+export const booksWithoutWords = feedBooks.filter((b) => !bookWords[b.id]).map((b) => b.id);
+if (booksWithoutWords.length) {
+  console.warn(`[feed] no shelf words yet, so not on the shelf: ${booksWithoutWords.map((id) => `book ${id}`).join(', ')}`);
 }
 
 export const books: Book[] = inOrder(
   feedBooks.filter((b) => bookWords[b.id]),
   Object.keys(bookWords),
 ).map((b) => {
-  const { cover, peek, ...text } = bookWords[b.id];
+  const { peek, ...text } = bookWords[b.id];
   const pages = feedPrintables.find((p) => p.id === b.printable);
   checkNumbers(`Book "${b.id}"`, text, [saidOfBook(b), pages ? said(pages) : []]);
   const subtitle = b.subtitle ? smart(b.subtitle) : '';
@@ -394,7 +391,7 @@ export const books: Book[] = inOrder(
     line: text.line ?? subtitle,
     blurb: text.blurb ?? subtitle,
     price: usd(b.price),
-    cover: { src: img(cover), alt: `${smart(b.title)}, paperback cover` },
+    cover: { src: feedImage(b.cover), alt: smart(b.cover.alt) },
     amazon: b.amazon_url,
     facts: text.facts ?? [b.pages ? `${b.pages} pages` : '', b.trim ? `${b.trim.replace(' x ', ' × ')} pages` : ''].filter(Boolean),
     peek: peek ?? [],

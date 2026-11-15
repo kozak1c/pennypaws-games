@@ -96,21 +96,24 @@ lives, and the next feed carries it.
 - `src/data/catalog.ts` and `src/data/games.ts` join those facts with the site's own words and
   art. The words may quote a number only if the product's facts hold the same number, and a
   game's counts are written as `{fact_name}`; the build fails otherwise.
-- A product is on the site because the feed names it. A printable needs nothing else; a book or
-  a game also needs its art here, and the build says which ones are waiting for it.
+- A product is on the site because the feed names it. A printable needs nothing else; a book also
+  needs its words in `bookWords` (which also sets the shelf's order), a game its art here, and the
+  build says which ones are waiting.
 - A page shows a listing picture at most 1024 px wide, so every `<Image>` that sets `widths` also
   sets `width` (the largest of them); without it Astro builds the 3000 px original as the
   fallback. `tests/images.test.mjs` fails on a missing `width` or a built picture over 1440 px.
 - Listing pictures are fetched from `media.pennypawsgames.com` before the build, checked against
   the SHA-256 in the feed, and served from our own origin (`ops/feed-images.mjs`). So a build
-  needs the network the first time: it downloads each printable's cover (ten today, about 18 MB)
-  into `src/assets/feed/` (not tracked) and reuses them afterwards. A picture that cannot be
+  needs the network the first time: it downloads each printable's and each book's cover (fourteen
+  today, about 22 MB) into `src/assets/feed/` (not tracked) and reuses them afterwards. A picture that cannot be
   fetched, or does not match its hash, fails the build; nothing is published without it. The
   workflows keep the folder in the Actions cache (`.github/actions/setup`), keyed on the feed;
   a restored file is checked against its hash like any other.
-- A book's cover in `src/assets/books/` is the front panel of the cover file uploaded to Amazon,
-  cut from that PDF at the trim (bleed and spine removed), never a draft, a reference or a poster
-  from the product's working folders.
+- A book's cover comes from the feed and nowhere else: it is the front panel of the cover file
+  uploaded to Amazon, cut at the trim (bleed and spine removed) where the book is published, and
+  fetched and hash-checked like a listing picture. There is no folder of book art here and
+  `bookWords` in `src/data/catalog.ts` types no cover; `tests/feed.test.mjs` fails otherwise. A
+  wrong cover is fixed where the book lives, and the next feed carries it.
 - Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
   allows exactly those through its `feed:printables` line.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
