@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Card from '../../components/Card.astro';
+import GameShots from '../../components/GameShots.astro';
+import Shape from '../../components/Shape.astro';
+import { book, printable, squishyBop as game } from '../../data/catalog';
+
+const pages = printable('squishy-coloring-pages');
+const paperback = book('squishy-coloring-book');
+---
+
+<Base
+  title="Squishy Bop! | Penny Paws Games"
+  description="Squishy Bop! is a block puzzle where every block is a plush friend that pops into a song. Free to play, no sign-in, and ads never interrupt a game."
+  section="games"
+>
+  <div class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.875rem,2vw,1.5rem)] pb-14">
+    <!-- The game's own colours are used on its own page only. -->
+    <section class="tray tray--plum" aria-labelledby="h-game">
+      <div class="grid items-center gap-[clamp(1.25rem,3vw,2.5rem)] desk:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <Image
+          class="w-full rounded-[clamp(1rem,2vw,1.5rem)] shadow-[0_1rem_2rem_rgb(15_20_51/0.45)]"
+          src={game.feature.src}
+          alt={game.feature.alt}
+          widths={[640, 1024]}
+          sizes="(min-width: 60rem) 38rem, 92vw"
+          loading="eager"
+        />
+        <div class="grid justify-items-start gap-4">
+          <div class="flex items-center gap-4">
+            <Image class="w-[5.25rem] rounded-[22%] shadow-[0_0.5rem_1rem_rgb(15_20_51/0.35)]" src={game.icon.src} alt="" width={192} loading="eager" />
+            <div class="grid justify-items-start gap-1.5">
+              <h1 class="text-[clamp(2.25rem,1.5rem+3vw,3.5rem)]" id="h-game">{game.name}</h1>
+              <span class="chip chip--navy">{game.status}</span>
+            </div>
+          </div>
+          <p class="tray__line">{game.pitch}</p>
+          <ul class="flex flex-wrap gap-2">
+            <li class="chip">Free to play</li>
+            <li class="chip">No sign-in</li>
+            <li class="chip">Ads never interrupt a game</li>
+          </ul>
+          <p class="max-w-[30rem] text-[1rem] font-bold">
+            It is in testing on Android now. This page gets its Google Play button when the game is out.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tray" aria-labelledby="h-play">
+      <h2 class="tray__title" id="h-play">See it played</h2>
+      <GameShots />
+    </section>
+
+    <section class="tray tray--paper" aria-labelledby="h-do">
+      <h2 class="tray__title" id="h-do">What you do</h2>
+      <div class="grid gap-x-10 gap-y-6 desk:grid-cols-3">
+        {game.parts.map((part) => (
+          <div class="grid content-start gap-2">
+            <h3 class="text-[1.375rem]">{part.title}</h3>
+            <p class="text-[1.0625rem] text-navy-soft">{part.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="tray tray--paper" aria-labelledby="h-grown">
+      <h2 class="tray__title" id="h-grown"><Shape name="star" />For grown-ups</h2>
+      <dl class="facts">
+        {game.grownUps.filter((fact) => fact.term !== 'Joining the test').map((fact) => (
+          <div>
+            <dt>{fact.term}</dt>
+            <dd>{fact.text}</dd>
+          </div>
+        ))}
+      </dl>
+      <a class="candy candy--small justify-self-start" href="/squishy-bop/privacy/">Read the privacy policy</a>
+    </section>
+
+    <section class="tray tray--heart" aria-labelledby="h-more">
+      <h2 class="tray__title" id="h-more">More squishy fun</h2>
+      <div class="rail rail--two">
+        <Card href={`/printables/${pages.id}/`} name={pages.name} line={pages.line} price={pages.price} cover={pages.cover} button="See what’s inside" />
+        <Card href="/books/" name={paperback.name} line={paperback.line} price={paperback.price} cover={paperback.cover} button="See the paperback" tone="yellow" />
+      </div>
+    </section>
+  </div>
+</Base>

@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './sections.css';
+@import './pages.css';
 
 /* Penny Paws tokens, from the brand kit. Tailwind turns these into utilities (bg-table, text-navy). */
 @theme {

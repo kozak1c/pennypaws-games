@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import BookCard from '../../components/BookCard.astro';
+import { books } from '../../data/catalog';
+---
+
+<Base
+  title="Books | Penny Paws Games"
+  description="Penny Paws coloring books in paperback: big pages and bold lines, printed and delivered by Amazon."
+  section="books"
+>
+  <div class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.875rem,2vw,1.5rem)] pb-14">
+    <section class="tray tray--sun" aria-labelledby="h-books">
+      <div class="tray__head">
+        <h1 class="tray__title" id="h-books">Books</h1>
+        <p class="tray__line">Our coloring books in paperback: big pages, bold lines, printed and delivered by Amazon.</p>
+      </div>
+      <div class="grid gap-[clamp(0.75rem,1.6vw,1.25rem)] desk:grid-cols-2">
+        {books.map((b) => <BookCard book={b} heading="h2" />)}
+      </div>
+    </section>
+
+    <section class="tray tray--paper" aria-labelledby="h-print">
+      <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-print">Want it today?</h2>
+      <p class="max-w-[38rem] text-[1.0625rem] font-bold text-navy-soft">
+        The same pages come as printables you can buy, download and print at home tonight.
+      </p>
+      <a class="candy candy--red justify-self-start" href="/printables/">See the printables</a>
+    </section>
+  </div>
+</Base>

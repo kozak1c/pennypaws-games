@@ -109,6 +109,11 @@
     .rail--three {
       --cols: 3;
     }
+
+    .rail--two {
+      --cols: 2;
+      max-width: 46rem;
+    }
   }
 
   /* A product card: white paper, the listing picture, a price sticker and one button. */

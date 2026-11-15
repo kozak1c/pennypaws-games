@@ -1,0 +1,37 @@
+---
+// The game in phone frames: first a short clip of real play at the game's own speed, then screenshots.
+import { getImage, Image } from 'astro:assets';
+import { squishyBop as game } from '../data/catalog';
+import playClip from '../assets/games/squishy-bop/play.mp4?url';
+import playPoster from '../assets/games/squishy-bop/play-poster.png';
+
+// Recorded from the game's staged demo board (--demo --drop=75): one piece dropped to fill two rows, and the pop.
+const poster = await getImage({ src: playPoster, width: 360 });
+---
+
+<div class="shots" role="region" aria-label="Squishy Bop! in play" tabindex="0">
+  <figure>
+    <span class="phone block">
+      <video
+        data-autoplay
+        muted
+        loop
+        playsinline
+        preload="none"
+        poster={poster.src}
+        width="360"
+        height="640"
+        aria-label="Squishy Bop! being played: a piece drops into place, two rows of squishies fill and pop, and a sticker is won"
+      >
+        <source src={playClip} type="video/mp4" />
+      </video>
+    </span>
+    <figcaption>{game.shots[0].caption}</figcaption>
+  </figure>
+  {game.shots.slice(1).map((shot) => (
+    <figure>
+      <span class="phone block"><Image src={shot.src} alt={shot.alt} width={360} /></span>
+      <figcaption>{shot.caption}</figcaption>
+    </figure>
+  ))}
+</div>

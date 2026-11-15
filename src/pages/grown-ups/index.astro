@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+import Shape from '../../components/Shape.astro';
+import { stores } from '../../data/catalog';
+---
+
+<Base
+  title="For grown-ups | Penny Paws Games"
+  description="Who makes Penny Paws, what this site promises, and how to reach a real person."
+  section="grown-ups"
+>
+  <div class="wrap grid grid-cols-[minmax(0,1fr)] gap-[clamp(0.75rem,1.5vw,1.125rem)] pt-[clamp(0.875rem,2vw,1.5rem)] pb-14">
+    <section class="tray tray--paper" aria-labelledby="h-grown">
+      <h1 class="tray__title" id="h-grown"><Shape name="star" />For grown-ups</h1>
+      <p class="max-w-[29ch] text-[clamp(1.5rem,1rem+2.3vw,2.75rem)] leading-[1.15] font-black tracking-[-0.02em]">
+        Penny Paws is a small family studio. We make the games and printables we want in our own house: kind, colorful and easy to put down when dinner is ready.
+      </p>
+      <p class="max-w-[38rem] text-[1.0625rem] font-bold text-navy-soft">
+        Penny is our dog. Her paw print is our logo, and she is the one giving high fives on the home page.
+      </p>
+    </section>
+
+    <section class="tray tray--paper" aria-labelledby="h-promise">
+      <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-promise">What we promise</h2>
+      <ul class="ticks text-[1.0625rem]">
+        <li><Shape name="check" /><span><b>This site keeps to itself.</b> No accounts, ads or tracking on this site.</span></li>
+        <li><Shape name="check" /><span><b>Printables are yours straight away.</b> They download the minute you buy, and you can print them as often as you like.</span></li>
+        <li><Shape name="check" /><span><b>Games say what they do.</b> Every game page says what it shows, sells and collects.</span></li>
+      </ul>
+    </section>
+
+    <section class="tray tray--paper" aria-labelledby="h-reach">
+      <h2 class="tray__title text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)]" id="h-reach">Reach a real person</h2>
+      <p class="max-w-[38rem] text-[1.0625rem] font-bold text-navy-soft">
+        Write to <span class="font-black text-navy select-all">{stores.email}</span> about anything here. For an order, the shop that sold it (Etsy or Amazon) handles payment, delivery and refunds.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a class="candy candy--small" href="/squishy-bop/privacy/">Squishy Bop! privacy policy</a>
+        <a class="candy candy--small candy--white" href={stores.etsy}>Our shop on Etsy</a>
+      </div>
+    </section>
+  </div>
+</Base>

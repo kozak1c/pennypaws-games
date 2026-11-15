@@ -3,7 +3,7 @@ import '@fontsource-variable/nunito';
 import '../styles/global.css';
 import { Image } from 'astro:assets';
 import Shape from '../components/Shape.astro';
-import { brand } from '../data/catalog';
+import { brand, stores } from '../data/catalog';
 interface Props {
   title: string;
   description: string;
@@ -11,11 +11,12 @@ interface Props {
 }
 const { title, description, section } = Astro.props;
 const tabs = [
-  { id: 'games', label: 'Games', href: '#games', shape: 'square' },
-  { id: 'printables', label: 'Printables', href: '#printables', shape: 'heart' },
-  { id: 'books', label: 'Books', href: '#books', shape: 'circle' },
-  { id: 'grown-ups', label: 'Grown-ups', href: '#grown-ups', shape: 'star' },
+  { id: 'games', label: 'Games', href: '/squishy-bop/', shape: 'square' },
+  { id: 'printables', label: 'Printables', href: '/printables/', shape: 'heart' },
+  { id: 'books', label: 'Books', href: '/books/', shape: 'circle' },
+  { id: 'grown-ups', label: 'Grown-ups', href: '/grown-ups/', shape: 'star' },
 ] as const;
+const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:underline';
 ---
 
 <!doctype html>
@@ -31,7 +32,7 @@ const tabs = [
   <body>
     <a class="candy candy--small fixed top-[-6rem] left-4 z-50 focus:top-4" href="#main">Skip to the page</a>
     <header class="top">
-      <a class="top__logo" href="#top" aria-current={section === 'home' ? 'page' : undefined}>
+      <a class="top__logo" href="/" aria-current={section === 'home' ? 'page' : undefined}>
         <Image src={brand.logoTight} alt="Penny Paws Games, home" width={380} loading="eager" />
       </a>
       <nav class="tabs" aria-label="Sections">
@@ -46,6 +47,47 @@ const tabs = [
     <main id="main">
       <slot />
     </main>
-    <slot name="after" />
+    <footer class="wrap grid gap-6 pb-12 text-[1rem] desk:grid-cols-[minmax(0,1.4fr)_auto_auto] desk:gap-16">
+      <div class="grid justify-items-start gap-2">
+        <a class="flex items-center self-start rounded-full bg-paper px-7 py-5 shadow-float" href="/">
+          <Image class="block h-auto w-[11.5rem]" src={brand.logoTight} alt="Penny Paws Games, home" width={420} />
+        </a>
+        <p class="max-w-[26ch] font-bold">Games, printables and books for families who like to play.</p>
+      </div>
+      <ul class="grid content-start gap-1 font-extrabold">
+        {tabs.map((tab) => (
+          <li><a class={footLink} href={tab.href}><Shape name={tab.shape} />{tab.label}</a></li>
+        ))}
+      </ul>
+      <ul class="grid content-start gap-1 font-extrabold">
+        <li><a class={footLink} href={stores.etsy}>Our shop on Etsy</a></li>
+        <li><a class={footLink} href={stores.instagram}>Instagram</a></li>
+        <li><a class={footLink} href={stores.facebook}>Facebook</a></li>
+        <li><a class={footLink} href="/squishy-bop/privacy/">Squishy Bop! privacy policy</a></li>
+      </ul>
+      <p class="text-[0.9375rem] text-navy-soft desk:col-span-3">
+        © 2026 Penny Paws. Google Play and the Google Play logo are trademarks of Google LLC. Etsy and Amazon are trademarks of their owners.
+      </p>
+    </footer>
+
+    <script>
+      // Gameplay clips play only while they are on screen, and never by themselves for people who ask for less motion.
+      const clips = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        clips.forEach((clip) => (clip.controls = true));
+      } else if (clips.length) {
+        const watch = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const clip = entry.target as HTMLVideoElement;
+              if (entry.isIntersecting) void clip.play().catch(() => {});
+              else clip.pause();
+            }
+          },
+          { threshold: 0.4 },
+        );
+        clips.forEach((clip) => watch.observe(clip));
+      }
+    </script>
   </body>
 </html>
