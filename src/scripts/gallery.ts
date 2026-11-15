@@ -19,6 +19,11 @@ document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
   // The picture nearest the middle of the stage is the one showing. The stage is positioned, so each
   // picture's offsetLeft is measured from the stage's own left edge.
   const nearest = () => {
+    // At either end of the stage the end picture is the one showing (on a tablet two are in view,
+    // and the last can never reach the middle).
+    const end = stage.scrollWidth - stage.clientWidth;
+    if (stage.scrollLeft <= 1) return 0;
+    if (stage.scrollLeft >= end - 1) return items.length - 1;
     const middle = stage.scrollLeft + stage.clientWidth / 2;
     let best = 0;
     let distance = Infinity;
@@ -36,9 +41,12 @@ document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
   // way, so the ring does not hop along the row; it follows the stage again once the scroll stops.
   let chosen: number | null = null;
   let settle = 0;
+  const inView = (item: HTMLElement) =>
+    item.offsetLeft >= stage.scrollLeft - 1 && item.offsetLeft + item.offsetWidth <= stage.scrollLeft + stage.clientWidth + 1;
   const release = () => {
+    const tapped = chosen;
     chosen = null;
-    show(nearest());
+    show(tapped !== null && inView(items[tapped]) ? tapped : nearest());
   };
 
   thumbs.forEach((thumb, i) => {
@@ -46,7 +54,8 @@ document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((gallery) => {
       const item = items[i];
       chosen = i;
       show(i);
-      const left = item.offsetLeft - (stage.clientWidth - item.offsetWidth) / 2;
+      const end = stage.scrollWidth - stage.clientWidth;
+      const left = Math.max(0, Math.min(end, item.offsetLeft - (stage.clientWidth - item.offsetWidth) / 2));
       if (Math.abs(stage.scrollLeft - left) < 1) {
         release();
         return;

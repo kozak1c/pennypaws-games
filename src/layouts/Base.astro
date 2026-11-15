@@ -64,6 +64,8 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
         <li><a class={footLink} href={stores.instagram}>Instagram</a></li>
         <li><a class={footLink} href={stores.facebook}>Facebook</a></li>
         <li><a class={footLink} href="/squishy-bop/privacy/">Squishy Bop! privacy policy</a></li>
+        <li><a class={footLink} href="/plush-hour/privacy/">Plush Hour privacy policy</a></li>
+        <li><a class={footLink} href="/giggle-bomb/privacy/">Giggle Bomb privacy policy</a></li>
       </ul>
       <p class="text-[0.9375rem] text-navy-soft desk:col-span-3">
         © 2026 Penny Paws. Google Play and the Google Play logo are trademarks of Google LLC. Etsy and Amazon are trademarks of their owners.
@@ -74,7 +76,10 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
       // Gameplay clips play only while they are on screen, and never by themselves for people who ask for less motion.
       const clips = document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]');
       const stopped = new WeakSet<HTMLVideoElement>();
-      clips.forEach((clip) => {
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // With less motion asked for, a clip gets the browser's own controls instead (below); a tap
+      // handler of ours as well would undo every tap on them.
+      if (!calm) clips.forEach((clip) => {
         const toggle = () => {
           if (clip.paused) {
             stopped.delete(clip);
@@ -95,7 +100,7 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
           }
         });
       });
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (calm) {
         clips.forEach((clip) => (clip.controls = true));
       } else if (clips.length) {
         const watch = new IntersectionObserver(

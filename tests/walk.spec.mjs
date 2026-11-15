@@ -147,6 +147,24 @@ test("a gallery's small pictures bring their picture into view", async ({ page }
   await expect(thumbs.first()).toHaveAttribute("aria-current", "true");
 });
 
+test("on a tablet, where two pictures show at once, the end pictures are marked when shown", async ({ page }, testInfo) => {
+  lightOnly(testInfo);
+  test.skip(testInfo.project.name !== "phone-light", "one tablet pass is enough");
+  await page.setViewportSize({ width: 820, height: 1180 });
+  await page.goto("/printables/squishy-coloring/");
+  const thumbs = page.locator("[data-gallery-thumbs]").first().locator("button");
+  const stage = page.locator("[data-gallery-stage]").first();
+  const count = await thumbs.count();
+  await thumbs.nth(count - 1).click();
+  await expect(thumbs.nth(count - 1)).toHaveAttribute("aria-current", "true");
+  await page.waitForTimeout(1200);
+  await expect(thumbs.nth(count - 1), "the tapped last page stays marked once the scroll stops").toHaveAttribute("aria-current", "true");
+  await stage.evaluate((el) => el.scrollTo({ left: 0 }));
+  await expect(thumbs.first()).toHaveAttribute("aria-current", "true");
+  await stage.evaluate((el) => el.scrollTo({ left: el.scrollWidth }));
+  await expect(thumbs.nth(count - 1), "scrolled to the end, the last page is marked").toHaveAttribute("aria-current", "true");
+});
+
 test("the dark pass still covers the pages that have a dark style", async () => {
   for (const p of ["/squishy-bop/privacy/", "/plush-hour/privacy/", "/giggle-bomb/privacy/"]) {
     expect(darkPages.has(p), p).toBe(true);

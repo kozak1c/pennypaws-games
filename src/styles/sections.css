@@ -329,7 +329,7 @@
       justify-self: start;
       margin-inline: 0.25rem;
       padding: 0.0625rem 0.5rem;
-      font-size: 0.75rem;
+      font-size: 0.8125rem;
     }
 
     .card--item .card__name {
@@ -358,6 +358,7 @@
     /* The head, icon and chips are laid out by max-desk: utilities in GameCard.astro (utilities
        outrank this layer). A chip may wrap here: the tile is narrower than "For teens and adults". */
     .card--game .card__chips .chip {
+      padding-inline: 0.5625rem;
       white-space: normal;
       text-wrap: balance;
     }
@@ -388,15 +389,6 @@
 
     .rail > .card--game:last-child:nth-child(odd) {
       grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      grid-template-areas: 'head chips' 'head line';
-      align-items: start;
-      column-gap: 1rem;
-    }
-
-    .rail > .card--game:last-child:nth-child(odd) .card__head {
-      grid-area: head;
     }
   }
 
@@ -578,12 +570,12 @@
   @media (max-width: 59.99rem) {
     .bookcard {
       grid-template-columns: minmax(0, min(40%, 12rem)) minmax(0, 1fr);
-      grid-template-areas: 'show name' 'show price' 'show print' 'cta cta' 'blurb blurb' 'facts facts';
-      grid-template-rows: auto auto 1fr;
+      grid-template-areas: 'show name' 'show price' 'cta cta' 'print print' 'blurb blurb' 'facts facts';
+      grid-template-rows: auto 1fr;
     }
 
     .bookcard--compact {
-      grid-template-areas: 'show name' 'show price' 'show print' 'cta cta';
+      grid-template-areas: 'show name' 'show price' 'cta cta' 'print print';
     }
 
     .bookcard__show {
@@ -638,7 +630,7 @@
 
     .bookcard__print {
       grid-area: print;
-      align-self: start;
+      justify-self: center;
     }
   }
 
