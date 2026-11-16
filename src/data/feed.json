@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "games": [
     {
       "id": "giggle-bomb",
@@ -271,7 +271,8 @@
         }
       ],
       "related": [],
-      "book": null
+      "book": null,
+      "site_pages": []
     },
     {
       "id": "cozy-christmas-mosaics",
@@ -344,7 +345,8 @@
         }
       ],
       "related": [],
-      "book": "cozy-christmas-mosaics"
+      "book": "cozy-christmas-mosaics",
+      "site_pages": []
     },
     {
       "id": "cozy-winter-mosaics",
@@ -433,7 +435,8 @@
         }
       ],
       "related": [],
-      "book": null
+      "book": null,
+      "site_pages": []
     },
     {
       "id": "mosaics-bundle",
@@ -536,7 +539,8 @@
         "cozy-winter-mosaics",
         "cozy-cats-mosaics"
       ],
-      "book": null
+      "book": null,
+      "site_pages": []
     },
     {
       "id": "north-pole-caper",
@@ -648,7 +652,8 @@
         }
       ],
       "related": [],
-      "book": null
+      "book": null,
+      "site_pages": []
     },
     {
       "id": "paper-squishy",
@@ -753,7 +758,8 @@
       "related": [
         "squishy-coloring"
       ],
-      "book": null
+      "book": null,
+      "site_pages": []
     },
     {
       "id": "pink-haunted-house",
@@ -867,7 +873,8 @@
       "related": [
         "north-pole-caper"
       ],
-      "book": null
+      "book": null,
+      "site_pages": []
     },
     {
       "id": "squishy-bundle",
@@ -970,7 +977,8 @@
         "squishy-christmas",
         "paper-squishy"
       ],
-      "book": null
+      "book": null,
+      "site_pages": []
     },
     {
       "id": "squishy-christmas",
@@ -1078,7 +1086,30 @@
         "squishy-coloring",
         "paper-squishy"
       ],
-      "book": "squishy-christmas"
+      "book": "squishy-christmas",
+      "site_pages": [
+        {
+          "name": "trim-the-tree",
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/eda9b872a70d-page-trim-the-tree.jpg",
+          "sha256": "eda9b872a70d1516c83fe5be44c21f55f9f5e06482b6e8197137b478e18b71a0",
+          "bytes": 224736,
+          "alt": "A trim the tree page"
+        },
+        {
+          "name": "stocking-surprise",
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/03c501d8b256-page-stocking-surprise.jpg",
+          "sha256": "03c501d8b256c0c92dc37f4d2585e2fbf017cfbacc06c1371ef1f7947bcd9e23",
+          "bytes": 248691,
+          "alt": "A stocking surprise page"
+        },
+        {
+          "name": "gingerbread-buddy",
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/257ab706ef36-page-gingerbread-buddy.jpg",
+          "sha256": "257ab706ef36ada57e01dba1ac9243a8a8b81938d066e3fa4563cf0745d1a284",
+          "bytes": 231918,
+          "alt": "A gingerbread buddy page"
+        }
+      ]
     },
     {
       "id": "squishy-coloring",
@@ -1177,7 +1208,51 @@
         }
       ],
       "related": [],
-      "book": "squishy-coloring"
+      "book": "squishy-coloring",
+      "site_pages": [
+        {
+          "name": "glitter-dumpling",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/173f6ef1fb72-page-glitter-dumpling.jpg",
+          "sha256": "173f6ef1fb72abbf2652499cb0c2f2b6c4304c0bcef4e376018cf8cb1e4ef54a",
+          "bytes": 143291,
+          "alt": "The glitter dumpling page, ready to color"
+        },
+        {
+          "name": "glitter-dumpling-colored",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/9655ce186323-page-glitter-dumpling-colored.jpg",
+          "sha256": "9655ce1863231520e5e19861a13120f19f2e328cd46a245ac10d6da9ca82358f",
+          "bytes": 267518,
+          "alt": "The same glitter dumpling, colored in"
+        },
+        {
+          "name": "bubble-bath-colored",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/955df14b5787-page-bubble-bath-colored.jpg",
+          "sha256": "955df14b5787c41b43d2c58973b3ad9e15197e15de2415f34341787e91b46289",
+          "bytes": 249061,
+          "alt": "The bubble bath page, colored in"
+        },
+        {
+          "name": "claw-machine",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/87a4535acc63-page-claw-machine.jpg",
+          "sha256": "87a4535acc63779a93fe925873fce045f1f4eaa14438f680c33779c4f073b39a",
+          "bytes": 321575,
+          "alt": "A claw machine page"
+        },
+        {
+          "name": "squishy-pile",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/d9019eea43b7-page-squishy-pile.jpg",
+          "sha256": "d9019eea43b754979174e50c4f1f28cd73f3692c1fb81545f9e89766c09cc1a8",
+          "bytes": 321072,
+          "alt": "A big pile of squishies page"
+        },
+        {
+          "name": "paper-squishies-made",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/af46219f61fa-page-paper-squishies-made.jpg",
+          "sha256": "af46219f61fa5561ec8408cabb0891882d94c91af7f17bd3fffe82dbd20cc378",
+          "bytes": 237962,
+          "alt": "Three finished paper squishies, colored, cut out and stuffed"
+        }
+      ]
     }
   ],
   "books": [
@@ -1199,7 +1274,8 @@
         "sha256": "7b1f549f1f2d3c87eaaf4758364ef03f6ae526c8e1375e735ecc44920bc5ef67",
         "bytes": 1051199,
         "alt": "Cozy Christmas Mystery Mosaics, paperback cover"
-      }
+      },
+      "site_pages": []
     },
     {
       "id": "squishy-christmas",
@@ -1219,7 +1295,30 @@
         "sha256": "0b6772c026def605e0218149422116196f8f313268c28cc742ad1a28001b9dca",
         "bytes": 904204,
         "alt": "Squishy Christmas Coloring Book, paperback cover"
-      }
+      },
+      "site_pages": [
+        {
+          "name": "trim-the-tree",
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/eda9b872a70d-page-trim-the-tree.jpg",
+          "sha256": "eda9b872a70d1516c83fe5be44c21f55f9f5e06482b6e8197137b478e18b71a0",
+          "bytes": 224736,
+          "alt": "A trim the tree page"
+        },
+        {
+          "name": "stocking-surprise",
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/03c501d8b256-page-stocking-surprise.jpg",
+          "sha256": "03c501d8b256c0c92dc37f4d2585e2fbf017cfbacc06c1371ef1f7947bcd9e23",
+          "bytes": 248691,
+          "alt": "A stocking surprise page"
+        },
+        {
+          "name": "gingerbread-buddy",
+          "url": "https://media.pennypawsgames.com/p/squishy-christmas/257ab706ef36-page-gingerbread-buddy.jpg",
+          "sha256": "257ab706ef36ada57e01dba1ac9243a8a8b81938d066e3fa4563cf0745d1a284",
+          "bytes": 231918,
+          "alt": "A gingerbread buddy page"
+        }
+      ]
     },
     {
       "id": "squishy-coloring",
@@ -1239,7 +1338,51 @@
         "sha256": "42b3622fd970ea030dea8b16851ce6f9bfaacb0862c2c29583fcf3a40ea78ac8",
         "bytes": 1108729,
         "alt": "Squishy Coloring Book, paperback cover"
-      }
+      },
+      "site_pages": [
+        {
+          "name": "glitter-dumpling",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/173f6ef1fb72-page-glitter-dumpling.jpg",
+          "sha256": "173f6ef1fb72abbf2652499cb0c2f2b6c4304c0bcef4e376018cf8cb1e4ef54a",
+          "bytes": 143291,
+          "alt": "The glitter dumpling page, ready to color"
+        },
+        {
+          "name": "glitter-dumpling-colored",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/9655ce186323-page-glitter-dumpling-colored.jpg",
+          "sha256": "9655ce1863231520e5e19861a13120f19f2e328cd46a245ac10d6da9ca82358f",
+          "bytes": 267518,
+          "alt": "The same glitter dumpling, colored in"
+        },
+        {
+          "name": "bubble-bath-colored",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/955df14b5787-page-bubble-bath-colored.jpg",
+          "sha256": "955df14b5787c41b43d2c58973b3ad9e15197e15de2415f34341787e91b46289",
+          "bytes": 249061,
+          "alt": "The bubble bath page, colored in"
+        },
+        {
+          "name": "claw-machine",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/87a4535acc63-page-claw-machine.jpg",
+          "sha256": "87a4535acc63779a93fe925873fce045f1f4eaa14438f680c33779c4f073b39a",
+          "bytes": 321575,
+          "alt": "A claw machine page"
+        },
+        {
+          "name": "squishy-pile",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/d9019eea43b7-page-squishy-pile.jpg",
+          "sha256": "d9019eea43b754979174e50c4f1f28cd73f3692c1fb81545f9e89766c09cc1a8",
+          "bytes": 321072,
+          "alt": "A big pile of squishies page"
+        },
+        {
+          "name": "paper-squishies-made",
+          "url": "https://media.pennypawsgames.com/p/squishy-coloring/af46219f61fa-page-paper-squishies-made.jpg",
+          "sha256": "af46219f61fa5561ec8408cabb0891882d94c91af7f17bd3fffe82dbd20cc378",
+          "bytes": 237962,
+          "alt": "Three finished paper squishies, colored, cut out and stuffed"
+        }
+      ]
     },
     {
       "id": "squishy-find",
@@ -1259,7 +1402,8 @@
         "sha256": "508cfcea36379b082e2d243c850029157ddc63d98433b0a91f9143ec2d4827c6",
         "bytes": 982461,
         "alt": "The Great Squishy Escape, paperback cover"
-      }
+      },
+      "site_pages": []
     }
   ]
 }
