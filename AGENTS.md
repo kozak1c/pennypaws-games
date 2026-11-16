@@ -45,6 +45,10 @@ load nothing from another origin: no outside script, style, font, image, clip or
    waiting. **Only the owner merges it.** That merge deploys production, checks the live
    site and rolls itself back if the check fails.
 
+One exception to step 4: a feed-only update (only `src/data/feed.json` changes, and only the facts
+of products already shown) goes live without the owner's merge, through `paws release site` on the
+owner's PC. The `feed-only` check decides it from the diff; see docs/runbook.md, "Deploy".
+
 Batch small changes into one pull request. Only the workflows deploy; they always pass
 `--env`. `main` and production are the owner's: your work ends at `staging`.
 
