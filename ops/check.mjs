@@ -11,7 +11,8 @@
 //              moves inline scripts into files and fails on any file not in
 //              ops/public-files.txt). "--only" with another step skips it and checks the
 //              dist/ that is there.
-//   unit       the Python tests for ops/health.py, ops/check_site.py and ops/site_url.py
+//   unit       the Python tests for ops/health.py, ops/check_site.py, ops/site_url.py and
+//              ops/feed_only.py
 //   config     tests/*.test.mjs: wrangler.jsonc, public/_headers, the workflows, the privacy
 //              pins, no inline script and nothing from another origin in the built pages, and
 //              that wrangler would upload exactly what ops/public-files.txt allows

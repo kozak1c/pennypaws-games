@@ -35,6 +35,24 @@ commit, with a comment on the pull request. About 5 minutes.
 
 A release never needs a terminal. If the `release` run is red, go to "A check is red".
 
+**Feed-only updates go live by themselves (PAWS-028).** The owner agreed that a change to the
+product facts of products already on the site (a price, a tagline, a rating, a picture) may go
+live without his merge. The hourly "Penny Paws feed sync" task on the owner's PC runs
+`paws release site` after it opens the "Feed: ..." pull request:
+
+1. It merges the feed pull request into `staging` when `ci` and the `feed-only` check are green
+   on its head and the kit's own copy of the rule agrees.
+2. When `staging` then differs from `main` only by that feed, and `ci`, `staging/smoke` and
+   `feed-only` are green on the release pull request, it marks the release pull request ready and
+   merges it. The `release` workflow deploys, checks and rolls back exactly as for the owner's merge.
+3. A Realign notice says what went live, or that the release failed.
+
+The `feed-only` check (`.github/workflows/feed-only.yml`, rule in `ops/feed_only.py`) is green
+only for a feed-only update and skipped on everything else. A new product, a removed one, a status
+or page change, or any other change waiting on `staging` makes it skip, and the update waits for
+the owner's release like any other change. To stop the lane, disable that task; nothing on GitHub
+needs changing.
+
 ## Roll back
 
 Agents may roll production back to the last good version without asking, and must report it.
