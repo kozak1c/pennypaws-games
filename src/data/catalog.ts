@@ -12,6 +12,7 @@
 import type { ImageMetadata } from 'astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import covers from './covers.json';
+import feedData from './feed.json';
 import shelf from './shelf.json';
 
 const art = import.meta.glob<{ default: ImageMetadata }>('../assets/**/*.{webp,png}', { eager: true });
@@ -134,14 +135,19 @@ interface PrintableWords {
   get?: string[];
 }
 
-const sheet = (folder: string, n: number, alt: string): Pic => ({
-  src: img(`printables/${folder}/page-${n}.webp`),
-  alt,
-});
+interface SitePage { name: string; url: string; sha256: string; alt: string }
+/** A named page from the feed's site_pages: rendered from a file released to buyers (digital_store
+ *  products/<id>/site_pages.yaml), never copied from a working folder. `alt` overrides the feed's. */
+const sitePage = (collection: 'printables' | 'books', id: string, name: string, alt?: string): Pic => {
+  const rows = feedData[collection] as { id: string; site_pages: SitePage[] }[];
+  const page = rows.find((row) => row.id === id)?.site_pages.find((p) => p.name === name);
+  if (!page) throw new Error(`The feed gives ${collection} ${id} no site page ${name} (digital_store products/<id>/site_pages.yaml)`);
+  return { src: feedImage(page), alt: alt ?? smart(page.alt) };
+};
 
 /** A coloring page that peeks out of the home page's Printables door (decoration; the printable's own
  *  page shows its listing pictures from the feed). */
-export const doorSheet = sheet('squishy-coloring', 8, '');
+export const doorSheet = sitePage('printables', 'squishy-coloring', 'bubble-bath-colored', '');
 
 // Keyed by the product's id in the feed, in shelf order.
 const printableWords: Record<string, PrintableWords> = {
@@ -152,15 +158,12 @@ const printableWords: Record<string, PrintableWords> = {
     coverAlt: 'Squishy coloring pages: a colored glitter dumpling beside the page it came from',
     facts: ['25 pages', 'Three levels, ages 4 and up', 'US Letter and A4', 'Instant download'],
     pair: {
-      blank: sheet('squishy-coloring', 2, 'The glitter dumpling page, ready to color'),
-      colored: sheet('squishy-coloring', 1, 'The same glitter dumpling, colored in'),
+      blank: sitePage('printables', 'squishy-coloring', 'glitter-dumpling'),
+      colored: sitePage('printables', 'squishy-coloring', 'glitter-dumpling-colored'),
       caption: 'The page you print, and the example that comes with it.',
     },
     made: {
-      pic: {
-        src: img('printables/squishy-coloring/finished.webp'),
-        alt: 'Three finished paper squishies, colored, cut out and stuffed',
-      },
+      pic: sitePage('printables', 'squishy-coloring', 'paper-squishies-made'),
       caption: 'Three of the pages are paper squishies to cut, stuff and squish.',
     },
     inside: [
@@ -334,9 +337,9 @@ const bookWords: Record<string, BookWords> = {
     blurb: 'Glitter dumplings, butter blocks and boba buddies, from easy pages for little hands to a page with 42 squishies to find.',
     facts: ['25 designs', 'Three levels', '8.5 × 11 in pages'],
     peek: [
-      sheet('squishy-coloring', 2, 'A glitter dumpling page'),
-      sheet('squishy-coloring', 7, 'A claw machine page'),
-      sheet('squishy-coloring', 9, 'A big pile of squishies page'),
+      sitePage('books', 'squishy-coloring', 'glitter-dumpling', 'A glitter dumpling page'),
+      sitePage('books', 'squishy-coloring', 'claw-machine'),
+      sitePage('books', 'squishy-coloring', 'squishy-pile'),
     ],
   },
   'squishy-christmas': {
@@ -344,9 +347,9 @@ const bookWords: Record<string, BookWords> = {
     blurb: 'Squishy friends trim the tree, peek out of stockings, bake cookies and go sledding. One design per sheet, so markers don’t bleed through.',
     facts: ['25 designs', 'One design per sheet', '8.5 × 11 in pages'],
     peek: [
-      sheet('squishy-christmas', 4, 'A trim the tree page'),
-      sheet('squishy-christmas', 2, 'A stocking surprise page'),
-      sheet('squishy-christmas', 3, 'A gingerbread buddy page'),
+      sitePage('books', 'squishy-christmas', 'trim-the-tree'),
+      sitePage('books', 'squishy-christmas', 'stocking-surprise'),
+      sitePage('books', 'squishy-christmas', 'gingerbread-buddy'),
     ],
     seasonal: true,
   },

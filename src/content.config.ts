@@ -8,8 +8,10 @@ import { file } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 /** The feed shape this build understands. A feed with another version fails the build.
- * 2: each book carries its cover (the front of the cover uploaded to Amazon, on the media bucket). */
-export const FEED_SCHEMA = 2;
+ * 2: each book carries its cover (the front of the cover uploaded to Amazon, on the media bucket).
+ * 3: printables and books carry site_pages: named single pages rendered from files released to
+ *    buyers (digital_store `factory media pages`), the site's only decoration taken from a product. */
+export const FEED_SCHEMA = 3;
 
 const feed = (collection: 'games' | 'printables' | 'books') =>
   file('src/data/feed.json', {
@@ -41,6 +43,8 @@ const picture = z.strictObject({
   bytes: z.number().int().positive(),
   alt: z.string().min(1),
 });
+/** A named page rendered from a file released to buyers, on the media bucket (PAWS-036). */
+const sitePage = picture.extend({ name: id });
 const sitePath = z.string().regex(/^\/[a-z0-9/-]*\/$/);
 const money = z.string().regex(/^\d+\.\d{2}$/);
 const fact = z.union([z.number(), z.string(), z.array(z.string())]);
@@ -89,6 +93,7 @@ const printables = defineCollection({
     faq: z.array(z.strictObject({ q: z.string(), a: z.string() })),
     related: z.array(id),
     book: id.nullable(),
+    site_pages: z.array(sitePage),
   }),
 });
 
@@ -108,6 +113,7 @@ const books = defineCollection({
     live_date: z.string().nullable(),
     printable: id.nullable(),
     cover: picture,
+    site_pages: z.array(sitePage),
   }),
 });
 

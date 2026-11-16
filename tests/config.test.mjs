@@ -118,7 +118,7 @@ const actionFiles = [
 ];
 
 test("workflows: the set the release flow needs is all there", () => {
-  assert.deepEqual(workflows, ["ci.yml", "preview.yml", "release-guard.yml", "release-pr.yml", "release.yml", "rollback.yml", "staging.yml", "watchdog.yml"]);
+  assert.deepEqual(workflows, ["ci.yml", "feed-only.yml", "preview.yml", "release-guard.yml", "release-pr.yml", "release.yml", "rollback.yml", "staging.yml", "watchdog.yml"]);
 });
 
 for (const file of actionFiles) {
@@ -191,6 +191,15 @@ test("release-guard.yml: a job named source-is-staging on pull requests into mai
   const text = read(".github/workflows/release-guard.yml");
   assert.match(text, /^  source-is-staging:$/m);
   assert.match(text, /branches: \[main\]/);
+});
+
+test("feed-only.yml: judged by the base branch's rule, green only when feed-only, never red", () => {
+  const text = read(".github/workflows/feed-only.yml");
+  assert.match(text, /branches: \[staging, main\]/);
+  assert.match(text, /git show "\$\{BASE\}:ops\/feed_only\.py"/, "the rule comes from the base branch, not the pull request");
+  assert.match(text, /^  feed-only:\n    needs: decide\n    if: needs\.decide\.outputs\.feed_only == 'true'$/m);
+  assert.doesNotMatch(text, /secrets\./);
+  assert.doesNotMatch(text, /^\s+\w+: write$/m, "it writes nothing");
 });
 
 test("watchdog.yml: scheduled, checks the public address, and only that job may write issues", () => {

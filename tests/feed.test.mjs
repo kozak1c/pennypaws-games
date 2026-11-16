@@ -23,14 +23,20 @@ const allowed = {
   games: ["id", "name", "tagline", "status", "page", "privacy", "ages", "rating", "child_directed", "price",
     "price_usd", "ads", "ads_personalized", "purchases", "play_url", "tester_url", "facts"],
   printables: ["id", "name", "title", "hook", "description", "collection", "price", "currency", "etsy_url",
-    "images", "features", "formats", "faq", "related", "book"],
+    "images", "features", "formats", "faq", "related", "book", "site_pages"],
   books: ["id", "title", "subtitle", "asin", "isbn", "price", "currency", "amazon_url", "pages", "trim",
-    "live_date", "printable", "cover"],
+    "live_date", "printable", "cover", "site_pages"],
 };
 
 test("the feed is a version this build reads, with the three collections", () => {
-  assert.equal(feed.schema_version, 2);
+  assert.equal(feed.schema_version, 3);
   assert.deepEqual(Object.keys(feed).sort(), ["books", "games", "printables", "schema_version"]);
+});
+
+test("decoration from a product is a feed site page, never a copy from a working folder (PAWS-036)", () => {
+  assert.equal(existsSync(path.join(root, "src/assets/printables")), false, "src/assets/printables/ came back: take the page from the feed's site_pages");
+  const code = readFileSync(path.join(root, "src/data/catalog.ts"), "utf8");
+  assert.doesNotMatch(code, /img\(['`]printables\//, "catalog.ts reads a printable's page from src/assets");
 });
 
 test("every product in the feed carries only the public fields", () => {
@@ -79,12 +85,14 @@ test("no page or data file types a price, a game's ages or a product's store add
   }
 });
 
-test("every printable's listing pictures and each shelf book's cover are pictures the feed names", async () => {
+test("every printable's listing pictures, each shelf book's cover and their site pages are pictures the feed names", async () => {
   const pictures = (await wanted()).map((p) => p.sha256);
   const shelf = JSON.parse(readFileSync(path.join(root, "src/data/shelf.json"), "utf8")).books;
   const onShelf = feed.books.filter((b) => shelf.includes(b.id));
   const listing = feed.printables.flatMap((p) => p.images);
-  assert.equal(pictures.length, listing.length + onShelf.length, "every printable's listing pictures and each shelf book's cover, nothing else");
+  const pages = new Set([...feed.printables, ...onShelf].flatMap((row) => row.site_pages).map((p) => p.sha256));
+  assert.equal(pictures.length, listing.length + onShelf.length + pages.size, "listing pictures, shelf covers and site pages, nothing else");
+  for (const sha of pages) assert.ok(pictures.includes(sha), `site page ${sha.slice(0, 12)} is not fetched`);
   for (const image of listing) assert.ok(pictures.includes(image.sha256), `listing picture ${image.url} is not fetched`);
   for (const book of onShelf) assert.ok(pictures.includes(book.cover.sha256), `book ${book.id} has no cover fetched`);
 });

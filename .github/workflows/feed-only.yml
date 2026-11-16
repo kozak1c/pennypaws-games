@@ -1,0 +1,62 @@
+# feed-only: says whether a pull request is a feed-only update, the kind the owner agreed may go
+# live without his merge (PAWS-028). The decision is made from the diff, never from the pull
+# request's words: ops/feed_only.py lists the rule.
+#
+#   decide      runs ops/feed_only.py as it is on the BASE branch, so a pull request cannot
+#               change the rule that judges it, and always passes.
+#   feed-only   runs only when the change is feed-only. So the check "feed-only" is green on a
+#               feed-only update and skipped (grey, never red) on everything else.
+#
+# pennypaws-kit (`paws release site`, run hourly on the owner's PC) merges the feed pull request
+# into staging and the release pull request into main only when this check is green on that
+# pull request's head, ci and staging/smoke are green, and its own copy of the rule agrees. Main
+# does not require this check: a release the owner merges needs no feed-only verdict.
+name: feed-only
+
+on:
+  pull_request:
+    branches: [staging, main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: feed-only-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  decide:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      feed_only: ${{ steps.decide.outputs.feed_only }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Decide from the diff
+        id: decide
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          INTO: ${{ github.base_ref }}
+        run: |
+          rule="$RUNNER_TEMP/feed_only.py"
+          if ! git show "${BASE}:ops/feed_only.py" > "$rule" 2>/dev/null; then
+            echo "The base branch has no ops/feed_only.py yet, so nothing is judged feed-only."
+            echo "feed_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          python3 "$rule" --base "$BASE" --head "$HEAD" --into "$INTO"
+
+  feed-only:
+    needs: decide
+    if: needs.decide.outputs.feed_only == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Feed-only update
+        run: echo "Only the product facts of products already on the site change; this may go live without the owner's merge."

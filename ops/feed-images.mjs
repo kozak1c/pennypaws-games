@@ -23,8 +23,9 @@ const sha256 = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 /** Which pictures the pages use: every listing picture of each printable (its cover, which
  *  src/data/covers.json picks, and the rest for its "A look inside" gallery) and the cover of each
- *  book on the shelf (src/data/shelf.json; the front of the cover uploaded to Amazon). A picture no
- *  page uses is not fetched, or the build would ship it. */
+ *  book on the shelf (src/data/shelf.json; the front of the cover uploaded to Amazon), and the named
+ *  site pages of those printables and books (decoration rendered from released files; every listed
+ *  page is used). A picture no page uses is not fetched, or the build would ship it. */
 export async function wanted(base = root) {
   const feed = JSON.parse(await readFile(join(base, 'src/data/feed.json'), 'utf8'));
   const covers = JSON.parse(await readFile(join(base, 'src/data/covers.json'), 'utf8'));
@@ -37,7 +38,10 @@ export async function wanted(base = root) {
     if (!b.cover) throw new Error(`The feed gives book ${b.id} no cover`);
     return b.cover;
   });
-  return [...printables, ...books];
+  const pages = [...(feed.printables ?? []), ...(feed.books ?? []).filter((b) => shelf.includes(b.id))]
+    .flatMap((row) => row.site_pages ?? []);
+  const seen = new Set();
+  return [...printables, ...books, ...pages].filter((p) => !seen.has(p.sha256) && seen.add(p.sha256));
 }
 
 /** One picture's bytes, retried with a pause when the connection drops or the bucket answers 5xx or
