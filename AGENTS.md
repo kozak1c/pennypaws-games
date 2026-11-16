@@ -133,6 +133,12 @@ lives, and the next feed carries it.
 - Each printable the feed names gets a page, `printables/<id>/`, and `ops/public-files.txt`
   allows exactly those through its `feed:printables` line.
   `src/data/covers.json` picks which listing picture is a printable's cover when it is not the first.
+- Decoration taken from a product (the page peeking out of the Printables door, the blank and colored
+  pair, the paper squishies photo, the pages peeking out of each paperback) is a named page in the
+  feed's `site_pages`, rendered from a file released to buyers (digital_store
+  `products/<id>/site_pages.yaml`, `factory media pages`) and fetched and hash-checked like a listing
+  picture. `sitePage()` in `src/data/catalog.ts` picks one by name; there is no `src/assets/printables/`
+  (`tests/feed.test.mjs`). A new page is added in digital_store, never copied here.
 - `tests/feed.test.mjs` fails if a page or data file types a price, a game's ages or a product's store address.
 
 ### Privacy pages
