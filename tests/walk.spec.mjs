@@ -1,6 +1,6 @@
 // Walk every public page of the build in a real browser, at each size in playwright.config.mjs.
 // The site is light only, so the dark pass walks only the pages that have a dark style of their
-// own (today the three privacy policies); for every other page it would repeat the light pass.
+// own (today the privacy policies and the terms of use); for every other page it would repeat the light pass.
 // For each page:
 //   * it answers 200 and has a title and one <h1>
 //   * the browser reports no console error, no failed request and no request to another origin
@@ -41,8 +41,8 @@ const slug = (p) => (p === "/" ? "home" : p.replace(/^\/|\/$/g, "").replaceAll("
 function watch(page, baseURL, leaving = () => false) {
   const problems = [];
   const origin = new URL(baseURL).origin;
-  // The privacy pages declare no icon, so browsers ask for /favicon.ico on their own (the
-  // site's icon is /favicon.svg). That 404 is the one complaint let through, here and below.
+  // Browsers may still ask for /favicon.ico on their own, although every page declares
+  // /favicon.svg. That 404 is the one complaint let through, here and below.
   const favicon = (url) => { try { return new URL(url).pathname === "/favicon.ico"; } catch { return false; } };
   page.on("console", (m) => {
     if (m.type() === "error" && !favicon(m.location().url)) problems.push(`console error: ${m.text()} (${m.location().url})`);
@@ -168,7 +168,7 @@ test("on a tablet, where two pictures show at once, the end pictures are marked 
 });
 
 test("the dark pass still covers the pages that have a dark style", async () => {
-  for (const p of ["/squishy-bop/privacy/", "/plush-hour/privacy/", "/giggle-bomb/privacy/"]) {
+  for (const p of ["/squishy-bop/privacy/", "/plush-hour/privacy/", "/giggle-bomb/privacy/", "/privacy/", "/terms/"]) {
     expect(darkPages.has(p), p).toBe(true);
   }
 });

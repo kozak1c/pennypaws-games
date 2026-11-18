@@ -16,12 +16,15 @@ const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest(
 const publicFiles = readPublicFiles().files;
 
 // page (its path inside public/ and dist/) -> SHA-256 of its bytes. Update a pin only together
-// with the reviewed change. Last changed 2026-11-15 (PAWS-034): a way back to the site above and
-// below each policy; the policy words, below, did not change.
+// with the reviewed change. Last changed 2026-11-18 (PAWS-045): the website's own privacy policy
+// and terms of use added, after the independent review; every policy page also declares the
+// site icon (outside <main>, so the game policy words did not change).
 const PRIVACY_PAGES = {
-  "squishy-bop/privacy/index.html": "3eac73c802fa0db16bc371c6e9563f9563b7300679eef3c9a0dab28c9ee9c200",
-  "plush-hour/privacy/index.html": "e19cabb547d40d34900f279531979db1a16fd2dd751132386b94a0ed5d35f404",
-  "giggle-bomb/privacy/index.html": "e28e825591161f7e8106ab23cdcb54ba3277e525728610d7d5d8482187597a79",
+  "squishy-bop/privacy/index.html": "d6530293124aef5db2bd8a17f0dcdd845ba2f3d16af7c4c680cd3659e46c8d93",
+  "plush-hour/privacy/index.html": "c561fd9c34278b89db339b4a646bf0e1300ef168f107b67d43115c3c67d09118",
+  "giggle-bomb/privacy/index.html": "d34d064c7d364fcb994f4d535582077f7f0995382a2a886e69cd78e9f56a7f85",
+  "privacy/index.html": "d29cd709c95137e14135a592e641cb527c9540c94505e7f09e89a7ca3bc09536",
+  "terms/index.html": "f59f115c2c288f88c8de0f2fbac47de21a063f259394e8c2d1f043625a3e53f4",
 };
 
 for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
@@ -43,6 +46,8 @@ const POLICY_WORDS = {
   "squishy-bop/privacy/index.html": "b1a655175355329e2ae15cfbbf1ba6d0b943509d9d5abd308cd777bb3c25c82e",
   "plush-hour/privacy/index.html": "15f3d37b90171025e1050105a9c32828b09785d0e9a821e1145c8909ab3dba9f",
   "giggle-bomb/privacy/index.html": "e2ccd952578780e7ac69a8f86c21052d474731d5c7f60c2cf0a42eb38bd2ecc4",
+  "privacy/index.html": "a62f427fd71f1a8df6fca1d389cf04a6a0c328b71b32fb4f1165def101763ea9",
+  "terms/index.html": "abb9eee06e8d4c7083d5386f9ca438d8d049d08c99bf23ae084b3c691fc4b69c",
 };
 
 for (const [file, pin] of Object.entries(POLICY_WORDS)) {

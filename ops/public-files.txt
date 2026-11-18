@@ -27,10 +27,13 @@ feed:printables printables/{id}/index.html
 books/index.html
 grown-ups/index.html
 
-# Privacy policies (copied unchanged from public/; pinned in tests/content.test.mjs)
+# Privacy policies and terms (copied unchanged from public/; pinned in tests/content.test.mjs)
 squishy-bop/privacy/index.html
 plush-hour/privacy/index.html
 giggle-bomb/privacy/index.html
+# The website's own privacy policy and terms of use (Etsy Share & Save requires both)
+privacy/index.html
+terms/index.html
 
 # Fixed files (copied unchanged from public/)
 app-ads.txt

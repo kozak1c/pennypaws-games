@@ -33,7 +33,9 @@ const feedImage = (image: { url: string; sha256: string }): ImageMetadata => {
 
 // The brand's own addresses. `play` stands in for a game's tester link until the feed carries one.
 export const stores = {
-  etsy: 'https://www.etsy.com/shop/PennyPawsPrintables',
+  // The shop's own Etsy address: visits through it count for Etsy's Share & Save fee credit,
+  // which needs the site to show its own privacy policy and terms of use (/privacy/, /terms/).
+  etsy: 'https://pennypawsprintables.etsy.com',
   instagram: 'https://www.instagram.com/pennypaws.games/',
   facebook: 'https://www.facebook.com/pennypawsprintables',
   email: 'pennypawsgames@gmail.com',
