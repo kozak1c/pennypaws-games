@@ -47,8 +47,8 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
     <main id="main">
       <slot />
     </main>
-    <footer class="wrap grid gap-6 pb-12 text-[1rem] desk:grid-cols-[minmax(0,1.4fr)_auto_auto] desk:gap-16">
-      <div class="grid justify-items-start gap-2">
+    <footer class="wrap grid gap-6 pb-12 text-[1rem] desk:grid-cols-[minmax(0,1.4fr)_auto_auto_auto] desk:gap-16">
+      <div class="grid content-start justify-items-start gap-2">
         <a class="flex items-center self-start rounded-full bg-paper px-7 py-5 shadow-float" href="/">
           <Image class="block h-auto w-[11.5rem]" src={brand.logoTight} alt="Penny Paws Games, home" width={420} />
         </a>
@@ -59,15 +59,19 @@ const footLink = 'inline-flex min-h-11 items-center gap-2 no-underline hover:und
           <li><a class={footLink} href={tab.href}><Shape name={tab.shape} />{tab.label}</a></li>
         ))}
       </ul>
-      <ul class="grid content-start gap-1 font-extrabold">
+      <ul class="grid content-start gap-1 font-extrabold" aria-label="Shop and follow us">
         <li><a class={footLink} href={stores.etsy}>Our shop on Etsy</a></li>
         <li><a class={footLink} href={stores.instagram}>Instagram</a></li>
         <li><a class={footLink} href={stores.facebook}>Facebook</a></li>
+      </ul>
+      <ul class="grid content-start gap-1 font-extrabold" aria-label="Privacy and terms">
+        <li><a class={footLink} href="/privacy/">Website privacy policy</a></li>
+        <li><a class={footLink} href="/terms/">Terms of use</a></li>
         <li><a class={footLink} href="/squishy-bop/privacy/">Squishy Bop! privacy policy</a></li>
         <li><a class={footLink} href="/plush-hour/privacy/">Plush Hour privacy policy</a></li>
         <li><a class={footLink} href="/giggle-bomb/privacy/">Giggle Bomb privacy policy</a></li>
       </ul>
-      <p class="text-[0.9375rem] text-navy-soft desk:col-span-3">
+      <p class="text-[0.9375rem] text-navy-soft desk:col-span-4">
         © 2026 Penny Paws. Google Play and the Google Play logo are trademarks of Google LLC. Etsy and Amazon are trademarks of their owners.
       </p>
     </footer>

@@ -40,6 +40,16 @@ path = "/giggle-bomb/privacy/"
 title = "Giggle Bomb Privacy Policy"
 why = "The privacy policy address given to Google Play for Giggle Bomb, and linked from inside the game."
 
+[[page]]
+path = "/privacy/"
+title = "Penny Paws Games Website Privacy Policy"
+why = "The website's privacy policy. Etsy's Share & Save program, which credits fees on sales from our Etsy links, requires the site to show one."
+
+[[page]]
+path = "/terms/"
+title = "Penny Paws Games Website Terms of Use"
+why = "The website's terms of use. Etsy's Share & Save program requires the site to show them."
+
 # The site's sections and product pages, added with the Astro build (2026-11-14). Every page
 # links to them from its header or from the home page, so a broken one is broken everywhere.
 [[page]]
