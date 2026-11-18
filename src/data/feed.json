@@ -28,15 +28,24 @@
       "facts": {
         "animal_count": 24,
         "brain_minigame_count": 7,
+        "character_appearance_count": 4,
+        "character_reaction_count": 12,
         "colour_count": 12,
         "dare_count_about_player": 12,
         "dare_count_classic": 62,
         "dare_count_guessing": 4,
+        "dare_count_paired": 3,
         "dare_count_pass": 30,
         "dare_count_timed": 11,
         "dare_pack_count": 4,
         "dare_pack_count_pass": 3,
         "free_minigame_count": 24,
+        "freeze_cycle_count": 3,
+        "fuse_behavior_count": 2,
+        "fuse_behaviors": [
+          "timed",
+          "random"
+        ],
         "fuse_setting_count": 3,
         "fuse_settings": [
           "chill",
@@ -46,13 +55,14 @@
         "max_players": 5,
         "minigame_count": 43,
         "nickname_count": 60,
+        "paired_min_players": 3,
         "shop_boom_count": 8,
         "shop_face_count": 3,
         "shop_hat_count": 20,
         "shop_party_count": 7,
         "shop_skin_count": 9,
         "shop_voice_count": 7,
-        "showdown_count": 9,
+        "showdown_count": 12,
         "turn_modes": [
           "around",
           "shuffle",
@@ -872,6 +882,415 @@
       ],
       "related": [
         "north-pole-caper"
+      ],
+      "book": null,
+      "site_pages": []
+    },
+    {
+      "id": "squishy-birthday",
+      "name": "Squishy Birthday Party Kit",
+      "title": "Personalized Squishy Birthday Party Kit",
+      "hook": "Their name hangs above the birthday table, squishy characters sit on the cupcakes, and each guest gets to make a paper squishy to take home. This printable kit brings invitations, decorations and activities together in the same colorful squishy style, with matching thank-you cards for after the party. Personalize the pieces online, add an optional photo to the invitation, and save a version to send by phone.",
+      "description": "Their name hangs above the birthday table, squishy characters sit on the cupcakes, and each guest gets to make a paper squishy to take home. This printable kit brings invitations, decorations and activities together in the same colorful squishy style, with matching thank-you cards for after the party. Personalize the pieces online, add an optional photo to the invitation, and save a version to send by phone.\n\nFour paper squishy characters, each in full color and color-your-own versions, a station sign, 12 different picture bingo boards with caller tiles and markers, a drawing placemat and two coloring pages. The matching party pieces include invitations, flat and folded thank-you cards, banner flags, cake and cupcake toppers, favor tags, a welcome sign and food tents. Save a matching invitation picture to send by phone.\n\nYou receive a four-page printing guide, three Letter PDFs and a ZIP containing the three A4 PDFs. Each paper size has 65 pages. Print selected sheets on white paper or card stock. For the crafts, add scissors, clear tape and soft stuffing. For the banner and toppers, add string and sticks.\n\nOpen START_HERE after purchase. Use the included fill-in sheets straight away, or open the personalization link and enter your Etsy order number. The personalization page needs an internet connection. Choose US Letter or A4 and print the pages you want at 100% (Actual Size). A local copy shop can print the PDFs for you.\n\nDigital download for personal use. Print as many copies as your family needs. Please do not distribute or resell the files. Card stock, toys and craft supplies are not included. Colors can vary by screen and printer. Illustrations were generated with AI from Penny Paws Printables prompts and checked individually. These are generic squishy designs. For help, message Penny Paws Printables through your Etsy purchase receipt.",
+      "collection": "Events & Parties",
+      "price": "11.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4619675704",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/2bce9bf5f10c-01_listing.jpg",
+          "sha256": "2bce9bf5f10ca6441641bb8f42556e56d53e224102dca34b92ae69046ded5b1b",
+          "bytes": 1394430,
+          "alt": "Squishy birthday table with a CHLOÉ name banner, welcome and craft signs, invitation, personalized cake and cupcake toppers, two bingo boards and paper squishy patterns. Real printable artwork is composited into a generated party setting."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/8a2d56c357c7-02_listing.jpg",
+          "sha256": "8a2d56c357c732f421e8f29e7481768889058edab3ff8604e16526ca4d70c0fe",
+          "bytes": 521174,
+          "alt": "Make a Squishy station sign beside paper squishy patterns for the party craft table."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/08bb61c92f8d-03_listing.jpg",
+          "sha256": "08bb61c92f8d6c97d748312135e25f2c7273be3a706eae704ccc559a1e6a2694",
+          "bytes": 609649,
+          "alt": "Online personalization form beside a finished invitation showing the birthday name."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/346b86a8d5c9-04_listing.jpg",
+          "sha256": "346b86a8d5c98fe278b845650bba324933dee1e5230734439bea06e1aac73c28",
+          "bytes": 658709,
+          "alt": "Invitation, cake topper, picture bingo board and craft station sign showing the range of the full printable kit."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/42e3b5c8876a-05_listing.jpg",
+          "sha256": "42e3b5c8876ad87159498947b2026256e6d43e9e805f594bd5f6787b4cf77ddb",
+          "bytes": 863474,
+          "alt": "Phone invitation, printed invitation and matching thank-you card from the stationery set."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/65fba94ccb4e-06_listing.jpg",
+          "sha256": "65fba94ccb4e25827c07a95086ec67bf39d177180109780e2e025ca2db10a215",
+          "bytes": 411801,
+          "alt": "Personalized CHLOÉ name banner assembled from individual painted letter flags."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/c049d5328e17-07_listing.jpg",
+          "sha256": "c049d5328e17d91c3a6d5ce2942a754db9c7f9b53f3ae6d6d3a0be407d7a077f",
+          "bytes": 586833,
+          "alt": "Personalized cake topper and matching squishy character cupcake circles."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/e4d3de858330-08_listing.jpg",
+          "sha256": "e4d3de858330643f11558e9c458e14726aa0bdd34ba6bd4a753849b7b791c21d",
+          "bytes": 485986,
+          "alt": "Full-color and color-your-own paper squishy patterns showing the two craft options."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/1838b68b9308-09_listing.jpg",
+          "sha256": "1838b68b9308b9cc3d45ec1697a9fcea90a377d973945d5ff11b6987071bd84d",
+          "bytes": 632202,
+          "alt": "Two different picture bingo boards and caller tiles from the twelve-board game."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday/2185ebaaee06-10_listing.jpg",
+          "sha256": "2185ebaaee0644499fb797324b168f2042ec5e523c94c42f75054fec231364dc",
+          "bytes": 393293,
+          "alt": "Printing guide beside the squishy drawing placemat included in the full kit."
+        }
+      ],
+      "features": [
+        "Four paper squishy characters in precolored and color-your-own versions",
+        "Twelve different bingo boards with caller tiles and markers",
+        "Painted name flags, cake and cupcake toppers",
+        "Phone and print invitations with matching thank-you cards",
+        "A welcome sign, food tents, placemat and two coloring pages"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "Which paper sizes are included?",
+          "a": "US Letter and A4 are included. Print the sheets at Actual Size."
+        },
+        {
+          "q": "Can I use the files without personalizing?",
+          "a": "Yes. Open the included fill-in PDFs and use only the sheets you want."
+        },
+        {
+          "q": "How do I add a name?",
+          "a": "Follow the link in START_HERE and use your Etsy order number to open the personalization page."
+        }
+      ],
+      "related": [
+        "paper-squishy",
+        "squishy-coloring"
+      ],
+      "book": null,
+      "site_pages": []
+    },
+    {
+      "id": "squishy-birthday-banner",
+      "name": "Squishy Birthday Banner",
+      "title": "Personalized Squishy Birthday Name Banner",
+      "hook": "Spell their name in big painted jelly letters above the birthday table. Each letter has its own flag, with squishy character flags to mix in and a matching HAPPY BIRTHDAY banner to hang above it. Create the name flags online using your order number, then arrange the letters, numbers and characters to suit your party space.",
+      "description": "Spell their name in big painted jelly letters above the birthday table. Each letter has its own flag, with squishy character flags to mix in and a matching HAPPY BIRTHDAY banner to hang above it. Create the name flags online using your order number, then arrange the letters, numbers and characters to suit your party space.\n\nPersonalized name and age flags, a full HAPPY BIRTHDAY set, character flags, number flags and blank flags to write on. Each flag is 5 × 7 inches. Print two per landscape sheet, cut along the guides and tape them to string. Leave a little space between words.\n\nYou receive a start guide and the fill-in banner pages in both Letter and A4. The name flags are made on the personalization page after purchase. Supply white card stock, scissors, string and tape.\n\nOpen START_HERE after purchase. Use the included fill-in sheets straight away, or open the personalization link and enter your Etsy order number. The personalization page needs an internet connection. Choose US Letter or A4 and print the pages you want at 100% (Actual Size). A local copy shop can print the PDFs for you.\n\nDigital download for personal use. Print as many copies as your family needs. Please do not distribute or resell the files. Card stock, toys and craft supplies are not included. Colors can vary by screen and printer. Illustrations were generated with AI from Penny Paws Printables prompts and checked individually. These are generic squishy designs. For help, message Penny Paws Printables through your Etsy purchase receipt.",
+      "collection": "Events & Parties",
+      "price": "4.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4619675874",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/f32ef15ecd62-01_listing.jpg",
+          "sha256": "f32ef15ecd62f360bdf4b9f94dc6c757d368b3fc683a7f80bdd0048b07d19160",
+          "bytes": 1137750,
+          "alt": "Three rows of squishy banner flags spell HAPPY, BIRTHDAY and CHLOÉ against a teal wall with balloons and streamers. Real printable flags are composited into a generated party setting."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/31e9306796c2-02_listing.jpg",
+          "sha256": "31e9306796c22348af91f35a0621db82fb7bf565cadf5a3ec09dd14417691847",
+          "bytes": 399133,
+          "alt": "Personalized CHLOÉ name banner with one painted letter on each flag."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/a7f99544d05e-03_listing.jpg",
+          "sha256": "a7f99544d05ea765aa9c3e8e6e53b75953679c3d141b40b36d31d72525eb94c3",
+          "bytes": 472967,
+          "alt": "Online personalization form beside a painted name-banner flag."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/94b26a19cad4-04_listing.jpg",
+          "sha256": "94b26a19cad4ca4235cb6bddb501709593131f572267cec5737f637fb206362b",
+          "bytes": 547859,
+          "alt": "Landscape print sheet containing two 5 × 7-inch banner flags."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/c060214940ca-05_listing.jpg",
+          "sha256": "c060214940ca091079f4deb5752cfd5304dff041db68bb6886e1d9cbeb7b05af",
+          "bytes": 610628,
+          "alt": "Painted HAPPY BIRTHDAY flags forming the included birthday greeting."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/04f83f57df54-06_listing.jpg",
+          "sha256": "04f83f57df54e2b302b1eb9f373fe0f1469991f8d3b8da2f6e79a407ca0e3b0c",
+          "bytes": 616098,
+          "alt": "Squishy character flags and a painted letter flag from the banner set."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/3ba7ba2dd74f-07_listing.jpg",
+          "sha256": "3ba7ba2dd74ff167374dd09ad3c65ca0bfcda2ece856d933007f543554f8de60",
+          "bytes": 571071,
+          "alt": "Number flags from zero to nine and their printable layout for displaying a birthday age."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/a196c3f8f747-08_listing.jpg",
+          "sha256": "a196c3f8f747f9c71aaebb4762c93b7e94dc4499e55f1d79ddf041fd00b97cd0",
+          "bytes": 568589,
+          "alt": "Blank banner flag beside squishy character flags for mixing drawings with the printed set."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/eeb9efb1d1d3-09_listing.jpg",
+          "sha256": "eeb9efb1d1d38c1bd97f590d9451b1b341bc0cde2aed8a72dcf215ee92aa24aa",
+          "bytes": 397524,
+          "alt": "Assembled personalized name banner showing how the cut flags hang along a string."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-banner/30c4346a5022-10_listing.jpg",
+          "sha256": "30c4346a50225ea37e90504a7ff22efb5e2fec0c2ee8d0a8237cd33977d5b23d",
+          "bytes": 553973,
+          "alt": "Printable banner sheet and blank flag from the US Letter and A4 download."
+        }
+      ],
+      "features": [
+        "One 5 × 7 inch name flag per character",
+        "An age flag to add to the name",
+        "Separate HAPPY BIRTHDAY greeting flags",
+        "Character, number and blank flags in the offline PDFs",
+        "Two flags on each landscape sheet"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "Which paper sizes are included?",
+          "a": "US Letter and A4 are included. Print the sheets at Actual Size."
+        },
+        {
+          "q": "Can I use the files without personalizing?",
+          "a": "Yes. Open the included fill-in PDFs and use only the sheets you want."
+        },
+        {
+          "q": "How do I add a name?",
+          "a": "Follow the link in START_HERE and use your Etsy order number to open the personalization page."
+        }
+      ],
+      "related": [
+        "squishy-birthday"
+      ],
+      "book": null,
+      "site_pages": []
+    },
+    {
+      "id": "squishy-birthday-invitation",
+      "name": "Squishy Birthday Invitation",
+      "title": "Personalized Squishy Birthday Invitation and Thank-You Cards",
+      "hook": "Their name in painted jelly letters, their photo if you want it, and all the details for a squishy birthday. Personalize the invitation online, then send it to the group chat or print matching cards to hand out. Flat and folded thank-you cards are included, so the stationery is ready for both sides of the party.",
+      "description": "Their name in painted jelly letters, their photo if you want it, and all the details for a squishy birthday. Personalize the invitation online, then send it to the group chat or print matching cards to hand out. Flat and folded thank-you cards are included, so the stationery is ready for both sides of the party.\n\nPersonalize the name and age, add your party details and choose whether to include a photo. The phone download is a portrait JPEG. The printable invitations are 5 × 7 inches. Choose flat thank-you cards (four per sheet) or folded thank-you cards (two per sheet). Handwriting lines appear on paper and are omitted from the phone picture.\n\nThe download includes a start guide and fill-in stationery on Letter and A4. Pick up white card stock, scissors and a pen for the paper version.\n\nOpen START_HERE after purchase. Use the included fill-in sheets straight away, or open the personalization link and enter your Etsy order number. The personalization page needs an internet connection. Choose US Letter or A4 and print the pages you want at 100% (Actual Size). A local copy shop can print the PDFs for you.\n\nDigital download for personal use. Print as many copies as your family needs. Please do not distribute or resell the files. Card stock, toys and craft supplies are not included. Colors can vary by screen and printer. Illustrations were generated with AI from Penny Paws Printables prompts and checked individually. These are generic squishy designs. For help, message Penny Paws Printables through your Etsy purchase receipt.",
+      "collection": "Events & Parties",
+      "price": "4.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4619675804",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/10ba28c421db-01_listing.jpg",
+          "sha256": "10ba28c421dbf8076f681915eff244d3470f919f84238d26295c9e06065907cb",
+          "bytes": 1390390,
+          "alt": "Squishy invitation for Chloé turning nine, shown as a printed card and on a phone, beside matching flat and folded thank-you cards. Real stationery artwork is composited into a generated party setting with balloons."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/4f62cddcb75c-02_listing.jpg",
+          "sha256": "4f62cddcb75c0cc4b20745cfba50c440fc98143123a8c7126592c68e83135cd9",
+          "bytes": 525096,
+          "alt": "Personalized squishy birthday invitation displayed on a phone for sharing as a JPEG."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/1227a8511b34-03_listing.jpg",
+          "sha256": "1227a8511b34f246993f9ca3c1dfd84898f17de8e7dad921fd4bbe80b85ab3f0",
+          "bytes": 619647,
+          "alt": "Online personalization form beside a completed squishy birthday invitation."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/5b1ce2c0f96e-04_listing.jpg",
+          "sha256": "5b1ce2c0f96ede72aef37155fbbd977f9c8857781ece943ee11071a3778ee66b",
+          "bytes": 744896,
+          "alt": "Print-ready sheet containing two 5 × 7-inch squishy birthday invitations."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/c49b5fd61f95-05_listing.jpg",
+          "sha256": "c49b5fd61f954242819af9764711b2f0eac3ca9ff0e294a9410ee0a6c25f6628",
+          "bytes": 869624,
+          "alt": "Printed invitation with handwriting lines beside the phone version without those lines."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/6c4d89d0afdb-06_listing.jpg",
+          "sha256": "6c4d89d0afdb73e269896e61e136de153527262c24d507c2b103138ae51b8085",
+          "bytes": 935847,
+          "alt": "Flat squishy thank-you card and its four-card print sheet."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/38d9934264e8-07_listing.jpg",
+          "sha256": "38d9934264e8b0356bc8ee506b64e5c2817c450bcf2acd19233849c8a5a84328",
+          "bytes": 574795,
+          "alt": "Matching folded thank-you card with space inside for a handwritten message."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/60da5da57a86-08_listing.jpg",
+          "sha256": "60da5da57a8639aace4481f37b228330286ea1ecbae9b989df6d05a0b7ed460e",
+          "bytes": 557114,
+          "alt": "Close view of the personalized name and age on the squishy birthday invitation."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/f1a483e3d2ab-09_listing.jpg",
+          "sha256": "f1a483e3d2ab991a19a4efaf98029a013e7ca98d2a5526347300d03391332ac2",
+          "bytes": 864118,
+          "alt": "Printable invitation sheet and folded thank-you card from the Letter and A4 stationery set."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-invitation/fd44dcb0446b-10_listing.jpg",
+          "sha256": "fd44dcb0446b5028c918388a4abc6b8299e3debb702e12b7ed9220db592d72d4",
+          "bytes": 857472,
+          "alt": "Phone invitation beside a matching thank-you card, showing the included stationery."
+        }
+      ],
+      "features": [
+        "Portrait JPEG for phone messages",
+        "Two 5 × 7 inch printed invitations on one sheet",
+        "Optional invitation photo",
+        "Individually typed, handwritten or omitted party details",
+        "Matching flat and folded thank-you cards"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "Which paper sizes are included?",
+          "a": "US Letter and A4 are included. Print the sheets at Actual Size."
+        },
+        {
+          "q": "Can I use the files without personalizing?",
+          "a": "Yes. Open the included fill-in PDFs and use only the sheets you want."
+        },
+        {
+          "q": "How do I add a name?",
+          "a": "Follow the link in START_HERE and use your Etsy order number to open the personalization page."
+        }
+      ],
+      "related": [
+        "squishy-birthday"
+      ],
+      "book": null,
+      "site_pages": []
+    },
+    {
+      "id": "squishy-birthday-toppers",
+      "name": "Squishy Cake and Cupcake Toppers",
+      "title": "Personalized Squishy Cake and Cupcake Toppers",
+      "hook": "Put their name and birthday age above the icing, surrounded by a rainbow of painted squishy letters. Personalize the cake topper online, then carry the same characters across the dessert table with matching cupcake circles. A patterned back is included to finish the cake topper on both sides.",
+      "description": "Put their name and birthday age above the icing, surrounded by a rainbow of painted squishy letters. Personalize the cake topper online, then carry the same characters across the dessert table with matching cupcake circles. A patterned back is included to finish the cake topper on both sides.\n\nThe cake topper is about 6 inches wide and has a patterned back. Place a stick between the two sides and glue them together. The cupcake toppers are 2-inch circles with six squishy characters and the birthday age, twelve to a sheet. Print extra sheets for a larger tray. The fill-in cake toppers include ages 1–12 and a blank badge.\n\nYou receive a start guide and fill-in topper PDFs on Letter and A4. Add white card stock, scissors, sticks and glue or tape. The online version adds the name and age.\n\nOpen START_HERE after purchase. Use the included fill-in sheets straight away, or open the personalization link and enter your Etsy order number. The personalization page needs an internet connection. Choose US Letter or A4 and print the pages you want at 100% (Actual Size). A local copy shop can print the PDFs for you.\n\nDigital download for personal use. Print as many copies as your family needs. Please do not distribute or resell the files. Card stock, toys and craft supplies are not included. Colors can vary by screen and printer. Illustrations were generated with AI from Penny Paws Printables prompts and checked individually. These are generic squishy designs. For help, message Penny Paws Printables through your Etsy purchase receipt.",
+      "collection": "Events & Parties",
+      "price": "3.99",
+      "currency": "USD",
+      "etsy_url": "https://pennypawsprintables.etsy.com/listing/4619675970",
+      "images": [
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/626174909585-01_listing.jpg",
+          "sha256": "6261749095853097bef1e9b8fc573cc7cf01b628a6f828721c3062602bda503c",
+          "bytes": 1138419,
+          "alt": "Personalized CHLOÉ cake topper with a ninth-birthday badge on a frosted cake, beside cupcakes with dumpling, jelly cube, paw and age-nine circles. Real printable topper artwork is composited into a generated party setting."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/4a56a28714cc-02_listing.jpg",
+          "sha256": "4a56a28714ccc9412022a533bc9073a1257d2be6f1d0e0c8c2c926fa681e2be6",
+          "bytes": 711607,
+          "alt": "Squishy cake topper with a painted rainbow heading and personalized birthday name and age."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/424ac06e2bc5-03_listing.jpg",
+          "sha256": "424ac06e2bc55f8659096b5a88a77147679ce2aa361ac342cddb6b29e3476f28",
+          "bytes": 421940,
+          "alt": "Online personalization form beside the finished name-and-age cake topper."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/36ac1650f04a-04_listing.jpg",
+          "sha256": "36ac1650f04ad0a99adf45879632323421971f55d0ebccefa304a4deb9bd5f4d",
+          "bytes": 414313,
+          "alt": "Print sheet containing the personalized cake topper front and matching patterned back."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/31c258d7e8b9-05_listing.jpg",
+          "sha256": "31c258d7e8b989b9203d901dc10abdef87558423e0ae8ff3f919c6985c897081",
+          "bytes": 510678,
+          "alt": "Printable sheet of twelve squishy birthday cupcake circles."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/ebeb03142781-06_listing.jpg",
+          "sha256": "ebeb031427818e4f879216adac53b0902a67e324969bdc0f5b58b8e33e2adb8c",
+          "bytes": 434164,
+          "alt": "Squishy character and birthday-age cupcake circles showing the coordinated designs."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/a1325eb44a90-07_listing.jpg",
+          "sha256": "a1325eb44a9059f9d69484ce3db75faa136d66ffb1498eb3a0d1041b60f5ed43",
+          "bytes": 680883,
+          "alt": "Close view of a 2-inch cupcake circle beside the full printable sheet."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/79364e92ee72-08_listing.jpg",
+          "sha256": "79364e92ee728d2eceb18b0273f7eb416355bbfb76e825255db8ab5fac3fa8c8",
+          "bytes": 573415,
+          "alt": "Fill-in cake topper and blank-badge version from the offline download."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/930e81ceaafc-09_listing.jpg",
+          "sha256": "930e81ceaafcf22e6b2d0e6726ed49fb1932e16c3db4a6385625d3c0266b8678",
+          "bytes": 735170,
+          "alt": "Cake-topper and cupcake-circle print sheets ready to cut and assemble."
+        },
+        {
+          "url": "https://media.pennypawsgames.com/p/squishy-birthday-toppers/3ed07521cbcf-10_listing.jpg",
+          "sha256": "3ed07521cbcffe05e348e8f578fe13876a35beda853c30c066a5df656201e510",
+          "bytes": 581169,
+          "alt": "Personalized cake topper and matching cupcake circles from the Letter and A4 download."
+        }
+      ],
+      "features": [
+        "Approximately six-inch cake topper with the name and age",
+        "Patterned reverse on the same sheet",
+        "Two-inch round cupcake toppers",
+        "Twelve cupcake circles per page",
+        "Fill-in cake toppers for ages one through twelve plus a blank badge"
+      ],
+      "formats": [
+        "pdf"
+      ],
+      "faq": [
+        {
+          "q": "Which paper sizes are included?",
+          "a": "US Letter and A4 are included. Print the sheets at Actual Size."
+        },
+        {
+          "q": "Can I use the files without personalizing?",
+          "a": "Yes. Open the included fill-in PDFs and use only the sheets you want."
+        },
+        {
+          "q": "How do I add a name?",
+          "a": "Follow the link in START_HERE and use your Etsy order number to open the personalization page."
+        }
+      ],
+      "related": [
+        "squishy-birthday"
       ],
       "book": null,
       "site_pages": []

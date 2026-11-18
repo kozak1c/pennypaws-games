@@ -130,7 +130,8 @@ the live site, plus the print service's health address once it is live, the mont
 Cloudflare usage, the domain's expiry date and the DNS backup. A check that fails twice in a
 row sends **one** alert to the owner's phone, and the alert closes itself when the check passes
 again. Each alert links to its section below. The `watchdog` workflow runs the same
-`ops/health.py` from GitHub twice an hour, for when the owner's PC is off.
+`ops/health.py` for the site and `ops/print_health.py` for the print service from GitHub
+twice an hour, for when the owner's PC is off.
 
 ### Site check failed
 
@@ -207,12 +208,27 @@ Fix: open the pull request from the alert, read the failing step, and fix or clo
 
 ### Watchdog issue (the check from GitHub)
 
-The `watchdog` workflow failed `ops/health.py` against the live site twice, a minute apart,
-and opened the issue "[watchdog] pennypawsgames.com is failing its health check", assigned to
+The `watchdog` workflow checks the site and print service independently. If `ops/health.py`
+fails against the live site twice, a minute apart, it
+opens the issue "[watchdog] pennypawsgames.com is failing its health check", assigned to
 the repository's owner so that GitHub emails it. GitHub also emails "Run failed: watchdog". The
 issue holds the failing lines; it gets a comment at most every six hours
 while the site stays down, and closes itself when the check passes. If the owner's PC is on, its
 own "Site check failed" alert arrives as well.
+
+The print check requests only `https://print.pennypawsgames.com/api/health`. It requires HTTP
+200 and a ready, live production report, so a seeded staging response cannot pass. It uses
+no credentials and does not read orders or customer data. Its alert is a separate issue,
+"[watchdog] print.pennypawsgames.com is failing its health check", with the same retry,
+six-hour comment limit, owner assignment and recovery close. One service recovering never
+closes the other service's alert. A print failure means check the print service's runbook;
+rolling back the static site does not roll back the print service.
+
+The print check starts when this workflow reaches `main` through the Release pull request.
+Run **watchdog** once after that release to confirm both checks pass. To exercise only its
+alert, run with `print_drill=true`, then an ordinary run; `drill=true` still exercises only
+the site's alert. A drill deliberately fails its workflow run. Both checks run independently,
+so the main site's `/app-ads.txt` and all its other checks still run during a print outage.
 
 GitHub starts scheduled runs late when it is busy, sometimes by an hour or more. The workflow
 does not know whether the owner's PC is running; an alert that comes only from here, with no

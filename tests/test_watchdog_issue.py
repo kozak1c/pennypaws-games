@@ -44,7 +44,7 @@ class OwnAlertOnly(unittest.TestCase):
 
 
 class Main(unittest.TestCase):
-    def run_main(self, ok, listed, owner="the-owner"):
+    def run_main(self, ok, listed, owner="the-owner", service="site"):
         calls = []
 
         def fake(args):
@@ -54,7 +54,7 @@ class Main(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             report = Path(d) / "health.md"
             report.write_text("FAIL exact /app-ads.txt: HTTP 404\n", encoding="utf-8")
-            code = w.main(["true" if ok else "false", str(report), "https://example.test/run/1"], run=fake, now=NOW, owner=owner)
+            code = w.main(["true" if ok else "false", str(report), "https://example.test/run/1", service], run=fake, now=NOW, owner=owner)
         return code, calls
 
     def test_a_failure_opens_the_issue_with_the_report_and_the_run(self):
@@ -84,8 +84,26 @@ class Main(unittest.TestCase):
         _, calls = self.run_main(True, [])
         self.assertEqual(len(calls), 1)
 
+    def test_print_failure_opens_its_own_alert_even_with_site_alert_open(self):
+        _, calls = self.run_main(False, [issue()], service="print")
+        self.assertEqual(calls[-1][:4], ["issue", "create", "--title", w.TITLES["print"]])
+
+    def test_recovery_never_closes_the_other_service_alert(self):
+        listed = [issue(7), issue(8, title=w.TITLES["print"])]
+        for service, expected in (("site", "7"), ("print", "8")):
+            _, calls = self.run_main(True, listed, service=service)
+            self.assertEqual(calls[-1][:3], ["issue", "close", expected])
+        _, calls = self.run_main(True, [issue()], service="print")
+        self.assertEqual(len(calls), 1)
+
+    def test_print_repeat_failure_keeps_its_own_comment_limit(self):
+        for hours, expected in ((1, "list"), (7, "comment")):
+            _, calls = self.run_main(False, [issue(8, title=w.TITLES["print"], hours_ago=hours)], service="print")
+            self.assertEqual(calls[-1][1], expected)
+
     def test_bad_arguments_are_refused(self):
         self.assertEqual(w.main(["maybe", "x", "y"], run=lambda a: "[]"), 2)
+        self.assertEqual(w.main(["true", "x", "y", "other"], run=lambda a: "[]"), 2)
 
 
 if __name__ == "__main__":

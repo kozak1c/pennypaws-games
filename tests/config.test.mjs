@@ -209,6 +209,12 @@ test("watchdog.yml: scheduled, checks the public address, and only that job may 
   assert.match(text, /ops\/health\.py "\$ADDRESS" /);
   assert.equal([...text.matchAll(/^\s+\w+: write$/gm)].map((m) => m[0].trim()).join(), "issues: write");
   assert.doesNotMatch(text, /secrets\./, "the watchdog needs no secret");
+  assert.match(text, /fail-fast: false/, "one failed service cannot cancel the other check");
+  assert.match(text, /service: \[site, print\]/);
+  assert.match(text, /ops\/print_health\.py "\$PRINT_ADDRESS"/);
+  assert.match(text, /\|\| 'https:\/\/print\.pennypawsgames\.com' \}\}/);
+  assert.match(text, /"\$RUN_URL" "\$SERVICE"/, "alerts must be isolated by service");
+  assert.match(text, /inputs\.print_drill/);
 });
 
 test("staging.yml posts the commit status staging/smoke", () => {
