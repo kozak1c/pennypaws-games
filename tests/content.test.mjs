@@ -16,12 +16,14 @@ const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest(
 const publicFiles = readPublicFiles().files;
 
 // page (its path inside public/ and dist/) -> SHA-256 of its bytes. Update a pin only together
-// with the reviewed change. Last changed 2026-11-15 (PAWS-034): a way back to the site above and
-// below each policy; the policy words, below, did not change.
+// with the reviewed change. Last changed 2026-11-18 (PAWS-045): the website's own privacy policy
+// and terms of use added, after the independent review; the game policies did not change.
 const PRIVACY_PAGES = {
   "squishy-bop/privacy/index.html": "3eac73c802fa0db16bc371c6e9563f9563b7300679eef3c9a0dab28c9ee9c200",
   "plush-hour/privacy/index.html": "e19cabb547d40d34900f279531979db1a16fd2dd751132386b94a0ed5d35f404",
   "giggle-bomb/privacy/index.html": "e28e825591161f7e8106ab23cdcb54ba3277e525728610d7d5d8482187597a79",
+  "privacy/index.html": "411a4035991fd245c41901facd0ee05d425a29368b7178113b82a726a70d5ab5",
+  "terms/index.html": "5f12b0c71ba736e72a9e3cf0d2bac0562597271a8858b8fae1318f52777e05e7",
 };
 
 for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
@@ -43,6 +45,8 @@ const POLICY_WORDS = {
   "squishy-bop/privacy/index.html": "b1a655175355329e2ae15cfbbf1ba6d0b943509d9d5abd308cd777bb3c25c82e",
   "plush-hour/privacy/index.html": "15f3d37b90171025e1050105a9c32828b09785d0e9a821e1145c8909ab3dba9f",
   "giggle-bomb/privacy/index.html": "e2ccd952578780e7ac69a8f86c21052d474731d5c7f60c2cf0a42eb38bd2ecc4",
+  "privacy/index.html": "9b4b7632eaa0c657de8bd291964896bc5ed4c9a61421f5881c87edff55fb4392",
+  "terms/index.html": "1aaa83c5acd8835cf1f86d5de2631f3da4c6b23d6bd86656177a0ee92988ab5a",
 };
 
 for (const [file, pin] of Object.entries(POLICY_WORDS)) {
