@@ -68,7 +68,8 @@ BUDGET_EXCEPTIONS = {
     r"^_astro/[0-9a-f]{16}\.": 1024 * KB,
 }
 KIND_TOTALS = {".js": 448 * KB}   # every script together; 376,456
-TOTAL_BUDGET = 17408 * KB         # the whole build; 15,013,247 (7,886,284 before the feed)
+# The 14-printable catalog with four birthday galleries builds to 20,611,747 bytes.
+TOTAL_BUDGET = 22 * 1024 * KB
 
 # attribute -> tags whose value is a resource the browser loads by itself
 RESOURCE_ATTRS = {
