@@ -17,13 +17,14 @@ const publicFiles = readPublicFiles().files;
 
 // page (its path inside public/ and dist/) -> SHA-256 of its bytes. Update a pin only together
 // with the reviewed change. Last changed 2026-11-18 (PAWS-045): the website's own privacy policy
-// and terms of use added, after the independent review; the game policies did not change.
+// and terms of use added, after the independent review; every policy page also declares the
+// site icon (outside <main>, so the game policy words did not change).
 const PRIVACY_PAGES = {
-  "squishy-bop/privacy/index.html": "3eac73c802fa0db16bc371c6e9563f9563b7300679eef3c9a0dab28c9ee9c200",
-  "plush-hour/privacy/index.html": "e19cabb547d40d34900f279531979db1a16fd2dd751132386b94a0ed5d35f404",
-  "giggle-bomb/privacy/index.html": "e28e825591161f7e8106ab23cdcb54ba3277e525728610d7d5d8482187597a79",
-  "privacy/index.html": "411a4035991fd245c41901facd0ee05d425a29368b7178113b82a726a70d5ab5",
-  "terms/index.html": "5f12b0c71ba736e72a9e3cf0d2bac0562597271a8858b8fae1318f52777e05e7",
+  "squishy-bop/privacy/index.html": "d6530293124aef5db2bd8a17f0dcdd845ba2f3d16af7c4c680cd3659e46c8d93",
+  "plush-hour/privacy/index.html": "c561fd9c34278b89db339b4a646bf0e1300ef168f107b67d43115c3c67d09118",
+  "giggle-bomb/privacy/index.html": "d34d064c7d364fcb994f4d535582077f7f0995382a2a886e69cd78e9f56a7f85",
+  "privacy/index.html": "d29cd709c95137e14135a592e641cb527c9540c94505e7f09e89a7ca3bc09536",
+  "terms/index.html": "f59f115c2c288f88c8de0f2fbac47de21a063f259394e8c2d1f043625a3e53f4",
 };
 
 for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
@@ -45,8 +46,8 @@ const POLICY_WORDS = {
   "squishy-bop/privacy/index.html": "b1a655175355329e2ae15cfbbf1ba6d0b943509d9d5abd308cd777bb3c25c82e",
   "plush-hour/privacy/index.html": "15f3d37b90171025e1050105a9c32828b09785d0e9a821e1145c8909ab3dba9f",
   "giggle-bomb/privacy/index.html": "e2ccd952578780e7ac69a8f86c21052d474731d5c7f60c2cf0a42eb38bd2ecc4",
-  "privacy/index.html": "9b4b7632eaa0c657de8bd291964896bc5ed4c9a61421f5881c87edff55fb4392",
-  "terms/index.html": "1aaa83c5acd8835cf1f86d5de2631f3da4c6b23d6bd86656177a0ee92988ab5a",
+  "privacy/index.html": "a62f427fd71f1a8df6fca1d389cf04a6a0c328b71b32fb4f1165def101763ea9",
+  "terms/index.html": "abb9eee06e8d4c7083d5386f9ca438d8d049d08c99bf23ae084b3c691fc4b69c",
 };
 
 for (const [file, pin] of Object.entries(POLICY_WORDS)) {
