@@ -16,11 +16,12 @@ const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest(
 const publicFiles = readPublicFiles().files;
 
 // page (its path inside public/ and dist/) -> SHA-256 of its bytes. Update a pin only together
-// with the reviewed change. Last changed 2026-11-18 (PAWS-045): the website's own privacy policy
-// and terms of use added, after the independent review; every policy page also declares the
-// site icon (outside <main>, so the game policy words did not change).
+// with the reviewed change. Last changed 2026-11-20 (SQUISH-068): the Squishy Bop policy describes
+// the game's new Rate and Share buttons, after the independent review. Before that, 2026-11-18
+// (PAWS-045): the website's own privacy policy and terms of use added; every policy page also
+// declares the site icon (outside <main>, so the game policy words did not change).
 const PRIVACY_PAGES = {
-  "squishy-bop/privacy/index.html": "d6530293124aef5db2bd8a17f0dcdd845ba2f3d16af7c4c680cd3659e46c8d93",
+  "squishy-bop/privacy/index.html": "f3e4aa0ee2e07096d456e59022afe9b3c7a41bf8bf01aaa9a640a048e0453408",
   "plush-hour/privacy/index.html": "c561fd9c34278b89db339b4a646bf0e1300ef168f107b67d43115c3c67d09118",
   "giggle-bomb/privacy/index.html": "d34d064c7d364fcb994f4d535582077f7f0995382a2a886e69cd78e9f56a7f85",
   "privacy/index.html": "d29cd709c95137e14135a592e641cb527c9540c94505e7f09e89a7ca3bc09536",
@@ -43,7 +44,7 @@ for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
 // the site links or styling around a policy moves the page pin above but not this one; a change
 // to these needs the privacy review of the words themselves.
 const POLICY_WORDS = {
-  "squishy-bop/privacy/index.html": "b1a655175355329e2ae15cfbbf1ba6d0b943509d9d5abd308cd777bb3c25c82e",
+  "squishy-bop/privacy/index.html": "aee51c8e74c37ab6b9c4cd1fee602661ef9bcb1bd2d8b41810945f27475d3933",
   "plush-hour/privacy/index.html": "15f3d37b90171025e1050105a9c32828b09785d0e9a821e1145c8909ab3dba9f",
   "giggle-bomb/privacy/index.html": "e2ccd952578780e7ac69a8f86c21052d474731d5c7f60c2cf0a42eb38bd2ecc4",
   "privacy/index.html": "a62f427fd71f1a8df6fca1d389cf04a6a0c328b71b32fb4f1165def101763ea9",
