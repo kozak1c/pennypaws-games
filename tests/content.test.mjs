@@ -16,7 +16,9 @@ const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest(
 const publicFiles = readPublicFiles().files;
 
 // page (its path inside public/ and dist/) -> SHA-256 of its bytes. Update a pin only together
-// with the reviewed change. Last changed 2026-11-20 (SQUISH-070): the Squishy Bop policy gains a section for
+// with the reviewed change. Last changed 2026-11-27 (MERGE-080): Plush Hour's terms of use added (the game's Settings
+// links them), and the Plush Hour policy describes Android's backup and the optional reminders, after the independent
+// review. Before that, 2026-11-20 (SQUISH-070): the Squishy Bop policy gains a section for
 // players in the EEA, the UK and Switzerland (limited ads, legal bases, rights, transfers, representatives) and a
 // short section for kids, after the independent review. Before that, 2026-11-20 (SQUISH-068): the Squishy Bop policy describes
 // the game's new Rate and Share buttons (Share behind the grown-up check; Rate and Share in Settings, the one-time rating card), after the independent review. Before that, 2026-11-18
@@ -24,7 +26,8 @@ const publicFiles = readPublicFiles().files;
 // declares the site icon (outside <main>, so the game policy words did not change).
 const PRIVACY_PAGES = {
   "squishy-bop/privacy/index.html": "d319ce96e13b11c02172d320ae9e066ce8bea463dae713d9ff16331f7918a889",
-  "plush-hour/privacy/index.html": "c561fd9c34278b89db339b4a646bf0e1300ef168f107b67d43115c3c67d09118",
+  "plush-hour/privacy/index.html": "7da853977e4e3e9bc3119cd1661371668d6f98dbaa0e5b3fae68a8beb8c21189",
+  "plush-hour/terms/index.html": "8a69ed4726190b759b4898a60c518b42691ea3296e55b2facf7a1c4cc1fe1ae3",
   "giggle-bomb/privacy/index.html": "d34d064c7d364fcb994f4d535582077f7f0995382a2a886e69cd78e9f56a7f85",
   "privacy/index.html": "d29cd709c95137e14135a592e641cb527c9540c94505e7f09e89a7ca3bc09536",
   "terms/index.html": "f59f115c2c288f88c8de0f2fbac47de21a063f259394e8c2d1f043625a3e53f4",
@@ -47,7 +50,8 @@ for (const [file, pin] of Object.entries(PRIVACY_PAGES)) {
 // to these needs the privacy review of the words themselves.
 const POLICY_WORDS = {
   "squishy-bop/privacy/index.html": "3b4910704b8dd5c4d157457d87555de67717e88b13c203e0eeb44736b0c66e5f",
-  "plush-hour/privacy/index.html": "15f3d37b90171025e1050105a9c32828b09785d0e9a821e1145c8909ab3dba9f",
+  "plush-hour/privacy/index.html": "f80b4975d09c887d49ec464730449c3ee54736c2a9c74b6e776ece125b3a01a2",
+  "plush-hour/terms/index.html": "55a8fd207ba0b72b8654b889da30e9c11f64acd6be13662ee26dafb2e467e604",
   "giggle-bomb/privacy/index.html": "e2ccd952578780e7ac69a8f86c21052d474731d5c7f60c2cf0a42eb38bd2ecc4",
   "privacy/index.html": "a62f427fd71f1a8df6fca1d389cf04a6a0c328b71b32fb4f1165def101763ea9",
   "terms/index.html": "abb9eee06e8d4c7083d5386f9ca438d8d049d08c99bf23ae084b3c691fc4b69c",
