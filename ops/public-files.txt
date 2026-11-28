@@ -30,6 +30,7 @@ grown-ups/index.html
 # Privacy policies and terms (copied unchanged from public/; pinned in tests/content.test.mjs)
 squishy-bop/privacy/index.html
 plush-hour/privacy/index.html
+plush-hour/terms/index.html
 giggle-bomb/privacy/index.html
 # The website's own privacy policy and terms of use (Etsy Share & Save requires both)
 privacy/index.html
